@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 // The base class 'enrol_plugin' can be found at lib/enrollib.php. Override
 // methods as necessary.
 
+require_once(__DIR__ . '/vendor/autoload.php');
 /**
  * Class enrol_selma_plugin.
  */
