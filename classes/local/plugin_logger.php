@@ -35,10 +35,10 @@ use tool_aap\local\monolog\MoodleEmailHandler;
  */
 class plugin_logger {
 
-    public const COMPONENT = 'tool_aap';
+    public const COMPONENT = 'enrol_selma';
 
     /** @var string LOG_TABLE_NAME Name of Moodle table to store log entries. */
-    public const LOG_TABLE_NAME = 'tool_aap_log';
+    public const LOG_TABLE_NAME = 'enrol_selma_log';
 
     /**
      * @var Logger $logger Handle to a Monolog logger instance.
