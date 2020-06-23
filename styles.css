@@ -1,0 +1,25 @@
+.log-level i.fa {
+    margin: 0.25em;
+}
+.log-level span {
+    font-weight: 700;
+}
+.log-level-emergency, .log-level-error, .log-level-critical {
+    color: #721C24;
+}
+
+.log-level-alert {
+    color: #155724;
+}
+
+.log-level-warning {
+    color: #F0AD4E;
+}
+
+.log-level-info, .log-level-notice {
+    color: #004085
+}
+
+.log-level-debug {
+    color: #563D7C;
+}

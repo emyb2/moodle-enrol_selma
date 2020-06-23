@@ -23,13 +23,14 @@ use DateInterval;
 use DateTime;
 use Monolog\Logger;
 use Monolog\Handler\NativeMailerHandler;
-use tool_aap\local\monolog\MoodleDBTableHandler;
-use tool_aap\local\monolog\MoodleEmailHandler;
+use enrol_selma\local\monolog\MoodleDBTableHandler;
+use enrol_selma\local\monolog\MoodleEmailHandler;
 
 /**
  * Singleton class for get Monolog logger.
  *
- * @package     Logging
+ * @package     enrol_selma
+ * @subpackage  logging
  * @copyright   2020 Troy Williams <troy.williams@learningworks.co.nz>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
