@@ -25,7 +25,87 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-if ($ADMIN->fulltree) {
-   // TODO: Define the plugin settings page.
-   // https://docs.moodle.org/dev/Admin_settings
+global $ADMIN;
+if ($hassiteconfig) {
+    // https://docs.moodle.org/dev/Admin_settings
+    $component = 'enrol_selma';
+
+    // Main plugin settings configuration page.
+    $settings = new admin_settingpage(
+        'enrolsettingsselma',
+        new lang_string('configuration', $component),
+        'moodle/site:config'
+    );
+
+    // Logging section.
+    $setting = new admin_setting_heading(
+        "{$component}/loggingheading",
+        new lang_string('logging', $component),
+        null
+    );
+    $settings->add($setting);
+
+    $setting = new admin_setting_configselect(
+        "{$component}/loglevel",
+        new lang_string('loglevel', $component),
+        new lang_string('loglevel::description', $component),
+        enrol_selma\local\log_levels::ERROR,
+        enrol_selma\local\log_levels::all()
+
+    );
+    $settings->add($setting);
+
+    $setting = new admin_setting_configcheckbox(
+        "{$component}/logemailcritical",
+        new lang_string('logemailcritical', $component),
+        new lang_string('logemailcritical::description', $component),
+        1
+    );
+    $settings->add($setting);
+
+    $setting = new admin_setting_configtext(
+        "{$component}/logemailcriticalrecipients",
+        new lang_string('logemailcriticalrecipients', $component),
+        new lang_string('logemailcriticalrecipients::description', $component),
+        get_admin()->email
+    );
+    $settings->add($setting);
+
+    $options = [
+        0 => new lang_string('keep', $component),
+        7 => new lang_string('sevendays', $component),
+        30 => new lang_string('thirtydays', $component),
+        60 => new lang_string('sixtydays', $component),
+        90 => new lang_string('ninetydays', $component)
+    ];
+
+    $setting = new admin_setting_configselect(
+        "{$component}/logretention",
+        new lang_string('logretention', $component),
+        new lang_string('logretention::description', $component),
+        0,
+        $options
+
+    );
+    $settings->add($setting);
+
+    // Create a category to house any external pages we may require.
+    $ADMIN->add(
+        'enrolments',
+        new admin_category(
+            "{$component}_folder",
+            new lang_string('pluginname', $component)
+        )
+    );
+
+    // Log view page.
+    $pluginlogexternalpage = new moodle_url('/enrol/selma/log.php');
+    $ADMIN->add(
+        "{$component}_folder",
+        new admin_externalpage(
+            "{$component}/log",
+            new lang_string('applicationlog', $component),
+            $pluginlogexternalpage->out(false)
+        )
+    );
 }
