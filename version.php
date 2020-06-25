@@ -24,8 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'enrol_selma';
-$plugin->release = '0.0.1 (MOOMA)';
-$plugin->version = 2020050100;
-$plugin->requires = 2019052000;
-$plugin->maturity = MATURITY_ALPHA;
+$plugin->component  = 'enrol_selma';
+$plugin->release    = '0.0.2 (MOOMA)';
+$plugin->version    = 2020062514;
+$plugin->requires   = 2019052000;
+$plugin->maturity   = MATURITY_ALPHA;
