@@ -4,7 +4,8 @@
     "require": {
         "php": ">=7.2",
         "monolog/monolog": "^2.0",
-        "symfony/options-resolver": "^4.4"
+        "symfony/options-resolver": "^4.4",
+        "guzzlehttp/guzzle": "6.5.*"
     },
     "config": {
         "platform": {
