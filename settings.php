@@ -30,13 +30,13 @@ if ($hassiteconfig) {
     // https://docs.moodle.org/dev/Admin_settings
     $component = 'enrol_selma';
 
-    // Settings folder setup.
+    // SELMA settings category setup.
     $ADMIN->add('enrolments',
-        new admin_category('enrolselmafolder',
+        new admin_category('enrolselmacategory',
             new lang_string('pluginname', $component)));
 
-    // ENROLMENT SETTINGS.
-    $addsettings = new admin_settingpage(
+    // Enrolment settings page.
+    $enrolsettings = new admin_settingpage(
         'enrolsettingsselma',
         new lang_string('settings', $component),
         'moodle/site:config'
@@ -47,64 +47,34 @@ if ($hassiteconfig) {
         new lang_string('settingsheading', $component),
         new lang_string('settingsheading::description', $component)
     );
-    $addsettings->add($setting);
+    $enrolsettings->add($setting);
 
-    // Add instance to new courses.
-    $setting = new admin_setting_configcheckbox(
-        "{$component}/autoadd",
-        new lang_string('autoadd', $component),
-        new lang_string('autoadd::description', $component),
-        1
-    );
-    $addsettings->add($setting);
-
-    // FROM Manual Enrolment plugin settings.
-    // Note: let's reuse the ext sync constants and strings here, internally it is very similar,
-    //       it describes what should happend when users are not supposed to be enerolled any more.
+    // Note: let's reuse the ext sync constants and strings here, internally it is very similar.
+    //       It describes what should happen when users are not supposed to be enrolled any more.
     $options = array(
-        ENROL_EXT_REMOVED_KEEP           => get_string('extremovedkeep', 'enrol'),
         ENROL_EXT_REMOVED_SUSPEND        => get_string('extremovedsuspend', 'enrol'),
         ENROL_EXT_REMOVED_SUSPENDNOROLES => get_string('extremovedsuspendnoroles', 'enrol'),
         ENROL_EXT_REMOVED_UNENROL        => get_string('extremovedunenrol', 'enrol'),
     );
-    // END FROM Manual Enrolment plugin settings.
 
-    // What to do when user's enrolment expired.
+    // What to do when 'unenrol user' event occurs.
     $setting = new admin_setting_configselect(
-        "{$component}/expiredaction",
-        new lang_string('expiredaction', $component),
-        new lang_string('expiredaction::description', $component),
-        ENROL_EXT_REMOVED_KEEP,
+        "{$component}/unenrolaction",
+        new lang_string('unenrolaction', $component),
+        new lang_string('unenrolaction::description', $component),
+        ENROL_EXT_REMOVED_SUSPENDNOROLES,
         $options
 
     );
-    $addsettings->add($setting);
-
-    // FROM Manual Enrolment plugin settings.
-    $options = array();
-    for ($i=0; $i<24; $i++) {
-        $options[$i] = $i;
-    }
-    // END FROM Manual Enrolment plugin settings.
-
-    // What hour of day to send the expiry reminder.
-    $setting = new admin_setting_configselect(
-        "{$component}/expirednotifhour",
-        new lang_string('expirednotifhour', $component),
-        new lang_string('expirednotifhour::description', $component),
-        6,
-        $options
-    );
-    $addsettings->add($setting);
+    $enrolsettings->add($setting);
 
     $setting = new admin_setting_heading(
         "{$component}/instancedefaults",
         new lang_string('instancedefaults', $component),
         new lang_string('instancedefaults::description', $component)
     );
-    $addsettings->add($setting);
+    $enrolsettings->add($setting);
 
-    // BASED ON Manual Enrolment plugin settings.
     // We can't get roles if Moodle's still being set up - don't show setting yet.
     if (!during_initial_install()) {
         $options = get_default_enrol_roles(context_system::instance());
@@ -117,50 +87,34 @@ if ($hassiteconfig) {
             $student->id,
             $options
         );
-        $addsettings->add($setting);
+        $enrolsettings->add($setting);
     }
-    // END BASED ON Manual Enrolment plugin settings.
 
-    // Duration of enrolment.
-    $setting = new admin_setting_configtext(
-        "{$component}/enrollength",
-        new lang_string('enrollength', $component),
-        new lang_string('enrollength::description', $component),
-        0,
-        PARAM_INT
+    $ADMIN->add(
+        'enrolselmacategory',
+        $enrolsettings
     );
-    $addsettings->add($setting);
 
-    $options = array();
-    $options[] = new lang_string("no");
-    $options[] = new lang_string("yes");
-
-    // Notify user of looming expiry.
-    $setting = new admin_setting_configselect(
-        "{$component}/notifyexpiry",
-        new lang_string('notifyexpiry', $component),
-        new lang_string('notifyexpiry::description', $component),
-        $options[0],
-        $options
+    // User settings page.
+    $usersettings = new admin_settingpage(
+        'usersettingsselma',
+        new lang_string('usersettings', $component),
+        'moodle/site:config'
     );
-    $addsettings->add($setting);
 
-    // Pre-unenrolment notification buffer.
-    $setting = new admin_setting_configtext(
-        "{$component}/notifypreexpiry",
-        new lang_string('notifypreexpiry', $component),
-        new lang_string('notifypreexpiry::description', $component),
-        0,
-        PARAM_INT
+    $setting = new admin_setting_heading(
+        "{$component}/userdefaults",
+        new lang_string('userdefaultsheading', $component),
+        new lang_string('userdefaultsheading::description', $component)
     );
-    $addsettings->add($setting);
+    $usersettings->add($setting);
 
     $setting = new admin_setting_heading(
         "{$component}/welcomeheading",
         new lang_string('welcomeheading', $component),
         new lang_string('welcomeheading::description', $component)
     );
-    $addsettings->add($setting);
+    $usersettings->add($setting);
 
     // Welcome email subject line.
     $setting = new admin_setting_configtext(
@@ -170,7 +124,7 @@ if ($hassiteconfig) {
         '',
         PARAM_TEXT
     );
-    $addsettings->add($setting);
+    $usersettings->add($setting);
 
     // Welcome email body message.
     $setting = new admin_setting_confightmleditor(
@@ -180,26 +134,33 @@ if ($hassiteconfig) {
         '',
         PARAM_CLEANHTML
     );
-    $addsettings->add($setting);
+    $usersettings->add($setting);
 
     $ADMIN->add(
-        'enrolselmafolder',
-        $addsettings
+        'enrolselmacategory',
+        $usersettings
     );
 
-    // COURSE SETTINGS.
-    $cousettings = new admin_settingpage(
+    // Course settings.
+    $coursettings = new admin_settingpage(
         'selmacoursesettings',
-        new lang_string('selmacoursesettingsheading', $component),
+        new lang_string('coursesettingsheading', $component),
         'moodle/site:config'
     );
 
     $setting = new admin_setting_heading(
-        "{$component}/selmacoursesettings",
-        new lang_string('selmacoursesettings', $component),
-        new lang_string('selmacoursesettings::description', $component)
+        "{$component}/coursedefaults",
+        new lang_string('coursedefaultsheading', $component),
+        new lang_string('coursedefaultsheading::description', $component)
     );
-    $cousettings->add($setting);
+    $coursettings->add($setting);
+
+    $setting = new admin_setting_heading(
+        "{$component}/coursesettings",
+        new lang_string('selmacoursesettingsheading', $component),
+        new lang_string('selmacoursesettingsheading::description', $component)
+    );
+    $coursettings->add($setting);
 
     $options = core_course_category::make_categories_list();
 
@@ -211,7 +172,7 @@ if ($hassiteconfig) {
         $options[1],
         $options
     );
-    $cousettings->add($setting);
+    $coursettings->add($setting);
 
     // Create groups based on SELMA intakes.
     $setting = new admin_setting_configcheckbox(
@@ -220,14 +181,14 @@ if ($hassiteconfig) {
         new lang_string('creategroups::description', $component),
         1
     );
-    $cousettings->add($setting);
+    $coursettings->add($setting);
 
     $ADMIN->add(
-        'enrolselmafolder',
-        $cousettings
+        'enrolselmacategory',
+        $coursettings
     );
 
-    // LOGGING SETTINGS.
+    // Logging settings.
     $logsettings = new admin_settingpage(
         'selmalogging',
         new lang_string('logging', $component),
@@ -285,12 +246,12 @@ if ($hassiteconfig) {
     );
     $logsettings->add($setting);
 
-    $ADMIN->add('enrolselmafolder', $logsettings);
+    $ADMIN->add('enrolselmacategory', $logsettings);
 
-    // VIEW LOGS - external page.
+    // View application log - external page.
     $pluginlogexternalpage = new moodle_url('/enrol/selma/log.php');
     $ADMIN->add(
-        'enrolselmafolder',
+        'enrolselmacategory',
         new admin_externalpage(
             "{$component}/log",
             new lang_string('applicationlog', $component),

@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'SELMA';
 
-$string['applicationlog'] = 'Application Logs';
+$string['applicationlog'] = 'Application log';
 $string['configuration'] = 'Configuration';
 $string['keep'] = 'Keep';
 $string['sevendays'] = '7 days';
@@ -46,7 +46,7 @@ $string['clear'] = 'Clear';
 $string['component'] = 'Component';
 $string['disabled'] = 'Disabled';
 $string['enabled'] = 'Enabled';
-$string['logging'] = 'Logging Settings';
+$string['logging'] = 'Logging settings';
 $string['loglevel'] = 'Log level';
 $string['loglevel::description'] = '
 <strong>DEBUG</strong> (100): Detailed debug information.
@@ -78,22 +78,12 @@ $string['settings'] = 'Enrolment settings';
 $string['settingsheading'] = 'SELMA enrolment settings';
 $string['settingsheading::description'] = 'The SELMA->Moodle enrolment plugin *(MOOMA)* allows admins to manage user enrolments from SELMA SMS.
 Internally, the enrolment is done via the Manual enrolment plugin - which **must** to be enabled in the same course.';
-$string['autoadd'] = 'Auto-add to new courses';
-$string['autoadd::description'] = 'Automatically add the plugin to new courses.';
-$string['expiredaction'] = 'Enrolment expired action';
-$string['expiredaction::description'] = 'Select action to carry out when user enrolment expires. Please note: some user data purged from course during unenrolment.';
-$string['expirednotifhour'] = 'Expiry notification sent at (hour)';
-$string['expirednotifhour::description'] = 'The reminder sent to the user regarding enrolment expiry will be sent at this hour of the day.';
+$string['unenrolaction'] = 'External unenrol action';
+$string['unenrolaction::description'] = 'Select action to carry out when Moodle receives \'unenrol\' request from SELMA. Please note: some user data purged from course during unenrolment.';
 $string['instancedefaults'] = 'Enrolment instance defaults';
-$string['instancedefaults::description'] = 'Default settings applied to a new selma enrolment instance in a course.';
+$string['instancedefaults::description'] = 'Default settings applied to a new SELMA enrolment instance in a course.';
 $string['defaultrole'] = 'Default role';
 $string['defaultrole::description'] = 'Default role assigned to user when enrolled to course.';
-$string['enrollength'] = 'Default enrolment duration';
-$string['enrollength::description'] = 'Number of **days** the user should be enrolled for. (0 = unlimited).';
-$string['notifyexpiry'] = 'Notify pre-expiry?';
-$string['notifyexpiry::description'] = 'Should a user be alerted of their upcoming enrolment expiry?';
-$string['notifypreexpiry'] = 'Notification threshold';
-$string['notifypreexpiry::description'] = 'How long beforehand should the user be notified? In number of **days**.';
 $string['welcomeheading'] = 'Welcome email';
 $string['welcomeheading::description'] = 'Template of the welcome email sent to new users created via SELMA.';
 $string['welcomesubject'] = 'Email subject';
@@ -111,11 +101,24 @@ $string['welcomebody::description'] = '<strong>Description</strong><br>
                                             <li>{courselink} - Clickable Course Full Name - links to appropriate course.</li>
                                             <li>{date} - Date in the format of dd/mm/yyyy.</li>
                                         </ul><hr>';
-$string['selmacoursesettingsheading'] = 'Course settings';
-$string['selmacoursesettings'] = 'SELMA course settings';
-$string['selmacoursesettings::description'] = 'Settings relating to courses created by SELMA.';
+$string['coursesettingsheading'] = 'Course settings';
+$string['coursedefaultsheading'] = 'Default course settings';
+$string['coursedefaultsheading::description'] = 'Default course settings set-up in Moodle is used by this plugin when creating new courses.<br><br>
+                                                You can find the \'Default course settings\' here:<br>
+                                                <a href="' . $CFG->wwwroot . '/admin/settings.php?section=coursesettings">Default course settings</a>';
+$string['selmacoursesettingsheading'] = 'SELMA course settings';
+$string['selmacoursesettingsheading::description'] = 'SELMA settings relating to course creation.';
 $string['newcoursecat'] = 'New course category';
 $string['newcoursecat::description'] = 'Which category a new course is placed in when created via SELMA.';
 $string['creategroups'] = 'Create \'groups\' from \'intakes\'';
-$string['creategroups::description'] = 'If enabled, the plugin will put users into the respecttive course group based on which intake they belong to in SELMA.
+$string['creategroups::description'] = 'If enabled, the plugin will put users into the respective course group based on which intake they belong to in SELMA.
                                         Otherwise, users are simply enrolled into the course (no groups).';
+$string['usersettings'] = 'User settings';
+$string['userdefaultsheading'] = 'Default user preferences';
+$string['userdefaultsheading::description'] = 'Default user preferences as set-up in Moodle is used by this plugin when creating new users.<br><br>
+                                                You can find the \'User default preferences\' here:<br>
+                                                <a href="' . $CFG->wwwroot . '/admin/settings.php?section=userdefaultpreferences">User default preferences</a>';
+
+// Capabilities.
+$string['selma:config'] = "Configure SELMA";
+$string['selma:manage'] = "Manage SELMA";
