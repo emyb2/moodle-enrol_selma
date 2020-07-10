@@ -20,7 +20,7 @@
  * @package     enrol_selma
  * @category    string
  * @copyright   2020 LearningWorks <selma@learningworks.ac.nz>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -122,3 +122,30 @@ $string['userdefaultsheading::description'] = 'Default user preferences as set-u
 // Capabilities.
 $string['selma:config'] = "Configure SELMA";
 $string['selma:manage'] = "Manage SELMA";
+
+// Web services.
+$string['create_course::description'] = '<strong>WIP - </strong>Creates a single course.';
+$string['course_name'] = 'Name of course to create.';
+$string['intake_id'] = 'Intake ID this course is created from.';
+$string['get_courses::description'] = 'Get a list of active courses in Moodle.';
+$string['create_course_returns'] = 'The returned values after attempting to create course.';
+$string['create_course_returns_success'] = 'Returns success status - true or false.';
+$string['create_course_returns_course_id'] = 'Returns the created course ID.';
+
+// CLI.
+$string['clihelp'] = 'Enrol SELMA plugin CLI script to update webservice functions without full Moodle upgrade.
+Please note you must execute this script with the same uid as apache!
+Options:
+-nv, --no-verbose       Disables output to the console.
+-h, --help              Print out this help.
+-pl, --print-logo       Prints a cool CLI logo if available.
+Example:
+Run script with default parameters  - \$sudo -u www-data /usr/bin/php upgrade.php
+';
+$string['cliheading'] = '{$a} - CLI script that refreshes/add new webservice functions.';
+$string['noverbose'] = '  Verbose output has been disabled.';
+$string['verbose'] = '  Verbose output has been enabled.';
+$string['servertime'] = '  Server Time: {$a}';
+$string['updatefunctions'] = '    Updating the SELMA webservices functions without going through whole Moodle upgrade process.';
+$string['updatefunctionsdone'] = '    The new webservice functions should be visible.';
+$string['executiontime'] = '  Script execution took {$a} seconds.';

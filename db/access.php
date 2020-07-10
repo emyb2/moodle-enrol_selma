@@ -19,14 +19,14 @@ defined('MOODLE_INTERNAL') || die();
 $capabilities = [
     'enrol/selma:config' => [
         'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
+        'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => [
             'manager' => CAP_ALLOW
         ]
     ],
     'enrol/selma:manage' => [
         'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
+        'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => [
             'manager' => CAP_ALLOW
         ]
