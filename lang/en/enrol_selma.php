@@ -125,6 +125,7 @@ $string['selma:manage'] = "Manage SELMA";
 
 // Web services.
 $string['create_course::description'] = '<strong>WIP - </strong>Creates a single course.';
+$string['create_course_parameters'] = 'Expected parameters to create a course.';
 $string['course_name'] = 'Name of course to create.';
 $string['intake_id'] = 'Intake ID this course is created from.';
 $string['get_courses::description'] = 'Get a list of active courses in Moodle.';

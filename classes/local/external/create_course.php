@@ -34,6 +34,8 @@ use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/course/lib.php');
+
 class create_course extends external_api {
 
     /**
@@ -44,9 +46,12 @@ class create_course extends external_api {
         // 'FUNCTIONNAME_parameters()' always return an 'external_function_parameters()'.
         // The 'external_function_parameters' constructor expects an array of 'external_description'.
         return new external_function_parameters(
-        // An 'external_description' can be 'external_value', 'external_single_structure' or 'external_multiple' structure
-                array('name' => new external_value(PARAM_TEXT, new lang_string('course_name', 'enrol_selma')),
-                        'intake_id' => new external_value(PARAM_INT, new lang_string('intake_id', 'enrol_selma')))
+            // An 'external_description' can be 'external_value', 'external_single_structure' or 'external_multiple' structure
+            [
+                    'name' => new external_value(PARAM_TEXT, new lang_string('course_name', 'enrol_selma')),
+                    'intake_id' => new external_value(PARAM_INT, new lang_string('intake_id', 'enrol_selma'))
+            ],
+            new lang_string('create_course_parameters', 'enrol_selma')
         );
     }
 
@@ -56,9 +61,10 @@ class create_course extends external_api {
      * @param $parameters array Parameters received from SELMA to create a course e.g. ['name' => 'FLM4', 'intake_id' => 1234].
      * @return array Array of success status & created course_id, if any.
      */
-    public static function create_course($parameters) {
+    public static function create_course($name, $intakeid) {
+
         // Validate parameters.
-        $params = self::validate_parameters(self::create_course_parameters(), $parameters);
+        $params = self::validate_parameters(self::create_course_parameters(), ['name' => $name, 'intake_id' => $intakeid]);
 
         $status = false;
         $courseid = 0;
@@ -69,8 +75,8 @@ class create_course extends external_api {
         // TODO - How to determine if we need to create of update a course.
         $data = new stdClass();
         $data->category = 1;
-        $data->shortname = 'shortname';             // Generated? Remember - visible to users.
-        $data->idnumber = 'idnumber';               // Generated?
+        $data->shortname = $params->name;             // Generated? Remember - visible to users.
+        $data->idnumber = $params->intake_id . time();               // Generated?
         $data->timecreated = time();                // Optional.
         $data->timemodified = $data->timecreated;   // Optional.
         $data->visible = '0';                       // Optional - based on category if not provided.
@@ -84,7 +90,8 @@ class create_course extends external_api {
 
         //course_updated() in lib.php? Check out lib/enrollib.php:409.
 
-        $course = create_course($data);
+        $course = \create_course($data);
+
 
         if ($course->id > 1) {
             $status = true;

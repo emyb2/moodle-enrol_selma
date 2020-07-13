@@ -125,7 +125,7 @@ class enrol_selma_plugin extends enrol_plugin {
     }
 
     /**
-     * Single instance add programatically. One instance per course.
+     * Single instance add programmatically. One instance per course.
      *
      * @param int $courseid.
      * @return bool.
