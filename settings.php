@@ -174,6 +174,16 @@ if ($hassiteconfig) {
     );
     $coursesettings->add($setting);
 
+    // Use $options while we have it... Which categories should SELMA ignore?
+    $setting = new admin_setting_configmultiselect(
+        "{$component}/excludecoursecat",
+        new lang_string('excludecoursecat', $component),
+        new lang_string('excludecoursecat::description', $component),
+        null,
+        $options
+    );
+    $coursesettings->add($setting);
+
     // Create groups based on SELMA intakes.
     $setting = new admin_setting_configcheckbox(
         "{$component}/creategroups",

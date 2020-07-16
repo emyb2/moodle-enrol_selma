@@ -110,6 +110,10 @@ $string['selmacoursesettingsheading'] = 'SELMA course settings';
 $string['selmacoursesettingsheading::description'] = 'SELMA settings relating to course creation.';
 $string['newcoursecat'] = 'New course category';
 $string['newcoursecat::description'] = 'Which category a new course is placed in when created via SELMA.';
+$string['excludecoursecat'] = 'Exclude Categories';
+$string['excludecoursecat::description'] = 'Which categories should be ignored by SELMA.<br>
+                                            For example, the list of courses shown in SELMA that\'s retieved from this site.<br>
+                                            Use Ctrl (Windows) or ⌘ (Mac) to select multiple categories.';
 $string['creategroups'] = 'Create \'groups\' from \'intakes\'';
 $string['creategroups::description'] = 'If enabled, the plugin will put users into the respective course group based on which intake they belong to in SELMA.
                                         Otherwise, users are simply enrolled into the course (no groups).';
@@ -140,6 +144,7 @@ $string['create_course_returns_courseid'] = 'Returns the created course ID.';
 $string['create_course_returns_message'] = 'Message to return along with the response.';
 $string['customfield'] = 'Custom field from SELMA: \'{$a}\'. CAUTION - THESE ARE UNIQUE TO THIS SYSTEM.';
 $string['customfields'] = 'Customfields we can accept for THIS site.';
+$string['get_courses::description'] = '***WIP - Gets all available courses.***';
 
 // Web services statuses.
 $string['status_other'] = '303';

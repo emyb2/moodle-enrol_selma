@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * SELMA plugin 'create_course' external file.
+ * SELMA plugin 'get_courses' external file.
  *
  * @package    enrol_selma
  * @category   external
@@ -42,14 +42,14 @@ require_once($CFG->dirroot . '/course/lib.php');
  *
  * @package enrol_selma\local\external
  */
-class create_course extends external_api {
+class get_courses extends external_api {
 
     /**
      * Returns required parameters to create a course.
      *
      * @return external_function_parameters Description of parameters and expected type.
      */
-    public static function create_course_parameters() {
+    public static function get_courses_parameters() {
         // 'FUNCTIONNAME_parameters()' always return an 'external_function_parameters()'.
         // The 'external_function_parameters' constructor expects an array of 'external_description'.
         return new external_function_parameters(
@@ -57,21 +57,21 @@ class create_course extends external_api {
             [
                 'name' => new external_value(PARAM_TEXT, get_string('coursename', 'enrol_selma')),
                 'intakeid' => new external_value(PARAM_INT, get_string('intakeid', 'enrol_selma')),
-                'customfields' => self::get_customfields_structure()
+                //'customfields' => self::get_customfields_structure()
             ],
             get_string('create_course_parameters', 'enrol_selma')
         );
     }
 
     /**
-     * The function itself - let's create a course.
+     * The function itself - let's get those courses.
      *
      * @param   string  $name Name of course to create.
      * @param   int     $intakeid ID of intake from which this course was created.
      * @param   array   $customfields string Name of course to create.
      * @return  array   Array of success status & created course_id, if any.
      */
-    public static function create_course($name, $intakeid, $customfields = []) {
+    public static function get_courses($name, $intakeid, $customfields = []) {
         // TODO - Any sanitisation here? Validation happens anyway below.
 
         // Validate parameters.
@@ -141,7 +141,7 @@ class create_course extends external_api {
      *
      * @return external_function_parameters Array of description of values returned by 'create_course' function.
      */
-    public static function create_course_returns() {
+    public static function get_courses_returns() {
         return new external_function_parameters(
             [
                 'status' => new external_value(PARAM_TEXT, get_string('create_course_returns_status', 'enrol_selma')),
@@ -149,41 +149,6 @@ class create_course extends external_api {
                 'message' => new external_value(PARAM_TEXT, get_string('create_course_returns_message', 'enrol_selma')),
             ],
             get_string('create_course_returns', 'enrol_selma')
-        );
-    }
-
-    /**
-     * Creates expected structure used to accept customfields as passed parameters.
-     *
-     * @return external_single_structure Used to build structure of expected parameters.
-     */
-    private static function get_customfields_structure() {
-        // TODO - Handle customfields that's passed, but the site does not have...
-        global $DB;
-
-        $structurearray = [];
-
-        // Get all the types of fields.
-        $fieldtypes = array_keys(customfield::get_enabled_plugins());
-
-        // For each field type, get customfield_field shortname
-        foreach ($fieldtypes as $fieldtype) {
-            // Get all the course customfields that's on the site.
-            $fields = $DB->get_records('customfield_field', ['type' => $fieldtype], null, 'shortname');
-
-            // Save time by checking if we actually found something. If we did, add it to the structure.
-            if (isset($fields) && !empty($fields)) {
-                // For each field, add as expected (toptional) parameter.
-                foreach ($fields as $field) {
-                    $structurearray[$field->shortname] = new external_value(PARAM_RAW_TRIMMED,
-                        get_string('customfield', 'enrol_selma', $field->shortname), VALUE_OPTIONAL);
-                }
-            }
-        }
-
-        // Return all possible accepted fields.
-        return new external_single_structure(
-            $structurearray, get_string('customfields', 'enrol_selma'), VALUE_OPTIONAL
         );
     }
 }
