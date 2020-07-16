@@ -103,7 +103,7 @@ $string['welcomebody::description'] = '<strong>Description</strong><br>
                                         </ul><hr>';
 $string['coursesettingsheading'] = 'Course settings';
 $string['coursedefaultsheading'] = 'Default course settings';
-$string['coursedefaultsheading::description'] = 'Default course settings set-up in Moodle is used by this plugin when creating new courses.<br><br>
+$string['coursedefaultsheading::description'] = 'This plugin uses the \'Default course settings\' as set-up in Moodle when creating new courses.<br><br>
                                                 You can find the \'Default course settings\' here:<br>
                                                 <a href="' . $CFG->wwwroot . '/admin/settings.php?section=coursesettings">Default course settings</a>';
 $string['selmacoursesettingsheading'] = 'SELMA course settings';
@@ -113,6 +113,11 @@ $string['newcoursecat::description'] = 'Which category a new course is placed in
 $string['creategroups'] = 'Create \'groups\' from \'intakes\'';
 $string['creategroups::description'] = 'If enabled, the plugin will put users into the respective course group based on which intake they belong to in SELMA.
                                         Otherwise, users are simply enrolled into the course (no groups).';
+$string['selmacoursetags'] = 'Default course tags';
+$string['selmacoursetags::description'] = 'Comma-separated text to include as tags in courses created via this plugin.<br>
+                                            Select placeholders are also available that will be dynamically replaced with real content.<br>
+                                            <strong>e.g.</strong><br>
+                                            "{{name}},selma"<br>Converted to individual tags: "Course Name" & "selma"';
 $string['usersettings'] = 'User settings';
 $string['userdefaultsheading'] = 'Default user preferences';
 $string['userdefaultsheading::description'] = 'Default user preferences as set-up in Moodle is used by this plugin when creating new users.<br><br>
@@ -124,14 +129,25 @@ $string['selma:config'] = "Configure SELMA";
 $string['selma:manage'] = "Manage SELMA";
 
 // Web services.
-$string['create_course::description'] = '<strong>WIP - </strong>Creates a single course.';
+$string['create_course::description'] = '***WIP - Creates a single course.***';
 $string['create_course_parameters'] = 'Expected parameters to create a course.';
-$string['course_name'] = 'Name of course to create.';
-$string['intake_id'] = 'Intake ID this course is created from.';
+$string['coursename'] = 'Name of course to create.';
+$string['intakeid'] = 'Intake ID this course is created from.';
 $string['get_courses::description'] = 'Get a list of active courses in Moodle.';
 $string['create_course_returns'] = 'The returned values after attempting to create course.';
-$string['create_course_returns_success'] = 'Returns success status - true or false.';
-$string['create_course_returns_course_id'] = 'Returns the created course ID.';
+$string['create_course_returns_status'] = 'Returns success status - code & description.';
+$string['create_course_returns_courseid'] = 'Returns the created course ID.';
+$string['create_course_returns_message'] = 'Message to return along with the response.';
+$string['customfield'] = 'Custom field from SELMA: \'{$a}\'. CAUTION - THESE ARE UNIQUE TO THIS SYSTEM.';
+$string['customfields'] = 'Customfields we can accept for THIS site.';
+
+// Web services statuses.
+$string['status_other'] = '303';
+$string['status_other_message'] = 'Other - Unexpected error/result received.';
+$string['status_ok'] = '200';
+$string['status_ok_message'] = 'OK - Expected response received.';
+$string['nomessage'] = 'No response message.';
+$string['nocustomfield'] = 'No custom course field(s) were provided.';
 
 // CLI.
 $string['clihelp'] = 'Enrol SELMA plugin CLI script to update webservice functions without full Moodle upgrade.
