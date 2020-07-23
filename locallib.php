@@ -26,8 +26,52 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/lib.php');
 
-function enrol_selma_create_course() {
+function enrol_selma_create_course($course) {
+    // Set status to 'we don't know what went wrong'. We will set this to potential known causes further down.
+    $status = get_string('status_other', 'enrol_selma');
+    // Courseid of null means something didn't work. Changed if successfully created a course.
+    $courseid = null;
+    // Use to give more detailed response message to user.
+    $message = get_string('status_other_message', 'enrol_selma');
 
+    // Prep tags - find & replace text and convert to array.
+    $tags = get_config('enrol_selma', 'selmacoursetags');
+    // Course name.
+    $tags = str_replace(['{{fullname}}', '{{shortname}}'], [$course['fullname'], $course['shortname']], $tags);
+    $tags = explode(',', $tags);
+
+    // Construct course object.
+    $coursedata = new stdClass();
+    $coursedata->category = get_config('enrol_selma', 'newcoursecat');  // The default category to put the course in. TODO - what if the setting has not been configured yet, but we get a call to create_course or if it's been deleted?
+    $coursedata->fullname = $course['fullname'];                        // Generated? Remember - visible to users.
+    $coursedata->shortname = $course['shortname'];                      // Generated? Remember - visible to users.
+    $coursedata->idnumber = $course['idnumber'];                        // Generated?
+    $coursedata->visible = get_config('moodlecourse', 'visible');       // Optional - based on category if not set.
+    $coursedata->tags = $tags;                                          // Add the user specified in 'selmacoursetags' setting.
+
+    // Consider course_updated() in lib.php? Check out lib/enrollib.php:409.
+    $coursecreated = \create_course($coursedata);
+    // Check out course/externallib.php:831.
+
+    // TODO - Add enrol_selma to course.
+    (new enrol_selma_plugin)->add_instance($coursecreated);
+
+    // TODO - proper check/message?
+    // Check if course created successfully.
+    if ($coursecreated->id > 1) {
+        $status = get_string('status_ok', 'enrol_selma');
+        $message = get_string('status_ok_message', 'enrol_selma');
+        $courseid = $coursecreated->id;
+
+        // Returned details - success!
+        return ['status' => $status, 'courseid' => $courseid, 'message' => $message];
+    }
+
+    $status = get_string('status_internalfail', 'enrol_selma');
+    $message = get_string('status_internalfail_message', 'enrol_selma');
+
+    // Returned details - failed...
+    return ['status' => $status, 'courseid' => $courseid, 'message' => $message];
 }
 
 /**
@@ -39,6 +83,8 @@ function enrol_selma_create_course() {
  */
 function enrol_selma_get_all_courses(int $amount = 0, int $page = 1) {
     global $DB;
+
+    // TODO - $amount & $page needs to be positive values.
 
     // To keep track of which DB 'page' to look on.
     $dbpage = $page;

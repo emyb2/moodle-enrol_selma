@@ -53,8 +53,7 @@ class get_all_courses extends external_api {
             [
                 'amount' => new external_value(PARAM_INT, get_string('get_all_courses_parameters::amount', 'enrol_selma'),VALUE_OPTIONAL, 0),
                 'page' => new external_value(PARAM_INT, get_string('get_all_courses_parameters::page', 'enrol_selma'), VALUE_OPTIONAL, 1)
-            ],
-            get_string('get_all_courses_parameters', 'enrol_selma')
+            ], get_string('get_all_courses_parameters', 'enrol_selma')
         );
     }
 
@@ -92,8 +91,7 @@ class get_all_courses extends external_api {
                 'courses' => new external_multiple_structure(self::get_course_structure(), get_string('get_all_courses_returns::courses', 'enrol_selma')),
                 'nextpage' => new external_value(PARAM_INT, get_string('get_all_courses_returns::nextpage', 'enrol_selma'), VALUE_OPTIONAL),
                 'message' => new external_value(PARAM_TEXT, get_string('get_all_courses_returns::message', 'enrol_selma'))
-            ],
-            get_string('get_all_courses_returns', 'enrol_selma')
+            ], get_string('get_all_courses_returns', 'enrol_selma')
         );
     }
 
@@ -104,8 +102,7 @@ class get_all_courses extends external_api {
                 'shortname' => new external_value(PARAM_TEXT, get_string('courses::shortname', 'enrol_selma')),
                 'fullname' => new external_value(PARAM_TEXT, get_string('courses::fullname', 'enrol_selma')),
                 'idnumber' => new external_value(PARAM_TEXT, get_string('courses::idnumber', 'enrol_selma')),
-            ],
-            get_string('courses::course_structure', 'enrol_selma')
+            ], get_string('courses::course_structure', 'enrol_selma')
         );
     }
 }

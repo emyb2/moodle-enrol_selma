@@ -121,7 +121,7 @@ $string['selmacoursetags'] = 'Default course tags';
 $string['selmacoursetags::description'] = 'Comma-separated text to include as tags in courses created via this plugin.<br>
                                             Select placeholders are also available that will be dynamically replaced with real content.<br>
                                             <strong>e.g.</strong><br>
-                                            "{{name}},selma"<br>Converted to individual tags: "Course Name" & "selma"';
+                                            "{{fullname}},{{shortname}},selma,course"<br>Converted to individual tags: "Course Name", "courseshortname", "selma" & "course"';
 $string['usersettings'] = 'User settings';
 $string['userdefaultsheading'] = 'Default user preferences';
 $string['userdefaultsheading::description'] = 'Default user preferences as set-up in Moodle is used by this plugin when creating new users.<br><br>
@@ -135,14 +135,14 @@ $string['selma:manage'] = "Manage SELMA";
 // Web services.
 $string['create_course::description'] = '***WIP - Creates a single course.***';
 $string['create_course_parameters'] = 'Expected parameters to create a course.';
-$string['create_course_parameters::coursename'] = 'Name of course to create.';
-$string['create_course_parameters::intakeid'] = 'Intake ID this course is created from.';
+$string['create_course_parameters::course'] = 'Object of course to create.';
+$string['create_course_parameters::fullname'] = 'Name of course to create.';
+$string['create_course_parameters::shortname'] = 'Short (unique) name of course to create - also visible to users.';
+$string['create_course_parameters::idnumber'] = 'Additional (unique) identifier for course - usually used for reports/integrations.';
 $string['create_course_returns'] = 'The returned values after attempting to create course.';
 $string['create_course_returns::status'] = 'Returns success status code.';
 $string['create_course_returns::courseid'] = 'Returns the created course ID.';
 $string['create_course_returns::message'] = 'Message to return along with the response.';
-$string['customfield'] = 'Custom field from SELMA: \'{$a}\'. CAUTION - THESE ARE UNIQUE TO THIS SYSTEM.';
-$string['customfields'] = 'Customfields we can accept for THIS site.';
 $string['get_all_courses::description'] = '***WIP - Get a list of active courses in Moodle.***';
 $string['get_all_courses_parameters'] = 'Expected parameters to get active course.';
 $string['get_all_courses_parameters::amount'] = 'Expected parameters to get active course.';
@@ -163,10 +163,11 @@ $string['status_ok'] = '200';
 $string['status_ok_message'] = 'OK - Expected response received.';
 $string['status_notfound'] = '404';
 $string['status_notfound_message'] = 'Not Found - 0 Records found.';
+$string['status_internalfail'] = '500';
+$string['status_internalfail_message'] = 'Internal Failure - Failed to complete operation.';
 $string['status_other'] = '303';
 $string['status_other_message'] = 'Other - Unexpected error/result received.';
 $string['nomessage'] = 'No response message.';
-$string['nocustomfield'] = 'No custom course field(s) were provided.';
 
 // CLI.
 $string['clihelp'] = 'Enrol SELMA plugin CLI script to update webservice functions without full Moodle upgrade.
