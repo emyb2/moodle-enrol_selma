@@ -36,11 +36,11 @@ $functions = [
         'type'          => 'write',                         // Is 'write' if function does any database change, otherwise 'read'.
         'ajax'          => true                             // If web service function callable via AJAX = true, otherwise false.
     ],
-    'enrol_selma_get_courses' => [
-        'classname'     => $namespace . 'get_courses',
-        'methodname'    => 'get_courses',
+    'enrol_selma_get_all_courses' => [
+        'classname'     => $namespace . 'get_all_courses',
+        'methodname'    => 'get_all_courses',
         'description'   => new lang_string(
-                'get_courses::description',
+                'get_all_courses::description',
                 'enrol_selma'
         ),
         'type'          => 'read',
@@ -118,9 +118,9 @@ $functions = [
 // A pre-built service is not editable by administrator.
 $services = [
     'enrol_selma_webservice' => [                // The name of the web service.
-        'functions' => [                    // Web service functions of this service.
+        'functions' => [                         // Web service functions of this service.
             'enrol_selma_create_course',
-            'enrol_selma_get_courses'
+            'enrol_selma_get_all_courses'
             //'enrol_selma_add_courses',
             //'enrol_selma_update_courses',
             //'enrol_selma_add_people',

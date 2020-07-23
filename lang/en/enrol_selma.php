@@ -111,8 +111,8 @@ $string['selmacoursesettingsheading::description'] = 'SELMA settings relating to
 $string['newcoursecat'] = 'New course category';
 $string['newcoursecat::description'] = 'Which category a new course is placed in when created via SELMA.';
 $string['excludecoursecat'] = 'Exclude Categories';
-$string['excludecoursecat::description'] = 'Which categories should be ignored by SELMA.<br>
-                                            For example, the list of courses shown in SELMA that\'s retieved from this site.<br>
+$string['excludecoursecat::description'] = 'Which categories should be ignored by SELMA. Child categories do <strong>not</strong> inherit parent\'s exclusion status.<br>
+                                            For example, this is used for the list of courses shown in SELMA that\'s retieved from this site.<br>
                                             Use Ctrl (Windows) or ⌘ (Mac) to select multiple categories.';
 $string['creategroups'] = 'Create \'groups\' from \'intakes\'';
 $string['creategroups::description'] = 'If enabled, the plugin will put users into the respective course group based on which intake they belong to in SELMA.
@@ -135,22 +135,36 @@ $string['selma:manage'] = "Manage SELMA";
 // Web services.
 $string['create_course::description'] = '***WIP - Creates a single course.***';
 $string['create_course_parameters'] = 'Expected parameters to create a course.';
-$string['coursename'] = 'Name of course to create.';
-$string['intakeid'] = 'Intake ID this course is created from.';
-$string['get_courses::description'] = 'Get a list of active courses in Moodle.';
+$string['create_course_parameters::coursename'] = 'Name of course to create.';
+$string['create_course_parameters::intakeid'] = 'Intake ID this course is created from.';
 $string['create_course_returns'] = 'The returned values after attempting to create course.';
-$string['create_course_returns_status'] = 'Returns success status - code & description.';
-$string['create_course_returns_courseid'] = 'Returns the created course ID.';
-$string['create_course_returns_message'] = 'Message to return along with the response.';
+$string['create_course_returns::status'] = 'Returns success status code.';
+$string['create_course_returns::courseid'] = 'Returns the created course ID.';
+$string['create_course_returns::message'] = 'Message to return along with the response.';
 $string['customfield'] = 'Custom field from SELMA: \'{$a}\'. CAUTION - THESE ARE UNIQUE TO THIS SYSTEM.';
 $string['customfields'] = 'Customfields we can accept for THIS site.';
-$string['get_courses::description'] = '***WIP - Gets all available courses.***';
+$string['get_all_courses::description'] = '***WIP - Get a list of active courses in Moodle.***';
+$string['get_all_courses_parameters'] = 'Expected parameters to get active course.';
+$string['get_all_courses_parameters::amount'] = 'Expected parameters to get active course.';
+$string['get_all_courses_parameters::page'] = 'Expected parameters to get active course.';
+$string['get_all_courses_returns'] = 'Returned values for requesting all active courses (ignores excluded categories - setting).';
+$string['get_all_courses_returns::status'] = 'Returns success status code.';
+$string['get_all_courses_returns::courses'] = 'Array of courses and each\'s details.';
+$string['courses::course_structure'] = 'Course details.';
+$string['courses::id'] = 'Course id (in DB).';
+$string['courses::shortname'] = 'Course shortname - must be unique.';
+$string['courses::fullname'] = 'Full name of course.';
+$string['courses::idnumber'] = 'Course idnumber - usually used in reports, etc.';
+$string['get_all_courses_returns::nextpage'] = 'The next page to be requested (if any).';
+$string['get_all_courses_returns::message'] = 'Message to return along with the response.';
 
 // Web services statuses.
-$string['status_other'] = '303';
-$string['status_other_message'] = 'Other - Unexpected error/result received.';
 $string['status_ok'] = '200';
 $string['status_ok_message'] = 'OK - Expected response received.';
+$string['status_notfound'] = '404';
+$string['status_notfound_message'] = 'Not Found - 0 Records found.';
+$string['status_other'] = '303';
+$string['status_other_message'] = 'Other - Unexpected error/result received.';
 $string['nomessage'] = 'No response message.';
 $string['nocustomfield'] = 'No custom course field(s) were provided.';
 

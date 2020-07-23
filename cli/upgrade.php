@@ -28,7 +28,7 @@
 define('CLI_SCRIPT', true);
 
 // Config file.
-require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
+require_once(dirname(__FILE__, 4) . '/config.php');
 
 global $CFG;
 

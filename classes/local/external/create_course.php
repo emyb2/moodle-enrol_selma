@@ -55,8 +55,8 @@ class create_course extends external_api {
         return new external_function_parameters(
             // An 'external_description' can be 'external_value', 'external_single_structure' or 'external_multiple' structure
             [
-                'name' => new external_value(PARAM_TEXT, get_string('coursename', 'enrol_selma')),
-                'intakeid' => new external_value(PARAM_INT, get_string('intakeid', 'enrol_selma')),
+                'name' => new external_value(PARAM_TEXT, get_string('create_course_parameters::coursename', 'enrol_selma')),
+                'intakeid' => new external_value(PARAM_INT, get_string('create_course_parameters::intakeid', 'enrol_selma')),
                 'customfields' => self::get_customfields_structure()
             ],
             get_string('create_course_parameters', 'enrol_selma')
@@ -83,15 +83,15 @@ class create_course extends external_api {
             ]
         );
 
+        // Validate context and check capabilities.
+        self::validate_context(context_system::instance());
+
         // Set status to 'we don't know what went wrong'. We will set this to potential known causes further down.
         $status = get_string('status_other', 'enrol_selma');
         // Courseid of -1 means something didn't work. Changed if successfully created a course.
         $courseid = -1;
         // Use to give more detailed response message to user.
         $message = get_string('status_other_message', 'enrol_selma');
-
-        // Validate context and check capabilities.
-        self::validate_context(context_system::instance());
 
         // Prep tags - find & replace text and convert to array.
         $tags = get_config('enrol_selma', 'selmacoursetags');
@@ -144,9 +144,9 @@ class create_course extends external_api {
     public static function create_course_returns() {
         return new external_function_parameters(
             [
-                'status' => new external_value(PARAM_TEXT, get_string('create_course_returns_status', 'enrol_selma')),
-                'courseid' => new external_value(PARAM_INT, get_string('create_course_returns_courseid', 'enrol_selma')),
-                'message' => new external_value(PARAM_TEXT, get_string('create_course_returns_message', 'enrol_selma')),
+                'status' => new external_value(PARAM_TEXT, get_string('create_course_returns::status', 'enrol_selma')),
+                'courseid' => new external_value(PARAM_INT, get_string('create_course_returns::courseid', 'enrol_selma')),
+                'message' => new external_value(PARAM_TEXT, get_string('create_course_returns::message', 'enrol_selma')),
             ],
             get_string('create_course_returns', 'enrol_selma')
         );
