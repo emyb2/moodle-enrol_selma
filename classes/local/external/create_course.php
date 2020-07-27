@@ -72,7 +72,6 @@ class create_course extends external_api {
      * @return  array   Array of success status & created course_id, if any.
      */
     public static function create_course(array $course) {
-
         // Validate parameters.
         $params = self::validate_parameters(self::create_course_parameters(),
             [
@@ -84,7 +83,7 @@ class create_course extends external_api {
         self::validate_context(context_system::instance());
 
         // Returned details.
-        return enrol_selma_create_course($course);
+        return enrol_selma_create_course($params['course']);
     }
 
     /**

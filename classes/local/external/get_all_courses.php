@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/course/lib.php');
 require_once(dirname(__FILE__, 4) . '/locallib.php');
 
 /**
- * Class create_course used to create course from SELMA.
+ * Class get_all_courses used to get all active courses in Moodle.
  *
  * @package enrol_selma\local\external
  */
@@ -82,7 +82,7 @@ class get_all_courses extends external_api {
     /**
      * Returns description of method result value.
      *
-     * @return external_function_parameters Array of description of values returned by 'create_course' function.
+     * @return external_function_parameters Array of description of values returned by 'get_all_courses' function.
      */
     public static function get_all_courses_returns() {
         return new external_function_parameters(
@@ -95,6 +95,11 @@ class get_all_courses extends external_api {
         );
     }
 
+    /**
+     * Helps generate the course structure expected as a parameter above.
+     *
+     * @return external_single_structure Array of expected course structure parameters and their description.
+     */
     public static function get_course_structure() {
         return new external_single_structure(
             [
