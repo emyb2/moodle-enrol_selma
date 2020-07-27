@@ -20,7 +20,7 @@
  * @package     enrol_selma
  * @category    string
  * @copyright   2020 LearningWorks <selma@learningworks.ac.nz>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -103,16 +103,25 @@ $string['welcomebody::description'] = '<strong>Description</strong><br>
                                         </ul><hr>';
 $string['coursesettingsheading'] = 'Course settings';
 $string['coursedefaultsheading'] = 'Default course settings';
-$string['coursedefaultsheading::description'] = 'Default course settings set-up in Moodle is used by this plugin when creating new courses.<br><br>
+$string['coursedefaultsheading::description'] = 'This plugin uses the \'Default course settings\' as set-up in Moodle when creating new courses.<br><br>
                                                 You can find the \'Default course settings\' here:<br>
                                                 <a href="' . $CFG->wwwroot . '/admin/settings.php?section=coursesettings">Default course settings</a>';
 $string['selmacoursesettingsheading'] = 'SELMA course settings';
 $string['selmacoursesettingsheading::description'] = 'SELMA settings relating to course creation.';
 $string['newcoursecat'] = 'New course category';
 $string['newcoursecat::description'] = 'Which category a new course is placed in when created via SELMA.';
+$string['excludecoursecat'] = 'Exclude Categories';
+$string['excludecoursecat::description'] = 'Which categories should be ignored by SELMA. Child categories do <strong>not</strong> inherit parent\'s exclusion status.<br>
+                                            For example, this is used for the list of courses shown in SELMA that\'s retieved from this site.<br>
+                                            Use Ctrl (Windows) or ⌘ (Mac) to select multiple categories.';
 $string['creategroups'] = 'Create \'groups\' from \'intakes\'';
 $string['creategroups::description'] = 'If enabled, the plugin will put users into the respective course group based on which intake they belong to in SELMA.
                                         Otherwise, users are simply enrolled into the course (no groups).';
+$string['selmacoursetags'] = 'Default course tags';
+$string['selmacoursetags::description'] = 'Comma-separated text to include as tags in courses created via this plugin.<br>
+                                            Select placeholders are also available that will be dynamically replaced with real content.<br>
+                                            <strong>e.g.</strong><br>
+                                            "{{fullname}},{{shortname}},selma,course"<br>Converted to individual tags: "Course Name", "courseshortname", "selma" & "course"';
 $string['usersettings'] = 'User settings';
 $string['userdefaultsheading'] = 'Default user preferences';
 $string['userdefaultsheading::description'] = 'Default user preferences as set-up in Moodle is used by this plugin when creating new users.<br><br>
@@ -122,3 +131,58 @@ $string['userdefaultsheading::description'] = 'Default user preferences as set-u
 // Capabilities.
 $string['selma:config'] = "Configure SELMA";
 $string['selma:manage'] = "Manage SELMA";
+
+// Web services.
+$string['create_course::description'] = '***WIP - Creates a single course.***';
+$string['create_course_parameters'] = 'Expected parameters to create a course.';
+$string['create_course_parameters::course'] = 'Object of course to create.';
+$string['create_course_parameters::fullname'] = 'Name of course to create.';
+$string['create_course_parameters::shortname'] = 'Short (unique) name of course to create - also visible to users.';
+$string['create_course_parameters::idnumber'] = 'Additional (unique) identifier for course - usually used for reports/integrations.';
+$string['create_course_returns'] = 'The returned values after attempting to create course.';
+$string['create_course_returns::status'] = 'Returns success status code.';
+$string['create_course_returns::courseid'] = 'Returns the created course ID.';
+$string['create_course_returns::message'] = 'Message to return along with the response.';
+$string['get_all_courses::description'] = '***WIP - Get a list of active courses in Moodle.***';
+$string['get_all_courses_parameters'] = 'Expected parameters to get active course.';
+$string['get_all_courses_parameters::amount'] = 'Expected parameters to get active course.';
+$string['get_all_courses_parameters::page'] = 'Expected parameters to get active course.';
+$string['get_all_courses_returns'] = 'Returned values for requesting all active courses (ignores excluded categories - setting).';
+$string['get_all_courses_returns::status'] = 'Returns success status code.';
+$string['get_all_courses_returns::courses'] = 'Array of courses and each\'s details.';
+$string['courses::course_structure'] = 'Course details.';
+$string['courses::id'] = 'Course id (in DB).';
+$string['courses::shortname'] = 'Course shortname - must be unique.';
+$string['courses::fullname'] = 'Full name of course.';
+$string['courses::idnumber'] = 'Course idnumber - usually used in reports, etc.';
+$string['get_all_courses_returns::nextpage'] = 'The next page to be requested (if any).';
+$string['get_all_courses_returns::message'] = 'Message to return along with the response.';
+
+// Web services statuses.
+$string['status_ok'] = '200';
+$string['status_ok_message'] = 'OK - Expected response received.';
+$string['status_notfound'] = '404';
+$string['status_notfound_message'] = 'Not Found - 0 Records found.';
+$string['status_internalfail'] = '500';
+$string['status_internalfail_message'] = 'Internal Failure - Failed to complete operation.';
+$string['status_other'] = '303';
+$string['status_other_message'] = 'Other - Unexpected error/result received.';
+$string['nomessage'] = 'No response message.';
+
+// CLI.
+$string['clihelp'] = 'Enrol SELMA plugin CLI script to update webservice functions without full Moodle upgrade.
+Please note you must execute this script with the same uid as apache!
+Options:
+-nv, --no-verbose       Disables output to the console.
+-h, --help              Print out this help.
+-pl, --print-logo       Prints a cool CLI logo if available.
+Example:
+Run script with default parameters  - \$sudo -u www-data /usr/bin/php upgrade.php
+';
+$string['cliheading'] = '{$a} - CLI script that refreshes/add new webservice functions.';
+$string['noverbose'] = '  Verbose output has been disabled.';
+$string['verbose'] = '  Verbose output has been enabled.';
+$string['servertime'] = '  Server Time: {$a}';
+$string['updatefunctions'] = '    Updating the SELMA webservices functions without going through whole Moodle upgrade process.';
+$string['updatefunctionsdone'] = '    The new webservice functions should be visible.';
+$string['executiontime'] = '  Script execution took {$a} seconds.';

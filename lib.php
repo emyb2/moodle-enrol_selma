@@ -125,12 +125,24 @@ class enrol_selma_plugin extends enrol_plugin {
     }
 
     /**
-     * Single instance add programatically. One instance per course.
+     * Single instance add programmatically. One instance per course.
      *
      * @param int $courseid.
      * @return bool.
      */
     public function can_add_instance($courseid) {
         return false;
+    }
+
+    /**
+     * Add new instance of SELMA enrol plugin.
+     * @param object $course
+     * @param array $fields instance fields
+     * @return int id of new instance, null if can not be created
+     */
+    public function add_instance($course, array $fields = null) {
+        // We can add to $fields here later, if needed.
+
+        return parent::add_instance($course, $fields);
     }
 }

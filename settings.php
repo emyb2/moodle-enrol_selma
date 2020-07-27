@@ -142,7 +142,7 @@ if ($hassiteconfig) {
     );
 
     // Course settings.
-    $coursettings = new admin_settingpage(
+    $coursesettings = new admin_settingpage(
         'selmacoursesettings',
         new lang_string('coursesettingsheading', $component),
         'moodle/site:config'
@@ -153,14 +153,14 @@ if ($hassiteconfig) {
         new lang_string('coursedefaultsheading', $component),
         new lang_string('coursedefaultsheading::description', $component)
     );
-    $coursettings->add($setting);
+    $coursesettings->add($setting);
 
     $setting = new admin_setting_heading(
         "{$component}/coursesettings",
         new lang_string('selmacoursesettingsheading', $component),
         new lang_string('selmacoursesettingsheading::description', $component)
     );
-    $coursettings->add($setting);
+    $coursesettings->add($setting);
 
     $options = core_course_category::make_categories_list();
 
@@ -172,7 +172,17 @@ if ($hassiteconfig) {
         $options[1],
         $options
     );
-    $coursettings->add($setting);
+    $coursesettings->add($setting);
+
+    // Use $options while we have it... Which categories should SELMA ignore?
+    $setting = new admin_setting_configmultiselect(
+        "{$component}/excludecoursecat",
+        new lang_string('excludecoursecat', $component),
+        new lang_string('excludecoursecat::description', $component),
+        null,
+        $options
+    );
+    $coursesettings->add($setting);
 
     // Create groups based on SELMA intakes.
     $setting = new admin_setting_configcheckbox(
@@ -181,11 +191,20 @@ if ($hassiteconfig) {
         new lang_string('creategroups::description', $component),
         1
     );
-    $coursettings->add($setting);
+    $coursesettings->add($setting);
+
+    // Add these tags to a course created using the plugin.
+    $setting = new admin_setting_configtext(
+        "{$component}/selmacoursetags",
+        new lang_string('selmacoursetags', $component),
+        new lang_string('selmacoursetags::description', $component),
+        null
+    );
+    $coursesettings->add($setting);
 
     $ADMIN->add(
         'enrolselmacategory',
-        $coursettings
+        $coursesettings
     );
 
     // Logging settings.
