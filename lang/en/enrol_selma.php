@@ -169,6 +169,13 @@ $string['status_other'] = '303';
 $string['status_other_message'] = 'Other - Unexpected error/result received.';
 $string['nomessage'] = 'No response message.';
 
+// Logging messages.
+$string['create_course_log'] = 'Function to create course called.';
+$string['get_all_courses_log'] = 'Function to get all courses called.';
+$string['get_all_courses_notfound_log'] = 'Not courses found.';
+$string['add_instance_to_course_log'] = 'Function to add SELMA instance to course called.';
+$string['add_instance_to_course_fail_log'] = 'Failed to add SELMA instance to course.';
+
 // CLI.
 $string['clihelp'] = 'Enrol SELMA plugin CLI script to update webservice functions without full Moodle upgrade.
 Please note you must execute this script with the same uid as apache!

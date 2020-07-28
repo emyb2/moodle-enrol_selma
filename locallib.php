@@ -22,11 +22,25 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use enrol_selma\local\plugin_logger;
+use Psr\Log\LogLevel;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/lib.php');
 
-function enrol_selma_create_course($course) {
+/**
+ * Creates the course based on details provided.
+ *
+ * @param array     $course Array of course details to create course.
+ * @return array    Array containing the status of the request, created course's ID, and appropriate message.
+ */
+function enrol_selma_create_course(array $course) {
+    // Log that this function got called immediately.
+    $logger = plugin_logger::get_logger();
+
+    $logger->log(LogLevel::INFO, get_string('create_course_log', 'enrol_selma'), ['enrol_selma_create_course']);
+
     // Set status to 'we don't know what went wrong'. We will set this to potential known causes further down.
     $status = get_string('status_other', 'enrol_selma');
     // Courseid of null means something didn't work. Changed if successfully created a course.
@@ -53,12 +67,12 @@ function enrol_selma_create_course($course) {
     $coursecreated = \create_course($coursedata);
     // Check out course/externallib.php:831.
 
-    // TODO - Add enrol_selma to course.
-    (new enrol_selma_plugin)->add_instance($coursecreated);
+    // TODO - Add enrol_selma to course. Is this enough? What to do if false is returned?
+    enrol_selma_add_instance_to_course($coursecreated);
 
     // TODO - proper check/message?
     // Check if course created successfully.
-    if ($coursecreated->id > 1) {
+    if (isset($coursecreated->id) && $coursecreated->id > 1) {
         $status = get_string('status_ok', 'enrol_selma');
         $message = get_string('status_ok_message', 'enrol_selma');
         $courseid = $coursecreated->id;
@@ -75,13 +89,18 @@ function enrol_selma_create_course($course) {
 }
 
 /**
- * Get all the courses that's not in any excluded catergory - excludecoursecat setting.
+ * Get all the courses that's not in any excluded category - excludecoursecat setting.
  *
  * @param   int     $amount Number of records to retrieve - get all by default.
  * @param   int     $page Which 'page' to retrieve from the DB - works in conjunction with $amount.
  * @return  array   Array containing the status of the request, courses found, and appropriate message.
  */
 function enrol_selma_get_all_courses(int $amount = 0, int $page = 1) {
+    // Log that this function got called immediately.
+    $logger = plugin_logger::get_logger();
+
+    $logger->log(LogLevel::INFO, get_string('get_all_courses_log', 'enrol_selma'), ['enrol_selma_get_all_courses']);
+
     global $DB;
 
     // TODO - $amount & $page needs to be positive values.
@@ -122,16 +141,27 @@ function enrol_selma_get_all_courses(int $amount = 0, int $page = 1) {
     $excats[] = '0';
 
     // Create SQL to exclude 'excluded' categories.
-    $notin = $DB->get_in_or_equal($excats, SQL_PARAMS_NAMED, null, false);
+    list($sqlfragment, $params) = $DB->get_in_or_equal($excats, SQL_PARAMS_NAMED, null, false);
 
     // Get those courses.
-    $courses = $DB->get_records_select('course', 'category ' . $notin[0], $notin[1], null, 'id,fullname,shortname,idnumber', $limitfrom, $limitnum);
+    $courses = $DB->get_records_select(
+        'course',
+        "category $sqlfragment",
+        $params,
+        null,
+        'id,fullname,shortname,idnumber',
+        $limitfrom,
+        $limitnum
+    );
 
     // Check if we found anything.
     if (empty($courses) || !isset($courses)) {
         // No courses found, update status/message.
         $status = get_string('status_notfound', 'enrol_selma');
         $message = get_string('status_notfound_message', 'enrol_selma');
+
+        // Log failure.
+        $logger->log(LogLevel::ERROR, get_string('get_all_courses_notfound_log', 'enrol_selma'), ['enrol_selma_get_all_courses']);
 
         // Return status.
         return ['status' => $status, 'courses' => $courses, 'message' => $message];
@@ -154,4 +184,30 @@ function enrol_selma_get_all_courses(int $amount = 0, int $page = 1) {
 
     // Returned details (excl. nextpage).
     return ['status' => $status, 'courses' => $courses, 'message' => $message];
+}
+
+/**
+ * Associates an instance of the SELMA enrolment plugin to a given course.
+ *
+ * @param   object      $course Course object to which the instance should be added.
+ * @return  bool|int    Returns false if failed to add, or instance ID as int if it was successfully added.
+ */
+function enrol_selma_add_instance_to_course(object $course) {
+    // Log that this function got called immediately.
+    $logger = plugin_logger::get_logger();
+
+    $logger->log(LogLevel::INFO, get_string('add_instance_to_course_log', 'enrol_selma'), ['enrol_selma_add_instance_to_course']);
+
+    $instance = (new enrol_selma_plugin)->add_instance($course);
+
+    // Let's return false instead, easier checking for if-statements, etc.
+    if (is_null($instance)) {
+        $instance = false;
+
+        // Log failure.
+        $logger->log(LogLevel::ERROR, get_string('add_instance_to_course_fail_log', 'enrol_selma'), ['enrol_selma_create_course']);
+
+    }
+
+    return $instance;
 }
