@@ -75,6 +75,34 @@ function enrol_selma_create_course($course) {
 }
 
 /**
+ * Creates users with details provided.
+ *
+ * @param   array|null  $users Array of users' details required to create an account for them.
+ * @return  array       Array containing the status of the request, userid of users created, and appropriate message.
+ */
+function enrol_selma_create_users(array $users = null) {
+    // Set status to 'we don't know what went wrong'. We will set this to potential known causes further down.
+    $status = get_string('status_other', 'enrol_selma');
+    // If $users = null, then it means we didn't find anything/something went wrong. Changed if successfully created a user(s).
+    $userids = null;
+    // Use to give more detailed response message to user.
+    $message = get_string('status_other_message', 'enrol_selma');
+
+    // TODO.
+    // Use profile field mapping to capture user data.
+    // For each user received, process...
+    // Check if user exists first - maybe check email too.
+    // If exist, update?
+    // Otherwise, create user.
+
+    var_dump($users);
+    die();
+
+    // Returned details - failed...
+    return ['status' => $status, 'userids' => $userids, 'message' => $message];
+}
+
+/**
  * Get all the courses that's not in any excluded catergory - excludecoursecat setting.
  *
  * @param   int     $amount Number of records to retrieve - get all by default.

@@ -157,6 +157,27 @@ $string['courses::fullname'] = 'Full name of course.';
 $string['courses::idnumber'] = 'Course idnumber - usually used in reports, etc.';
 $string['get_all_courses_returns::nextpage'] = 'The next page to be requested (if any).';
 $string['get_all_courses_returns::message'] = 'Message to return along with the response.';
+$string['create_users::description'] = '***WIP - Creates an array of users.***';
+$string['create_users_parameters'] = 'Expected parameters to create users.';
+$string['create_users_parameters::users'] = 'List of all users\' details - to be created.';
+$string['create_users_parameters::user'] = 'A user\'s details - needed to create.';
+$string['create_users_parameters::username'] = 'Username of user.';
+$string['create_users_parameters::forename'] = 'First name of user.';
+$string['create_users_parameters::lastname'] = 'Last name of user.';
+$string['create_users_parameters::preferredname'] = 'Preferred name/Nickname of user.';
+$string['create_users_parameters::email1'] = 'Email address of user.';
+$string['create_users_parameters::mobilephone'] = 'Mobile phone number of user.';
+$string['create_users_parameters::secondaryphone'] = 'Phone number of user.';
+$string['create_users_parameters::gender'] = 'Gender of user.';
+$string['create_users_parameters::dob'] = 'Date of Birth of user.';
+$string['create_users_parameters::nsn'] = 'NSN of user.';
+$string['create_users_parameters::id'] = 'ID number (SELMA) of user.';
+$string['create_users_parameters::status'] = 'Status of user.';
+$string['create_users_returns'] = 'The returned values after attempting to create user(s).';
+$string['create_users_returns::status'] = 'Returns success status code.';
+$string['create_users_returns::userids'] = 'Returns the user IDs of the users that were created.';
+$string['create_users_returns::message'] = 'Message to return along with the response.';
+
 
 // Web services statuses.
 $string['status_ok'] = '200';

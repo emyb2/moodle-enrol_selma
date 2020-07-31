@@ -25,6 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once('locallib.php');
+
 global $ADMIN;
 if ($hassiteconfig) {
     // https://docs.moodle.org/dev/Admin_settings
@@ -134,6 +136,33 @@ if ($hassiteconfig) {
         '',
         PARAM_CLEANHTML
     );
+    $usersettings->add($setting);
+
+    //$setting = new admin_setting_heading(
+    //    "{$component}/userprofilemapheading",
+    //    new lang_string('userprofilemapheading', $component),
+    //    new lang_string('userprofilemapheading::description', $component)
+    //);
+    //$usersettings->add($setting);
+
+    $blacklistkeys = ['id', 'auth', 'confirmed', 'policyagreed', 'deleted', 'mnethostid', 'password'];
+
+    $alloptions = get_user_fieldnames();
+    //print_object($alloptions);
+    //die();
+    $options = array_diff((array) $alloptions, (array) $blacklistkeys);
+
+    // Welcome email subject line.
+    $setting = new admin_setting_configselect(
+        "{$component}/userprofilemap",
+        new lang_string('userprofilemap', $component),
+        new lang_string('userprofilemap::description', $component),
+        '',
+        $options
+    );
+
+    $setting->set_updatedcallback('validate_profile_mapping');
+
     $usersettings->add($setting);
 
     $ADMIN->add(

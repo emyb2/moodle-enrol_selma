@@ -46,6 +46,16 @@ $functions = [
         'type'          => 'read',
         'ajax'          => true
     ],
+    'enrol_selma_create_users' => [
+        'classname'     => $namespace . 'create_users',
+        'methodname'    => 'create_users',
+        'description'   => new lang_string(
+            'create_users::description',
+            'enrol_selma'
+        ),
+        'type'          => 'write',
+        'ajax'          => true
+    ]
     /*'enrol_selma_get_course' => [
         'classname' => 'get_course_external',
         'methodname' => 'get_course',
@@ -120,7 +130,8 @@ $services = [
     'enrol_selma_webservice' => [                // The name of the web service.
         'functions' => [                         // Web service functions of this service.
             'enrol_selma_create_course',
-            'enrol_selma_get_all_courses'
+            'enrol_selma_get_all_courses',
+            'enrol_selma_create_users'
             //'enrol_selma_add_courses',
             //'enrol_selma_update_courses',
             //'enrol_selma_add_people',
