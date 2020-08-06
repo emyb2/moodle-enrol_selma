@@ -127,6 +127,36 @@ $string['userdefaultsheading'] = 'Default user preferences';
 $string['userdefaultsheading::description'] = 'Default user preferences as set-up in Moodle is used by this plugin when creating new users.<br><br>
                                                 You can find the \'User default preferences\' here:<br>
                                                 <a href="' . $CFG->wwwroot . '/admin/settings.php?section=userdefaultpreferences">User default preferences</a>';
+$string['profilemapheading'] = 'User profile field mapping';
+$string['profilemapheading::description'] = 'Below you can specify which SELMA user profile field is mapped to which Moodle profile field. Custom profile fields are also supported.';
+$string['profilemap_duplicatewarning'] = '<span class="settingwarning">WARNING - Duplicates detected!</span>';
+$string['profilemap_duplicatewarning::description'] = '<span class="settingwarning">Duplicates values detected: {$a}</span><hr>';
+$string['profilemapduplicate'] = '<div class="alert alert-danger">Duplicate value!</div>';
+$string['profilemap_username'] = 'SELMA username';
+$string['profilemap_username::description'] = '<sup class="settingwarning">Enforced to preserve data integrity.</sup>';
+$string['profilemap_forename'] = 'SELMA forename';
+$string['profilemap_forename::description'] = '<sup class="settingwarning">Enforced to preserve data integrity.</sup>';
+$string['profilemap_lastname'] = 'SELMA lastname';
+$string['profilemap_lastname::description'] = '<sup class="settingwarning">Enforced to preserve data integrity.</sup>';
+$string['profilemap_email1'] = 'SELMA email1';
+$string['profilemap_email1::description'] = '<sup class="settingwarning">Enforced to preserve data integrity.</sup>';
+$string['profilemap_id'] = 'SELMA ID';
+$string['profilemap_id::description'] = '<sup class="settingwarning">Enforced to preserve data integrity.</sup>';
+$string['profilemap_mobilephone'] = 'SELMA mobilephone';
+$string['profilemap_mobilephone::description'] = 'Which Moodle field the SELMA mobilephone field can be mapped to.';
+$string['profilemap_secondaryphone'] = 'SELMA secondaryphone';
+$string['profilemap_secondaryphone::description'] = 'Which Moodle field the SELMA secondaryphone field can be mapped to.';
+$string['profilemap_gender'] = 'SELMA gender';
+$string['profilemap_gender::description'] = 'Which Moodle field the SELMA gender field can be mapped to.';
+$string['profilemap_dob'] = 'SELMA dob';
+$string['profilemap_dob::description'] = 'Which Moodle field the SELMA dob field can be mapped to.';
+$string['profilemap_nsn'] = 'SELMA nsn';
+$string['profilemap_nsn::description'] = 'Which Moodle field the SELMA nsn field can be mapped to.';
+$string['profilemap_status'] = 'SELMA status';
+$string['profilemap_status::description'] = 'Which Moodle field the SELMA status field can be mapped to.';
+$string['profilemap_preferredname'] = 'SELMA preferredname';
+$string['profilemap_preferredname::description'] = 'Which Moodle field the SELMA preferredname field can be mapped to.';
+
 
 // Capabilities.
 $string['selma:config'] = "Configure SELMA";

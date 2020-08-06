@@ -198,3 +198,31 @@ function enrol_selma_get_all_courses(int $amount = 0, int $page = 1) {
     // Returned details (excl. nextpage).
     return ['status' => $status, 'courses' => $courses, 'message' => $message];
 }
+
+/**
+ * @return  array   Returns array of the duplicated values used for profile field mapping.
+ */
+function enrol_selma_validate_profile_mapping() {
+    // TODO - Get all and filter dupes or be specific?
+    // Get all the plugin's configs.
+    $selmasettings = (array) get_config('enrol_selma');
+
+    // Check each setting if profilemap.
+    foreach ($selmasettings as $key => $value) {
+        // We only check if profilemaps have duplicates.
+        if (stripos($key, 'profilemap_') === false) {
+            // Not profilemap - remove.
+            unset($selmasettings[$key]);
+            continue;
+        }
+    }
+
+    // Count how many times each value shows up.
+    $duplicatesfound = array_count_values($selmasettings);
+
+    // Remove if it's only turned up once, and then return array's keys as values instead.
+    $duplicatesfound = array_keys(array_diff($duplicatesfound, [1]));
+
+    //Return all duplicates found, if any.
+    return $duplicatesfound;
+}
