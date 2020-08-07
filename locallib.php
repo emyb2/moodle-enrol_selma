@@ -82,6 +82,34 @@ function enrol_selma_create_course(array $course) {
 }
 
 /**
+ * Creates users with details provided.
+ *
+ * @param   array|null  $users Array of users' details required to create an account for them.
+ * @return  array       Array containing the status of the request, userid of users created, and appropriate message.
+ */
+function enrol_selma_create_users(array $users = null) {
+    // Set status to 'we don't know what went wrong'. We will set this to potential known causes further down.
+    $status = get_string('status_other', 'enrol_selma');
+    // If $users = null, then it means we didn't find anything/something went wrong. Changed if successfully created a user(s).
+    $userids = null;
+    // Use to give more detailed response message to user.
+    $message = get_string('status_other_message', 'enrol_selma');
+
+    // TODO.
+    // Use profile field mapping to capture user data.
+    // For each user received, process...
+    // Check if user exists first - maybe check email too.
+    // If exist, update?
+    // Otherwise, create user.
+
+    var_dump($users);
+    //die();
+
+    // Returned details - failed...
+    return ['status' => $status, 'userids' => $userids, 'message' => $message];
+}
+
+/**
  * Get all the courses that's not in any excluded category - excludecoursecat setting.
  *
  * @param   int     $amount Number of records to retrieve - get all by default.
@@ -169,4 +197,32 @@ function enrol_selma_get_all_courses(int $amount = 0, int $page = 1) {
 
     // Returned details (excl. nextpage).
     return ['status' => $status, 'courses' => $courses, 'message' => $message];
+}
+
+/**
+ * @return  array   Returns array of the duplicated values used for profile field mapping.
+ */
+function enrol_selma_validate_profile_mapping() {
+    // TODO - Get all and filter dupes or be specific?
+    // Get all the plugin's configs.
+    $selmasettings = (array) get_config('enrol_selma');
+
+    // Check each setting if profilemap.
+    foreach ($selmasettings as $key => $value) {
+        // We only check if profilemaps have duplicates.
+        if (stripos($key, 'profilemap_') === false) {
+            // Not profilemap - remove.
+            unset($selmasettings[$key]);
+            continue;
+        }
+    }
+
+    // Count how many times each value shows up.
+    $duplicatesfound = array_count_values($selmasettings);
+
+    // Remove if it's only turned up once, and then return array's keys as values instead.
+    $duplicatesfound = array_keys(array_diff($duplicatesfound, [1]));
+
+    //Return all duplicates found, if any.
+    return $duplicatesfound;
 }

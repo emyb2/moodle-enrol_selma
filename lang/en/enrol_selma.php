@@ -127,6 +127,36 @@ $string['userdefaultsheading'] = 'Default user preferences';
 $string['userdefaultsheading::description'] = 'Default user preferences as set-up in Moodle is used by this plugin when creating new users.<br><br>
                                                 You can find the \'User default preferences\' here:<br>
                                                 <a href="' . $CFG->wwwroot . '/admin/settings.php?section=userdefaultpreferences">User default preferences</a>';
+$string['profilemapheading'] = 'User profile field mapping';
+$string['profilemapheading::description'] = 'Below you can specify which SELMA user profile field is mapped to which Moodle profile field. Custom profile fields are also supported.';
+$string['profilemap_duplicatewarning'] = '<span class="settingwarning">WARNING - Duplicates detected!</span>';
+$string['profilemap_duplicatewarning::description'] = '<span class="settingwarning">Duplicates values detected: {$a}</span><hr>';
+$string['profilemapduplicate'] = '<div class="alert alert-danger">Duplicate value!</div>';
+$string['profilemap_username'] = 'SELMA username';
+$string['profilemap_username::description'] = '<sup class="settingwarning">Enforced to preserve data integrity.</sup>';
+$string['profilemap_forename'] = 'SELMA forename';
+$string['profilemap_forename::description'] = '<sup class="settingwarning">Enforced to preserve data integrity.</sup>';
+$string['profilemap_lastname'] = 'SELMA lastname';
+$string['profilemap_lastname::description'] = '<sup class="settingwarning">Enforced to preserve data integrity.</sup>';
+$string['profilemap_email1'] = 'SELMA email1';
+$string['profilemap_email1::description'] = '<sup class="settingwarning">Enforced to preserve data integrity.</sup>';
+$string['profilemap_id'] = 'SELMA ID';
+$string['profilemap_id::description'] = '<sup class="settingwarning">Enforced to preserve data integrity.</sup>';
+$string['profilemap_mobilephone'] = 'SELMA mobilephone';
+$string['profilemap_mobilephone::description'] = 'Which Moodle field the SELMA mobilephone field can be mapped to.';
+$string['profilemap_secondaryphone'] = 'SELMA secondaryphone';
+$string['profilemap_secondaryphone::description'] = 'Which Moodle field the SELMA secondaryphone field can be mapped to.';
+$string['profilemap_gender'] = 'SELMA gender';
+$string['profilemap_gender::description'] = 'Which Moodle field the SELMA gender field can be mapped to.';
+$string['profilemap_dob'] = 'SELMA dob';
+$string['profilemap_dob::description'] = 'Which Moodle field the SELMA dob field can be mapped to.';
+$string['profilemap_nsn'] = 'SELMA nsn';
+$string['profilemap_nsn::description'] = 'Which Moodle field the SELMA nsn field can be mapped to.';
+$string['profilemap_status'] = 'SELMA status';
+$string['profilemap_status::description'] = 'Which Moodle field the SELMA status field can be mapped to.';
+$string['profilemap_preferredname'] = 'SELMA preferredname';
+$string['profilemap_preferredname::description'] = 'Which Moodle field the SELMA preferredname field can be mapped to.';
+
 
 // Capabilities.
 $string['selma:config'] = "Configure SELMA";
@@ -157,6 +187,27 @@ $string['courses::fullname'] = 'Full name of course.';
 $string['courses::idnumber'] = 'Course idnumber - usually used in reports, etc.';
 $string['get_all_courses_returns::nextpage'] = 'The next page to be requested (if any).';
 $string['get_all_courses_returns::message'] = 'Message to return along with the response.';
+$string['create_users::description'] = '***WIP - Creates an array of users.***';
+$string['create_users_parameters'] = 'Expected parameters to create users.';
+$string['create_users_parameters::users'] = 'List of all users\' details - to be created.';
+$string['create_users_parameters::user'] = 'A user\'s details - needed to create.';
+$string['create_users_parameters::username'] = 'Username of user.';
+$string['create_users_parameters::forename'] = 'First name of user.';
+$string['create_users_parameters::lastname'] = 'Last name of user.';
+$string['create_users_parameters::preferredname'] = 'Preferred name/Nickname of user.';
+$string['create_users_parameters::email1'] = 'Email address of user.';
+$string['create_users_parameters::mobilephone'] = 'Mobile phone number of user.';
+$string['create_users_parameters::secondaryphone'] = 'Phone number of user.';
+$string['create_users_parameters::gender'] = 'Gender of user.';
+$string['create_users_parameters::dob'] = 'Date of Birth of user.';
+$string['create_users_parameters::nsn'] = 'NSN of user.';
+$string['create_users_parameters::id'] = 'ID number (SELMA) of user.';
+$string['create_users_parameters::status'] = 'Status of user.';
+$string['create_users_returns'] = 'The returned values after attempting to create user(s).';
+$string['create_users_returns::status'] = 'Returns success status code.';
+$string['create_users_returns::userids'] = 'Returns the user IDs of the users that were created.';
+$string['create_users_returns::message'] = 'Message to return along with the response.';
+
 
 // Web services statuses.
 $string['status_ok'] = '200';
