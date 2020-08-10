@@ -53,7 +53,7 @@ class create_users extends external_api {
                 'users' => new external_multiple_structure(
                     new external_single_structure(
                         [
-                            'username' => new external_value(PARAM_TEXT, get_string('create_users_parameters::username', 'enrol_selma')),
+                            'username' => new external_value(PARAM_TEXT, get_string('create_users_parameters::username', 'enrol_selma'), VALUE_OPTIONAL),
                             'forename' => new external_value(PARAM_TEXT, get_string('create_users_parameters::forename', 'enrol_selma')),
                             'lastname' => new external_value(PARAM_TEXT, get_string('create_users_parameters::lastname', 'enrol_selma')),
                             'email1' => new external_value(PARAM_EMAIL, get_string('create_users_parameters::email1', 'enrol_selma')),

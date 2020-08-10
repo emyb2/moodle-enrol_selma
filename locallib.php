@@ -25,6 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/lib.php');
+require_once(dirname(__FILE__, 3) . '/admin/tool/uploaduser/locallib.php');
+require_once(dirname(__FILE__, 3) . '/user/lib.php');
 
 /**
  * Creates the course based on details provided.
@@ -88,6 +90,9 @@ function enrol_selma_create_course(array $course) {
  * @return  array       Array containing the status of the request, userid of users created, and appropriate message.
  */
 function enrol_selma_create_users(array $users = null) {
+    global $DB, $CFG;
+    $existinguser = [];
+
     // Set status to 'we don't know what went wrong'. We will set this to potential known causes further down.
     $status = get_string('status_other', 'enrol_selma');
     // If $users = null, then it means we didn't find anything/something went wrong. Changed if successfully created a user(s).
@@ -95,15 +100,78 @@ function enrol_selma_create_users(array $users = null) {
     // Use to give more detailed response message to user.
     $message = get_string('status_other_message', 'enrol_selma');
 
-    // TODO.
     // Use profile field mapping to capture user data.
-    // For each user received, process...
-    // Check if user exists first - maybe check email too.
-    // If exist, update?
-    // Otherwise, create user.
+    $profilemapping = enrol_selma_get_profile_mapping();
 
-    var_dump($users);
-    //die();
+    // For each user received, process...
+    foreach ($users as $user) {
+        // Keep track of customfields & their values.
+        $usercustomfields = [];
+
+        // If no username set, set to firstname.lastname format.
+        if (!isset($user['username']) || empty($user['username'])) {
+            $user['username'] = strtolower($user['forename'] . '.' . $user['lastname']);
+        }
+
+        // TODO - If exist, update? Maybe check email too - respect `allowaccountssameemail` setting?
+        // First, check if user exists by SELMA id.
+        $tempuser = $DB->get_record('user', array($profilemapping['id'] => $user['id']));
+
+        if ($tempuser !== false) {
+            // Add to list of existing users found.
+            $existinguser[] = $user['id'];
+            continue;
+        }
+
+        // TODO - Different error, or just return the ID/email1? Any better way than 2 DB calls - $DB->get_records_select?
+        // Then, check if user exists with email - respect `allowaccountssameemail`.
+        $tempuser = $DB->get_record('user', array($profilemapping['email1'] => $user['email1']));
+        if (get_config('moodle', 'allowaccountssameemail') === '0' && $tempuser->email === $user['email1']) {
+            // Add to list of existing users found.
+            $existinguser[] = $user['email1'];
+            continue;
+        }
+
+        // Otherwise, create user.
+        // TODO - Which is better `create_user_record();` or `user_create_user();` - the latter is more thorough.
+        $newuser = new stdClass();
+
+        // Assign each user profile fields to the Moodle equivalent.
+        foreach ($user as $field => $value) {
+            // Translate to Moodle field.
+            $element = $profilemapping[$field];
+
+            // If customfield, track it for later, otherwise, add to user object.
+            if (preg_match('/^profile_field_/', $element)) {
+                $usercustomfields[preg_replace('/^profile_field_/', '', $element)] = $value;
+            } else {
+                // Set field to value.
+                $newuser->$element = $value;
+            }
+        }
+
+        // We only support local accounts.
+        $newuser->mnethostid = $CFG->mnet_localhost_id;
+
+        // TODO - increment username?
+        // Check if username exists and increment, if necessary.
+        if ($DB->get_record('user', array('username' => $newuser->username)) !== false) {
+            $newuser->username = uu_increment_username($newuser->username);
+        }
+
+        $createduserid = user_create_user($newuser);
+
+        // Handle custom profile fields.
+        profile_save_custom_fields($createduserid, $usercustomfields);
+    }
+
+    // Check if existing users were found & update status/message.
+    if (isset($existinguser) && !empty($existinguser)) {
+        $status = get_string('status_almostok', 'enrol_selma');
+        $message = get_string('status_almostok_message', 'enrol_selma') .
+            ' ' .
+            get_string('status_almostok_existing_message', 'enrol_selma', implode(', ', $existinguser));
+    }
 
     // Returned details - failed...
     return ['status' => $status, 'userids' => $userids, 'message' => $message];
@@ -204,6 +272,7 @@ function enrol_selma_get_all_courses(int $amount = 0, int $page = 1) {
  */
 function enrol_selma_validate_profile_mapping() {
     // TODO - Get all and filter dupes or be specific?
+    // TODO - Also check the types match. e.g. NSN -> Integer.
     // Get all the plugin's configs.
     $selmasettings = (array) get_config('enrol_selma');
 
@@ -213,7 +282,6 @@ function enrol_selma_validate_profile_mapping() {
         if (stripos($key, 'profilemap_') === false) {
             // Not profilemap - remove.
             unset($selmasettings[$key]);
-            continue;
         }
     }
 
@@ -223,6 +291,57 @@ function enrol_selma_validate_profile_mapping() {
     // Remove if it's only turned up once, and then return array's keys as values instead.
     $duplicatesfound = array_keys(array_diff($duplicatesfound, [1]));
 
-    //Return all duplicates found, if any.
+    // Return all duplicates found, if any.
     return $duplicatesfound;
+}
+
+/**
+ * @return  array   Returns array of the duplicated values used for profile field mapping.
+ */
+function enrol_selma_get_profile_mapping() {
+    $searchstring = 'profilemap_';
+
+    // TODO - Get all and filter dupes or be specific?
+    // Get all the plugin's configs.
+    $profilemap = (array) get_config('enrol_selma');
+
+    // Check each setting if profilemap.
+    foreach ($profilemap as $key => $value) {
+        // Check if a profilemapping config.
+        if (stripos($key, $searchstring) === false) {
+            // Not profilemap - remove.
+            unset($profilemap[$key]);
+        }
+    }
+
+    // Remove prefix from fields.
+    $profilemap = enrol_selma_remove_arrkey_substr($profilemap, $searchstring);
+
+    // Return all profilemaps found, if any.
+    return $profilemap;
+}
+
+/**
+ * Loops through an array's keys and removes any occurrence of the given substring.
+ *
+ * @param   array   $checkarray The array to search through.
+ * @param   string  $substring  The substring to search for.
+ * @return  array   Returns array of the duplicated values used for profile field mapping.
+ */
+function enrol_selma_remove_arrkey_substr(array $checkarray, string $substring) {
+    // Note - can't use array_walk as we'll be updating the array structure (not only it's values).
+    // See https://www.php.net/manual/en/function.array-walk.php#refsect1-function.array-walk-parameters.
+    // Loop through the array to manually update the keys.
+    foreach ($checkarray as $key => $value) {
+        // Check if the key contains the substring.
+        if (stripos($key, $substring) !== false) {
+            // Found a match! Add an entry to the array with the updated key and same value, then remove the old entry.
+            $newkey = str_replace($substring, '', $key);
+            $checkarray[$newkey] = $value;
+            unset($checkarray[$key]);
+        }
+    }
+
+    // Return array with updated keys, if any.
+    return $checkarray;
 }
