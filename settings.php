@@ -125,15 +125,15 @@ if ($hassiteconfig) {
     $duplicates = enrol_selma_validate_profile_mapping();
     $duplist = implode(', ', $duplicates);
 
-    // Alert of duplicates.
-    $setting = new admin_setting_heading(
-        "{$component}/profilemap_duplicatewarning",
-        new lang_string('profilemap_duplicatewarning', $component),
-        new lang_string('profilemap_duplicatewarning::description', $component, $duplist)
-    );
-
-    // Add if duplicates detected.
+    // Only add if duplicates detected.
     if (!empty($duplicates)) {
+        // Alert of duplicates.
+        $setting = new admin_setting_heading(
+            "{$component}/profilemap_duplicatewarning",
+            new lang_string('profilemap_duplicatewarning', $component),
+            new lang_string('profilemap_duplicatewarning::description', $component, $duplist)
+        );
+
         $usersettings->add($setting);
     }
 
@@ -195,7 +195,7 @@ if ($hassiteconfig) {
         new lang_string('profilemap_username', $component),
         new lang_string('profilemap_username::description', $component),
         'username',
-        $options,
+        ['username' => 'username'],
         false
     );
 
@@ -212,7 +212,7 @@ if ($hassiteconfig) {
         new lang_string('profilemap_forename', $component),
         new lang_string('profilemap_forename::description', $component),
         'firstname',
-        $options,
+        ['firstname' => 'firstname'],
         false
     );
 
@@ -229,7 +229,7 @@ if ($hassiteconfig) {
         new lang_string('profilemap_lastname', $component),
         new lang_string('profilemap_lastname::description', $component),
         'lastname',
-        $options,
+        ['lastname' => 'lastname'],
         false
     );
 
@@ -246,7 +246,7 @@ if ($hassiteconfig) {
         new lang_string('profilemap_email1', $component),
         new lang_string('profilemap_email1::description', $component),
         'email',
-        $options,
+        ['email' => 'email'],
         false
     );
 
@@ -263,7 +263,7 @@ if ($hassiteconfig) {
         new lang_string('profilemap_id', $component),
         new lang_string('profilemap_id::description', $component),
         'idnumber',
-        $options,
+        ['idnumber' => 'idnumber'],
         false
     );
 
