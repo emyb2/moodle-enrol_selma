@@ -96,7 +96,7 @@ function enrol_selma_create_users(array $users = null) {
     // Set status to 'we don't know what went wrong'. We will set this to potential known causes further down.
     $status = get_string('status_other', 'enrol_selma');
     // If $users = null, then it means we didn't find anything/something went wrong. Changed if successfully created a user(s).
-    $userids = null;
+    $userids = [];
     // Use to give more detailed response message to user.
     $message = get_string('status_other_message', 'enrol_selma');
 
@@ -163,6 +163,9 @@ function enrol_selma_create_users(array $users = null) {
 
         // Handle custom profile fields.
         profile_save_custom_fields($createduserid, $usercustomfields);
+
+        // Add to list of created userids to be returned.
+        $userids[] = $createduserid;
     }
 
     // Check if existing users were found & update status/message.
@@ -171,6 +174,23 @@ function enrol_selma_create_users(array $users = null) {
         $message = get_string('status_almostok_message', 'enrol_selma') .
             ' ' .
             get_string('status_almostok_existing_message', 'enrol_selma', implode(', ', $existinguser));
+
+        // Above message okay for if we managed to create some users alongside some duplicates. Below is if only duplicates found,
+        // But no new accounts created.
+        if (empty($userids) || !isset($userids)) {
+            $status = get_string('status_nonew', 'enrol_selma');
+            $message = get_string('status_nonew_message', 'enrol_selma');
+        }
+    } else {
+        // If we have no duplicates & created some users - best type of success.
+        if (isset($userids) && !empty($userids)) {
+            $status = get_string('status_ok', 'enrol_selma');
+            $message = get_string('status_ok_message', 'enrol_selma');
+        } else {
+            // No duplicates & no users created - fail/nothing done.
+            $status = get_string('status_nocontent', 'enrol_selma');
+            $message = get_string('status_nocontent_message', 'enrol_selma');
+        }
     }
 
     // Returned details - failed...

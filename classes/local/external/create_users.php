@@ -103,10 +103,12 @@ class create_users extends external_api {
         return new external_function_parameters(
             [
                 'status' => new external_value(PARAM_TEXT, get_string('create_users_returns::status', 'enrol_selma')),
-                'userids' => new external_value(PARAM_INT, get_string('create_users_returns::userids', 'enrol_selma')),
-                'message' => new external_value(PARAM_TEXT, get_string('create_users_returns::message', 'enrol_selma')),
-            ],
-            get_string('create_users_returns', 'enrol_selma')
+                'userids' => new external_multiple_structure(
+                    new external_value(PARAM_INT, get_string('create_users_returns::userid', 'enrol_selma')),
+                    get_string('create_users_returns::userids', 'enrol_selma')
+                ),
+                'message' => new external_value(PARAM_TEXT, get_string('create_users_returns::message', 'enrol_selma'))
+            ], get_string('create_users_returns', 'enrol_selma')
         );
     }
 }

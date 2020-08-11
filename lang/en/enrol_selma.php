@@ -205,16 +205,21 @@ $string['create_users_parameters::id'] = 'ID number (SELMA) of user.';
 $string['create_users_parameters::status'] = 'Status of user.';
 $string['create_users_returns'] = 'The returned values after attempting to create user(s).';
 $string['create_users_returns::status'] = 'Returns success status code.';
-$string['create_users_returns::userids'] = 'Returns the user IDs of the users that were created.';
+$string['create_users_returns::userids'] = 'Returns the user Moodle IDs of the users that were created.';
+$string['create_users_returns::userid'] = 'Moodle ID of a user that was created.';
 $string['create_users_returns::message'] = 'Message to return along with the response. Lists duplicate SELMA IDs or emails found.';
 
 
 // Web services statuses.
 $string['status_ok'] = '200';
 $string['status_ok_message'] = 'OK - Expected response received.';
+$string['status_nocontent'] = '204';
+$string['status_nocontent_message'] = 'No content to return - processed successfully, but intended result not achieved.';
 $string['status_almostok'] = '206';
 $string['status_almostok_message'] = 'Partially OK - Some part of the operation could not be completed.';
 $string['status_almostok_existing_message'] = 'Found existing records for: {$a}';
+$string['status_nonew'] = '208';
+$string['status_nonew_message'] = 'Already Reported - Nothing inherently wrong with request, but all this has been processed before.';
 $string['status_notfound'] = '404';
 $string['status_notfound_message'] = 'Not Found - 0 Records found.';
 $string['status_internalfail'] = '500';
