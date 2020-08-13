@@ -29,8 +29,8 @@ require_once(__DIR__ . '/lib.php');
 /**
  * Creates the course based on details provided.
  *
- * @param array     $course Array of course details to create course.
- * @return array    Array containing the status of the request, created course's ID, and appropriate message.
+ * @param   array   $course Array of course details to create course.
+ * @return  array   Array containing the status of the request, created course's ID, and appropriate message.
  */
 function enrol_selma_create_course(array $course) {
     // Set status to 'we don't know what went wrong'. We will set this to potential known causes further down.
@@ -79,6 +79,55 @@ function enrol_selma_create_course(array $course) {
 
     // Returned details - failed...
     return ['status' => $status, 'courseid' => $courseid, 'message' => $message];
+}
+
+/**
+ * Creates the intake record based on details provided.
+ *
+ * @param   array   $intake Array of intake details, used to create intake.
+ * @return  array   Array containing the status of the request, the created intake's ID, and appropriate message.
+ */
+function enrol_selma_create_intake(array $intake) {
+    global $USER, $DB;
+    // Set status to 'we don't know what went wrong'. We will set this to potential known causes further down.
+    $status = get_string('status_other', 'enrol_selma');
+    // Intakeid of null means something didn't work. Changed if successfully created the intake record.
+    $intakeid = null;
+    // Use to give more detailed response message to user.
+    $message = get_string('status_other_message', 'enrol_selma');
+
+    // TODO - Any additional checks - as we're inserting to DB?
+
+    // TODO - Handle date values, time seems to be set to current time.
+    $intake['intakestartdate'] = DateTime::createFromFormat('d-m-Y', $intake['intakestartdate']);
+    $intake['intakeenddate'] = DateTime::createFromFormat('d-m-Y', $intake['intakeenddate']);
+
+    // Build record.
+    $data = new stdClass();
+    $data->id =             $intake['intakeid'];
+    $data->programmeid =    $intake['programmeid'];
+    $data->code =           $intake['intakecode'];
+    $data->name =           $intake['intakename'];
+    $data->startdate =      $intake['intakestartdate']->getTimestamp();
+    $data->enddate =        $intake['intakeenddate']->getTimestamp();
+    $data->usermodified =   $USER->id;
+    $data->timecreated =    (new DateTime)->getTimestamp();
+    $data->timemodified =   (new DateTime)->getTimestamp();
+
+    print_object($data);
+
+    // If we successfully created the record, set success status.
+    if ($DB->insert_record('enrol_selma_intake', $data, false)) {
+        // Set status to 'OK'.
+        $status = get_string('status_ok', 'enrol_selma');
+        // Intakeid of null means something didn't work. Changed if successfully created the intake record.
+        $intakeid = $data->id;
+        // Use to give more detailed response message to user.
+        $message = get_string('status_ok_message', 'enrol_selma');
+    }
+
+    // Returned details - failed if not changed above...
+    return ['status' => $status, 'intakeid' => $intakeid, 'message' => $message];
 }
 
 /**
