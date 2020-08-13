@@ -53,7 +53,7 @@ class create_users extends external_api {
                 'users' => new external_multiple_structure(
                     new external_single_structure(
                         [
-                            'username' => new external_value(PARAM_TEXT, get_string('create_users_parameters::username', 'enrol_selma')),
+                            'username' => new external_value(PARAM_TEXT, get_string('create_users_parameters::username', 'enrol_selma'), VALUE_OPTIONAL),
                             'forename' => new external_value(PARAM_TEXT, get_string('create_users_parameters::forename', 'enrol_selma')),
                             'lastname' => new external_value(PARAM_TEXT, get_string('create_users_parameters::lastname', 'enrol_selma')),
                             'email1' => new external_value(PARAM_EMAIL, get_string('create_users_parameters::email1', 'enrol_selma')),
@@ -103,10 +103,12 @@ class create_users extends external_api {
         return new external_function_parameters(
             [
                 'status' => new external_value(PARAM_TEXT, get_string('create_users_returns::status', 'enrol_selma')),
-                'userids' => new external_value(PARAM_INT, get_string('create_users_returns::userids', 'enrol_selma')),
-                'message' => new external_value(PARAM_TEXT, get_string('create_users_returns::message', 'enrol_selma')),
-            ],
-            get_string('create_users_returns', 'enrol_selma')
+                'userids' => new external_multiple_structure(
+                    new external_value(PARAM_INT, get_string('create_users_returns::userid', 'enrol_selma')),
+                    get_string('create_users_returns::userids', 'enrol_selma')
+                ),
+                'message' => new external_value(PARAM_TEXT, get_string('create_users_returns::message', 'enrol_selma'))
+            ], get_string('create_users_returns', 'enrol_selma')
         );
     }
 }

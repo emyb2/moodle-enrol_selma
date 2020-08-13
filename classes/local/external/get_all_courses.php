@@ -51,8 +51,8 @@ class get_all_courses extends external_api {
     public static function get_all_courses_parameters() {
         return new external_function_parameters(
             [
-                'amount' => new external_value(PARAM_INT, get_string('get_all_courses_parameters::amount', 'enrol_selma'),VALUE_OPTIONAL, 0),
-                'page' => new external_value(PARAM_INT, get_string('get_all_courses_parameters::page', 'enrol_selma'), VALUE_OPTIONAL, 1)
+                'amount' => new external_value(PARAM_INT, get_string('get_all_courses_parameters::amount', 'enrol_selma'),VALUE_OPTIONAL),
+                'page' => new external_value(PARAM_INT, get_string('get_all_courses_parameters::page', 'enrol_selma'), VALUE_OPTIONAL)
             ], get_string('get_all_courses_parameters', 'enrol_selma')
         );
     }

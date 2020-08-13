@@ -46,10 +46,22 @@ class admin_setting_configselect_with_enabled extends admin_setting_configselect
      */
     public function __construct($name, $visiblename, $description, $defaultsetting, $choices, $enabled = true) {
         $this->enabled = $enabled;
-        // TODO - Should we check if the setting has been set first? Otherwise it may never be set to what we want to force it to?
+
+        // TODO - We can possibly assign default values below during install script?
+        // Just get me the config's name, please. No configs with a '/' allowed.
+        $pos = strrpos($name, '/');
+        $configname = $pos === false ? $name : substr($name, $pos + 1);
+
+        // If the setting has not been set yet, make it writeable with only the default as an option.
+        // E.g. upon plugin install, new setting, etc.
+        if (get_config('enrol_selma', $configname) === false) {
+            $this->enabled = true;
+        }
+
+        // TODO - Maybe done above now. Should we check if the setting has been set first? Otherwise it may never be set to what we want to force it to?
         // TODO - We can assign forced config values at plugin install?
         // We should not save changes to the disabled elements.
-        $this->nosave = !$enabled;
+        $this->nosave = !$this->enabled;
         parent::__construct($name, $visiblename, $description, $defaultsetting, $choices);
     }
 
