@@ -88,7 +88,7 @@ class intake extends stdClass {
     public function set_code(string $code) : self {
         $length = core_text::strlen($code);
         if ($length > 255) {
-            throw new moodle_exception('maximumcharacterlengthexceeded', 'enrol_arlo', null, 255);
+            throw new moodle_exception('maximumcharacterlengthexceeded', 'enrol_selma', null, 255);
         }
         $this->code = $code;
         return $this;
@@ -103,7 +103,7 @@ class intake extends stdClass {
     public function set_name(string $name) : self {
         $length = core_text::strlen($name);
         if ($length > 255) {
-            throw new moodle_exception('maximumcharacterlengthexceeded', 'enrol_arlo', null, 255);
+            throw new moodle_exception('maximumcharacterlengthexceeded', 'enrol_selma', null, 255);
         }
         $this->name = $name;
         return $this;
@@ -128,7 +128,7 @@ class intake extends stdClass {
             case $type == 'DateTime':
                 break;
             default:
-                throw new moodle_exception('invalidargument', 'enrol_arlo', null, 'startdate');
+                throw new moodle_exception('invalidargument', 'enrol_selma', null, 'startdate');
         }
 
         $this->startdate = $startdate->getTimestamp();
@@ -154,7 +154,7 @@ class intake extends stdClass {
             case $type == 'DateTime':
                 break;
             default:
-                throw new moodle_exception('invalidargument', 'enrol_arlo', null, 'enddate');
+                throw new moodle_exception('invalidargument', 'enrol_selma', null, 'enddate');
         }
         $this->enddate = $enddate->getTimestamp();
         return $this;
