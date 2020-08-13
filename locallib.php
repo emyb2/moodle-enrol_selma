@@ -39,7 +39,7 @@ function enrol_selma_create_course(array $course) {
     $status = get_string('status_other', 'enrol_selma');
     // Courseid of null means something didn't work. Changed if successfully created a course.
     $courseid = null;
-    // Use to give more detailed response message to user.
+    // Set to give more detailed response message to user.
     $message = get_string('status_other_message', 'enrol_selma');
 
     // Prep tags - find & replace text and convert to array.
@@ -95,7 +95,7 @@ function enrol_selma_create_intake(array $intake) {
     $status = get_string('status_other', 'enrol_selma');
     // Intakeid of null means something didn't work. Changed if successfully created the intake record.
     $intakeid = null;
-    // Use to give more detailed response message to user.
+    // Set to give more detailed response message to user.
     $message = get_string('status_other_message', 'enrol_selma');
 
     // TODO - Any additional checks - as we're inserting to DB?
@@ -116,16 +116,23 @@ function enrol_selma_create_intake(array $intake) {
     $data->timecreated =    (new DateTime)->getTimestamp();
     $data->timemodified =   (new DateTime)->getTimestamp();
 
-    print_object($data);
-
-    // If we successfully created the record, set success status.
-    if ($DB->insert_record('enrol_selma_intake', $data, false)) {
+    // Check if record exists before inserting.
+    if (!$DB->record_exists('enrol_selma_intake', array('id' => $data->id))) {
+        // TODO - use raw insert? No safety checks.
+        // Try to insert to DB, Moodle will through exception, if necessary.
+        $DB->insert_record_raw('enrol_selma_intake', $data, null, null, true);
         // Set status to 'OK'.
         $status = get_string('status_ok', 'enrol_selma');
         // Intakeid of null means something didn't work. Changed if successfully created the intake record.
         $intakeid = $data->id;
         // Use to give more detailed response message to user.
         $message = get_string('status_ok_message', 'enrol_selma');
+    } else {
+        // Record could not be created - probably because it already exists.
+        // Set status to 'Already Reported'.
+        $status = get_string('status_nonew', 'enrol_selma');
+        // Give more detailed response message to user.
+        $message = get_string('status_nonew_message', 'enrol_selma');
     }
 
     // Returned details - failed if not changed above...
@@ -146,7 +153,7 @@ function enrol_selma_create_users(array $users = null) {
     $status = get_string('status_other', 'enrol_selma');
     // If $users = null, then it means we didn't find anything/something went wrong. Changed if successfully created a user(s).
     $userids = [];
-    // Use to give more detailed response message to user.
+    // Set to give more detailed response message to user.
     $message = get_string('status_other_message', 'enrol_selma');
 
     // Use profile field mapping to capture user data.
@@ -265,7 +272,7 @@ function enrol_selma_get_all_courses(int $amount = 0, int $page = 1) {
     $status = get_string('status_other', 'enrol_selma');
     // If courses = null, then it means we didn't find anything/something went wrong. Changed if successfully found a course(s).
     $courses = null;
-    // Use to give more detailed response message to user.
+    // Set to give more detailed response message to user.
     $message = get_string('status_other_message', 'enrol_selma');
 
     // Used to calculate the right place to start from. Page index starts at 0.
