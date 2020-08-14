@@ -113,17 +113,17 @@ function enrol_selma_create_intake(array $intake) {
     $data->startdate =      $intake['intakestartdate']->getTimestamp();
     $data->enddate =        $intake['intakeenddate']->getTimestamp();
     $data->usermodified =   $USER->id;
-    $data->timecreated =    (new DateTime)->getTimestamp();
-    $data->timemodified =   (new DateTime)->getTimestamp();
+    $data->timecreated =    time();
+    $data->timemodified =   time();
 
     // Check if record exists before inserting.
     if (!$DB->record_exists('enrol_selma_intake', array('id' => $data->id))) {
         // TODO - use raw insert? No safety checks.
-        // Try to insert to DB, Moodle will through exception, if necessary.
+        // Try to insert to DB, Moodle will throw exception, if necessary.
         $DB->insert_record_raw('enrol_selma_intake', $data, null, null, true);
         // Set status to 'OK'.
         $status = get_string('status_ok', 'enrol_selma');
-        // Intakeid of null means something didn't work. Changed if successfully created the intake record.
+        // Set intakeid to the one we just created.
         $intakeid = $data->id;
         // Use to give more detailed response message to user.
         $message = get_string('status_ok_message', 'enrol_selma');
@@ -145,7 +145,7 @@ function enrol_selma_create_intake(array $intake) {
  * @param   array|null  $users Array of users' details required to create an account for them.
  * @return  array       Array containing the status of the request, userid of users created, and appropriate message.
  */
-function enrol_selma_create_users(array $users = null) {
+function enrol_selma_create_users(array $users) {
     global $DB, $CFG;
     $existinguser = [];
 
