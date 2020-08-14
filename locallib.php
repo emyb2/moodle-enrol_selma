@@ -85,6 +85,7 @@ function enrol_selma_add_user_to_intake(int $userid, int $intakeid) {
     $data->timecreated = time();
     $data->timemodified = time();
 
+    // TODO - also eventually check if we need to enrol user into anything once we have all the necessary functions.
     // If added successfully, return success message.
     if ($DB->insert_record('enrol_selma_user_intake', $data, false)) {
         // Set status to 'OK'.
