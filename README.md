@@ -1,6 +1,12 @@
 # SELMA for Moodle Plugin #
 
-TODO Describe the plugin shortly here.
+This plugin allows you to enrol your students from SELMA into Moodle courses.
+
+The plugin support:
+* User creation
+* Course creation
+* User enrolment
+* User grouping (in courses)
 
 TODO Provide more detailed description here.
 

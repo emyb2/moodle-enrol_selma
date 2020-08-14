@@ -34,7 +34,7 @@ $functions = [
                 'enrol_selma'
         ),                                                  // Human-readable description displayed in generated API documentation.
         'type'          => 'write',                         // Is 'write' if function does any database change, otherwise 'read'.
-        'ajax'          => true                             // If web service function callable via AJAX = true, otherwise false.
+        'ajax'          => false                            // If web service function callable via AJAX = true, otherwise false.
     ],
     'enrol_selma_get_all_courses' => [
         'classname'     => $namespace . 'get_all_courses',
@@ -44,7 +44,7 @@ $functions = [
                 'enrol_selma'
         ),
         'type'          => 'read',
-        'ajax'          => true
+        'ajax'          => false
     ],
     'enrol_selma_create_users' => [
         'classname'     => $namespace . 'create_users',
@@ -54,73 +54,18 @@ $functions = [
             'enrol_selma'
         ),
         'type'          => 'write',
-        'ajax'          => true
+        'ajax'          => false
+    ],
+    'enrol_selma_create_intake' => [
+        'classname'     => $namespace . 'create_intake',
+        'methodname'    => 'create_intake',
+        'description'   => new lang_string(
+            'create_intake::description',
+            'enrol_selma'
+        ),
+        'type'          => 'write',
+        'ajax'          => false
     ]
-    /*'enrol_selma_get_course' => [
-        'classname' => 'get_course_external',
-        'methodname' => 'get_course',
-        'classpath' => 'enrol/selma/externallib.php',
-        'description' => '',
-        'capabilities' => '',
-        'type' => 'read'
-    ],
-    'enrol_selma_get_courses' => [
-        'classname' => 'get_courses_external',
-        'methodname' => 'get_courses',
-        'classpath' => 'enrol/selma/externallib.php',
-        'description' => '',
-        'capabilities' => '',
-        'type' => 'read'
-    ],
-    'enrol_selma_create_course' => [
-        'classname' => 'add_course_external',
-        'methodname' => 'get_course',
-        'classpath' => 'enrol/selma/externallib.php',
-        'description' => '',
-        'capabilities' => '',
-        'type' => 'read'
-    ],
-    'enrol_selma_add_person' => [
-        'classname' => 'add_person_external',
-        'methodname' => 'add_person',
-        'classpath' => 'enrol/selma/externallib.php',
-        'description' => '',
-        'capabilities' => '',
-        'type' => 'write'
-    ],
-    'enrol_selma_update_person' => [
-        'classname' => 'update_person_external',
-        'methodname' => 'update_person',
-        'classpath' => 'enrol/selma/externallib.php',
-        'description' => '',
-        'capabilities' => '',
-        'type' => 'write'
-    ],
-    'enrol_selma_enrol_person' => [
-        'classname' => 'enrol_person_external',
-        'methodname' => 'enrol_person',
-        'classpath' => 'enrol/selma/externallib.php',
-        'description' => '',
-        'capabilities' => '',
-        'type' => 'write'
-    ],
-    'enrol_selma_enrol_people' => [
-        'classname' => 'enrol_people_external',
-        'methodname' => 'enrol_people',
-        'classpath' => 'enrol/selma/externallib.php',
-        'description' => '',
-        'capabilities' => '',
-        'type' => 'write'
-    ],
-    'enrol_selma_disenrol_person' => [
-        'classname' => 'disenrol_person_external',
-        'methodname' => 'disenrol_person',
-        'classpath' => 'enrol/selma/externallib.php',
-        'description' => '',
-        'capabilities' => '',
-        'type' => 'write'
-    ]
-    */
 ];
 
 // OPTIONAL
@@ -131,12 +76,8 @@ $services = [
         'functions' => [                         // Web service functions of this service.
             'enrol_selma_create_course',
             'enrol_selma_get_all_courses',
-            'enrol_selma_create_users'
-            //'enrol_selma_add_courses',
-            //'enrol_selma_update_courses',
-            //'enrol_selma_add_people',
-            //'enrol_selma_update_people',
-            //'enrol_selma_enrol_people',
+            'enrol_selma_create_users',
+            'enrol_selma_create_intake'
         ],
             'requiredcapability' =>
                     'enrol/selma:manage',   // Web service user needs this capability to access any function of this service.

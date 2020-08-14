@@ -208,7 +208,19 @@ $string['create_users_returns::status'] = 'Returns success status code.';
 $string['create_users_returns::userids'] = 'Returns the user Moodle IDs of the users that were created.';
 $string['create_users_returns::userid'] = 'Moodle ID of a user that was created.';
 $string['create_users_returns::message'] = 'Message to return along with the response. Lists duplicate SELMA IDs or emails found.';
-
+$string['create_intake::description'] = '***WIP - Expected parameters to create an intake record.***';
+$string['create_intake_parameters'] = 'Expected parameters to create an intake record.';
+$string['create_intake_parameters::intake'] = 'Intake details.';
+$string['create_intake_parameters::intakeid'] = 'Intake SELMA ID.';
+$string['create_intake_parameters::programmeid'] = 'Programme ID that intake is associated to.';
+$string['create_intake_parameters::intakecode'] = 'Intake code.';
+$string['create_intake_parameters::intakename'] = 'Intake name.';
+$string['create_intake_parameters::intakestartdate'] = 'Intake\'s start date.';
+$string['create_intake_parameters::intakeenddate'] = 'Intake\'s end date.';
+$string['create_intake_returns'] = 'Returned values when calling this function.';
+$string['create_intake_returns::status'] = 'Returns success status code.';
+$string['create_intake_returns::intakeid'] = 'Returns created intake\'s ID.';
+$string['create_intake_returns::message'] = 'Message to return along with the response.';
 
 // Web services statuses.
 $string['status_ok'] = '200';
