@@ -105,15 +105,15 @@ function enrol_selma_add_user_to_intake(int $userid, int $intakeid) {
 /**
  * Creates the course based on details provided.
  *
- * @param array     $course Array of course details to create course.
- * @return array    Array containing the status of the request, created course's ID, and appropriate message.
+ * @param   array   $course Array of course details to create course.
+ * @return  array   Array containing the status of the request, created course's ID, and appropriate message.
  */
 function enrol_selma_create_course(array $course) {
     // Set status to 'we don't know what went wrong'. We will set this to potential known causes further down.
     $status = get_string('status_other', 'enrol_selma');
     // Courseid of null means something didn't work. Changed if successfully created a course.
     $courseid = null;
-    // Use to give more detailed response message to user.
+    // Set to give more detailed response message to user.
     $message = get_string('status_other_message', 'enrol_selma');
 
     // Prep tags - find & replace text and convert to array.
@@ -158,12 +158,68 @@ function enrol_selma_create_course(array $course) {
 }
 
 /**
+ * Creates the intake record based on details provided.
+ *
+ * @param   array   $intake Array of intake details, used to create intake.
+ * @return  array   Array containing the status of the request, the created intake's ID, and appropriate message.
+ */
+function enrol_selma_create_intake(array $intake) {
+    global $USER, $DB;
+    // Set status to 'we don't know what went wrong'. We will set this to potential known causes further down.
+    $status = get_string('status_other', 'enrol_selma');
+    // Intakeid of null means something didn't work. Changed if successfully created the intake record.
+    $intakeid = null;
+    // Set to give more detailed response message to user.
+    $message = get_string('status_other_message', 'enrol_selma');
+
+    // TODO - Any additional checks - as we're inserting to DB?
+
+    // TODO - Handle date values, time seems to be set to current time.
+    $intake['intakestartdate'] = DateTime::createFromFormat('d-m-Y', $intake['intakestartdate']);
+    $intake['intakeenddate'] = DateTime::createFromFormat('d-m-Y', $intake['intakeenddate']);
+
+    // Build record.
+    $data = new stdClass();
+    $data->id =             $intake['intakeid'];
+    $data->programmeid =    $intake['programmeid'];
+    $data->code =           $intake['intakecode'];
+    $data->name =           $intake['intakename'];
+    $data->startdate =      $intake['intakestartdate']->getTimestamp();
+    $data->enddate =        $intake['intakeenddate']->getTimestamp();
+    $data->usermodified =   $USER->id;
+    $data->timecreated =    time();
+    $data->timemodified =   time();
+
+    // Check if record exists before inserting.
+    if (!$DB->record_exists('enrol_selma_intake', array('id' => $data->id))) {
+        // TODO - use raw insert? No safety checks.
+        // Try to insert to DB, Moodle will throw exception, if necessary.
+        $DB->insert_record_raw('enrol_selma_intake', $data, null, null, true);
+        // Set status to 'OK'.
+        $status = get_string('status_ok', 'enrol_selma');
+        // Set intakeid to the one we just created.
+        $intakeid = $data->id;
+        // Use to give more detailed response message to user.
+        $message = get_string('status_ok_message', 'enrol_selma');
+    } else {
+        // Record could not be created - probably because it already exists.
+        // Set status to 'Already Reported'.
+        $status = get_string('status_nonew', 'enrol_selma');
+        // Give more detailed response message to user.
+        $message = get_string('status_nonew_message', 'enrol_selma');
+    }
+
+    // Returned details - failed if not changed above...
+    return ['status' => $status, 'intakeid' => $intakeid, 'message' => $message];
+}
+
+/**
  * Creates users with details provided.
  *
  * @param   array|null  $users Array of users' details required to create an account for them.
  * @return  array       Array containing the status of the request, userid of users created, and appropriate message.
  */
-function enrol_selma_create_users(array $users = null) {
+function enrol_selma_create_users(array $users) {
     global $DB, $CFG;
     $existinguser = [];
 
@@ -171,7 +227,7 @@ function enrol_selma_create_users(array $users = null) {
     $status = get_string('status_other', 'enrol_selma');
     // If $users = null, then it means we didn't find anything/something went wrong. Changed if successfully created a user(s).
     $userids = [];
-    // Use to give more detailed response message to user.
+    // Set to give more detailed response message to user.
     $message = get_string('status_other_message', 'enrol_selma');
 
     // Use profile field mapping to capture user data.
@@ -290,7 +346,7 @@ function enrol_selma_get_all_courses(int $amount = 0, int $page = 1) {
     $status = get_string('status_other', 'enrol_selma');
     // If courses = null, then it means we didn't find anything/something went wrong. Changed if successfully found a course(s).
     $courses = null;
-    // Use to give more detailed response message to user.
+    // Set to give more detailed response message to user.
     $message = get_string('status_other_message', 'enrol_selma');
 
     // Used to calculate the right place to start from. Page index starts at 0.

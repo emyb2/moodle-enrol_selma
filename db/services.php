@@ -34,7 +34,7 @@ $functions = [
                 'enrol_selma'
         ),                                                  // Human-readable description displayed in generated API documentation.
         'type'          => 'write',                         // Is 'write' if function does any database change, otherwise 'read'.
-        'ajax'          => true                             // If web service function callable via AJAX = true, otherwise false.
+        'ajax'          => false                            // If web service function callable via AJAX = true, otherwise false.
     ],
     'enrol_selma_get_all_courses' => [
         'classname'     => $namespace . 'get_all_courses',
@@ -44,7 +44,7 @@ $functions = [
                 'enrol_selma'
         ),
         'type'          => 'read',
-        'ajax'          => true
+        'ajax'          => false
     ],
     'enrol_selma_create_users' => [
         'classname'     => $namespace . 'create_users',
@@ -54,7 +54,17 @@ $functions = [
             'enrol_selma'
         ),
         'type'          => 'write',
-        'ajax'          => true
+        'ajax'          => false
+    ],
+    'enrol_selma_create_intake' => [
+        'classname'     => $namespace . 'create_intake',
+        'methodname'    => 'create_intake',
+        'description'   => new lang_string(
+            'create_intake::description',
+            'enrol_selma'
+        ),
+        'type'          => 'write',
+        'ajax'          => false
     ],
     'enrol_selma_add_user_to_intake' => [
         'classname'     => $namespace . 'add_user_to_intake',
@@ -64,7 +74,7 @@ $functions = [
             'enrol_selma'
         ),
         'type'          => 'write',
-        'ajax'          => true
+        'ajax'          => false
     ]
 ];
 
@@ -77,6 +87,7 @@ $services = [
             'enrol_selma_create_course',
             'enrol_selma_get_all_courses',
             'enrol_selma_create_users',
+            'enrol_selma_create_intake',
             'enrol_selma_add_user_to_intake'
         ],
             'requiredcapability' =>
