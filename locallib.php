@@ -29,6 +29,33 @@ require_once(dirname(__FILE__, 3) . '/admin/tool/uploaduser/locallib.php');
 require_once(dirname(__FILE__, 3) . '/user/lib.php');
 
 /**
+ * Function to add this intake to that course.
+ *
+ * @param   int     $intakeid ID of intake to add to course.
+ * @param   int     $courseid ID of course the intake should be added to.
+ * @return  array   Array of success status & bool of true if success, along with message.
+ */
+function enrol_selma_add_intake_to_course(int $intakeid, int $courseid) {
+    // Set status to 'we don't know what went wrong'. We will set this to potential known causes further down.
+    $status = get_string('status_other', 'enrol_selma');
+    // Var 'added' of false means something didn't work. Changed if successfully added user to intake.
+    $added = false;
+    // Use to give more detailed response message to user.
+    $message = get_string('status_other_message', 'enrol_selma');
+
+    // TODO - Add intake to course.
+    // Check if course exists.
+    // Check if intake exists.
+    // Add enrol_selma instance to course, if none.
+    // Create group in course, if needed.
+    // Build relationship - group, course, enrol instance, intake.
+    // Enrol users to course - use core functions, if possible. TODO - Queue?
+
+    // Returned details - failed (probably)...
+    return ['status' => $status, 'added' => $added, 'message' => $message];
+}
+
+/**
  * Creates the course based on details provided.
  *
  * @param   array   $course Array of course details to create course.

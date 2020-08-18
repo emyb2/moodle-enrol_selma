@@ -65,6 +65,16 @@ $functions = [
         ),
         'type'          => 'write',
         'ajax'          => false
+    ],
+    'enrol_selma_add_intake_to_course' => [
+        'classname'     => $namespace . 'add_intake_to_course',
+        'methodname'    => 'add_intake_to_course',
+        'description'   => new lang_string(
+            'add_intake_to_course::description',
+            'enrol_selma'
+        ),
+        'type'          => 'write',
+        'ajax'          => false
     ]
 ];
 
