@@ -29,6 +29,81 @@ require_once(dirname(__FILE__, 3) . '/admin/tool/uploaduser/locallib.php');
 require_once(dirname(__FILE__, 3) . '/user/lib.php');
 
 /**
+ * The function to add the specified user to an intake.
+ *
+ * @param   int     $userid SELMA ID of user to add to intake.
+ * @param   int     $intakeid SELMA intake ID the user should be added to.
+ * @return  array   Array of success status & bool if successful/not, message.
+ */
+function enrol_selma_add_user_to_intake(int $userid, int $intakeid) {
+    global $DB, $USER;
+
+    // Set status to 'we don't know what went wrong'. We will set this to potential known causes further down.
+    $status = get_string('status_other', 'enrol_selma');
+    // Var 'added' of false means something didn't work. Changed if successfully added user to intake.
+    $added = false;
+    // Use to give more detailed response message to user.
+    $message = get_string('status_other_message', 'enrol_selma');
+
+    // Prep data to go into DB.
+    // Check which Moodle field the SELMA ID is associated to.
+    $idmapping = enrol_selma_get_profile_mapping()['id'];
+
+    // Get real Moodle user ID.
+    $muserid = $DB->get_record('user', array($idmapping => $userid), 'id');
+
+    // If user doesn't exist yet (or they have not been 'linked' to SELMA yet).
+    if (!$muserid) {
+        // Set status to 'not found'.
+        $status = get_string('status_notfound', 'enrol_selma');
+        // Use to give more detailed response message to user.
+        $message = get_string('status_notfound_message', 'enrol_selma');
+
+        // Return 'not found' status.
+        return ['status' => $status, 'added' => $added, 'message' => $message];
+    }
+
+    // Check if they've already been linked?
+    $linked = $DB->record_exists('enrol_selma_user_intake', array('userid' => $muserid->id, 'intakeid' => $intakeid));
+
+    // If user's been linked before.
+    if ($linked) {
+        // Set status to 'already reported'.
+        $status = get_string('status_nonew', 'enrol_selma');
+        // Set message to give more detailed response to user.
+        $message = get_string('status_nonew_message', 'enrol_selma');
+
+        // Return 'already reported' status.
+        return ['status' => $status, 'added' => $added, 'message' => $message];
+    }
+
+    // Contruct data object for DB.
+    $data = new stdClass();
+    $data->userid = $muserid->id;
+    $data->intakeid = $intakeid;
+    $data->usermodified = $USER->id;
+    $data->timecreated = time();
+    $data->timemodified = time();
+
+    // TODO - also eventually check if we need to enrol user into anything once we have all the necessary functions.
+    // If added successfully, return success message.
+    if ($DB->insert_record('enrol_selma_user_intake', $data, false)) {
+        // Set status to 'OK'.
+        $status = get_string('status_ok', 'enrol_selma');
+        // User added to intake.
+        $added = true;
+        // Use to give more detailed response message to user.
+        $message = get_string('status_ok_message', 'enrol_selma');
+
+        // Return 'success' status.
+        return ['status' => $status, 'added' => $added, 'message' => $message];
+    }
+
+    // Returned details - failed (probably)...
+    return ['status' => $status, 'added' => $added, 'message' => $message];
+}
+
+/**
  * Creates the course based on details provided.
  *
  * @param   array   $course Array of course details to create course.
@@ -372,7 +447,7 @@ function enrol_selma_validate_profile_mapping() {
 }
 
 /**
- * @return  array   Returns array of the duplicated values used for profile field mapping.
+ * @return  array   Returns array of which Moodle fields the SELMA fields are mapped to.
  */
 function enrol_selma_get_profile_mapping() {
     $searchstring = 'profilemap_';
