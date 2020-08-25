@@ -141,8 +141,39 @@ class enrol_selma_plugin extends enrol_plugin {
      * @return int id of new instance, null if can not be created
      */
     public function add_instance($course, array $fields = null) {
+        global $DB;
         // We can add to $fields here later, if needed.
 
+        // Check if we can really add an instance to the course.
+        $enrolinstance = $DB->record_exists('enrol', array('courseid' => $course->id, 'enrol' => $this->get_name()));
+
+        // Return null if an instance already exists for the course.
+        if ($enrolinstance) {
+            return null;
+        }
+
+        // Otherwise, continue adding the instance to the course.
+
         return parent::add_instance($course, $fields);
+    }
+
+    /**
+     * Is it possible to hide/show enrol instance via standard UI?
+     *
+     * @param stdClass $instance
+     * @return bool
+     */
+    public function can_hide_show_instance($instance) {
+        return false;
+    }
+
+    /**
+     * Is it possible to delete enrol instance via standard UI?
+     *
+     * @param stdClass  $instance
+     * @return bool
+     */
+    public function can_delete_instance($instance) {
+        return true;
     }
 }

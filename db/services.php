@@ -87,7 +87,8 @@ $services = [
             'enrol_selma_create_course',
             'enrol_selma_get_all_courses',
             'enrol_selma_create_users',
-            'enrol_selma_create_intake'
+            'enrol_selma_create_intake',
+            'enrol_selma_add_intake_to_course'
         ],
             'requiredcapability' =>
                     'enrol/selma:manage',   // Web service user needs this capability to access any function of this service.

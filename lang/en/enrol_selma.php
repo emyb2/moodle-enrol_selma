@@ -240,13 +240,20 @@ $string['status_almostok_message'] = 'Partially OK - Some part of the operation 
 $string['status_almostok_existing_message'] = 'Found existing records for: {$a}';
 $string['status_nonew'] = '208';
 $string['status_nonew_message'] = 'Already Reported - Nothing inherently wrong with request, but all this has been processed before.';
+$string['status_forbidden'] = '403';
+$string['status_forbidden_message'] = 'Forbidden - That\'s not allowed.';
 $string['status_notfound'] = '404';
 $string['status_notfound_message'] = 'Not Found - 0 Records found.';
+$string['status_notfound_detailed_message'] = ' Not found: \'{$a}\'.';
 $string['status_internalfail'] = '500';
 $string['status_internalfail_message'] = 'Internal Failure - Failed to complete operation.';
 $string['status_other'] = '303';
 $string['status_other_message'] = 'Other - Unexpected error/result received.';
 $string['nomessage'] = 'No response message.';
+
+// Custom additional detailed messages for status messages.
+$string['forbidden_instance_add'] = ' Can not add more than one enrol_selma instance to course \'{$a}\'.';
+$string['forbidden_group_add'] = ' Failed to create group for intake \'{$a->intake}\' in course \'{$a->course}\'.';
 
 // CLI.
 $string['clihelp'] = 'Enrol SELMA plugin CLI script to update webservice functions without full Moodle upgrade.
