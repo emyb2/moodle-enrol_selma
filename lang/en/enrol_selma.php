@@ -229,6 +229,14 @@ $string['add_intake_to_course_returns'] = 'Returned values when calling this fun
 $string['add_intake_to_course_returns::status'] = 'Returns success status code.';
 $string['add_intake_to_course_returns::added'] = 'Boolean of whether the intake was added or not';
 $string['add_intake_to_course_returns::message'] = 'Message returned along with the response.';
+$string['add_user_to_intake::description'] = '***WIP - Adds a user to an intake in Moodle.***';
+$string['add_user_to_intake_parameters'] = 'Parameters required to add a user to an intake.';
+$string['add_user_to_intake_parameters::userid'] = 'SELMA user ID.';
+$string['add_user_to_intake_parameters::intakeid'] = 'SELMA intake ID.';
+$string['add_user_to_intake_returns'] = 'The returned values after attempting to a user to an intake.';
+$string['add_user_to_intake_returns::status'] = 'Returns success status code.';
+$string['add_user_to_intake_returns::added'] = 'Bool of whether the user could be added or not.';
+$string['add_user_to_intake_returns::message'] = 'Message returned along with the response.';
 
 // Web services statuses.
 $string['status_ok'] = '200';

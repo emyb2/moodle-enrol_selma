@@ -34,6 +34,7 @@ class intake_testcase extends provider_testcase {
     public function setUp() {
         global $CFG;
         require_once($CFG->dirroot . '/enrol/selma/lib.php');
+        require_once($CFG->dirroot . '/enrol/selma/locallib.php');
         $this->plugingenerator = $this->getDataGenerator()->get_plugin_generator('enrol_selma');
         $this->plugingenerator->enable_plugin();
         $this->resetAfterTest();
@@ -73,5 +74,4 @@ class intake_testcase extends provider_testcase {
         $intake = new enrol_selma\local\intake();
         $intake->set_end_date(00.0000);
     }
-
 }

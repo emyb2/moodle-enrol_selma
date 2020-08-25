@@ -75,6 +75,16 @@ $functions = [
         ),
         'type'          => 'write',
         'ajax'          => false
+    ],
+    'enrol_selma_add_user_to_intake' => [
+        'classname'     => $namespace . 'add_user_to_intake',
+        'methodname'    => 'add_user_to_intake',
+        'description'   => new lang_string(
+            'add_user_to_intake::description',
+            'enrol_selma'
+        ),
+        'type'          => 'write',
+        'ajax'          => false
     ]
 ];
 
@@ -88,7 +98,8 @@ $services = [
             'enrol_selma_get_all_courses',
             'enrol_selma_create_users',
             'enrol_selma_create_intake',
-            'enrol_selma_add_intake_to_course'
+            'enrol_selma_add_intake_to_course',
+            'enrol_selma_add_user_to_intake'
         ],
             'requiredcapability' =>
                     'enrol/selma:manage',   // Web service user needs this capability to access any function of this service.

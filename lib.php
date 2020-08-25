@@ -176,4 +176,36 @@ class enrol_selma_plugin extends enrol_plugin {
     public function can_delete_instance($instance) {
         return true;
     }
+
+    /**
+     * Attempt to automatically enrol current user in course without any interaction,
+     * calling code has to make sure the plugin and instance are active.
+     *
+     * This should return either a timestamp in the future or false.
+     *
+     * @param stdClass $instance course enrol instance.
+     * @return bool|int false means not enrolled, integer means timeend.
+     */
+    public function try_autoenrol(stdClass $instance) {
+        // We can possibly try_autoenrol if user tries accessing a course to see if they are meant to be enrolled.
+
+        return parent::try_autoenrol($instance);
+    }
+
+    /**
+     * Forces synchronisation of user enrolments.
+     *
+     * This is important especially for external enrol plugins,
+     * this function is called for all enabled enrol plugins
+     * right after every user login.
+     *
+     * @param object $user user record
+     * @return void
+     */
+    public function sync_user_enrolments($user) {
+        // Or we can use this to check if user still needs to be enrolled into anything.
+    }
+
+    // TODO - need this file to allow/do self_unenrolments - check <wwwroot>/lib/enrollib.php:2330.
+    // new moodle_url("/enrol/$name/unenrolself.php", array('enrolid'=>$instance->id));
 }
