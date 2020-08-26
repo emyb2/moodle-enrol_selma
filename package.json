@@ -1,0 +1,22 @@
+{
+  "name": "enrol-selma-tasks",
+  "version": "0.0.8",
+  "description": "Grunt tasks for SELMA enrol plugin.",
+  "main": "Gruntfile.js",
+  "author": {
+    "name": "LearningWorks Ltd",
+    "url": "https://learningworks.co.nz/"
+  },
+  "devDependencies": {
+    "grunt": "1.0.1",
+    "grunt-exec": "~0.4.6",
+    "grunt-sass": "2.1.0",
+    "grunt-contrib-watch": "^1.1.0",
+    "grunt-stylelint": "0.6.0",
+    "stylelint": "8.0.0"
+  },
+  "engines": {
+    "node": ">=8.9"
+  },
+  "license": "GPL-3.0"
+}
