@@ -221,6 +221,14 @@ $string['create_intake_returns'] = 'Returned values when calling this function.'
 $string['create_intake_returns::status'] = 'Returns success status code.';
 $string['create_intake_returns::intakeid'] = 'Returns created intake\'s ID.';
 $string['create_intake_returns::message'] = 'Message to return along with the response.';
+$string['add_intake_to_course::description'] = '***WIP - Expected parameters to add a SELMA intake to a Moodle course.***';
+$string['add_intake_to_course_parameters'] = 'Expected parameters to add an intake to a course.';
+$string['add_intake_to_course_parameters::intakeid'] = 'SELMA intake ID to be added to course.';
+$string['add_intake_to_course_parameters::courseid'] = 'Moodle course ID the intake should be added to.';
+$string['add_intake_to_course_returns'] = 'Returned values when calling this function.';
+$string['add_intake_to_course_returns::status'] = 'Returns success status code.';
+$string['add_intake_to_course_returns::added'] = 'Boolean of whether the intake was added or not';
+$string['add_intake_to_course_returns::message'] = 'Message returned along with the response.';
 $string['add_user_to_intake::description'] = '***WIP - Adds a user to an intake in Moodle.***';
 $string['add_user_to_intake_parameters'] = 'Parameters required to add a user to an intake.';
 $string['add_user_to_intake_parameters::userid'] = 'SELMA user ID.';
@@ -240,13 +248,20 @@ $string['status_almostok_message'] = 'Partially OK - Some part of the operation 
 $string['status_almostok_existing_message'] = 'Found existing records for: {$a}';
 $string['status_nonew'] = '208';
 $string['status_nonew_message'] = 'Already Reported - Nothing inherently wrong with request, but all this has been processed before.';
+$string['status_forbidden'] = '403';
+$string['status_forbidden_message'] = 'Forbidden - That\'s not allowed.';
 $string['status_notfound'] = '404';
 $string['status_notfound_message'] = 'Not Found - 0 Records found.';
+$string['status_notfound_detailed_message'] = ' Not found: \'{$a}\'.';
 $string['status_internalfail'] = '500';
 $string['status_internalfail_message'] = 'Internal Failure - Failed to complete operation.';
 $string['status_other'] = '303';
 $string['status_other_message'] = 'Other - Unexpected error/result received.';
 $string['nomessage'] = 'No response message.';
+
+// Custom additional detailed messages for status messages.
+$string['forbidden_instance_add'] = ' Can not add more than one enrol_selma instance to course \'{$a}\'.';
+$string['forbidden_group_add'] = ' Failed to create group for intake \'{$a->intake}\' in course \'{$a->course}\'.';
 
 // CLI.
 $string['clihelp'] = 'Enrol SELMA plugin CLI script to update webservice functions without full Moodle upgrade.
