@@ -66,6 +66,16 @@ $functions = [
         'type'          => 'write',
         'ajax'          => false
     ],
+    'enrol_selma_add_intake_to_course' => [
+        'classname'     => $namespace . 'add_intake_to_course',
+        'methodname'    => 'add_intake_to_course',
+        'description'   => new lang_string(
+            'add_intake_to_course::description',
+            'enrol_selma'
+        ),
+        'type'          => 'write',
+        'ajax'          => false
+    ],
     'enrol_selma_add_user_to_intake' => [
         'classname'     => $namespace . 'add_user_to_intake',
         'methodname'    => 'add_user_to_intake',
@@ -88,6 +98,7 @@ $services = [
             'enrol_selma_get_all_courses',
             'enrol_selma_create_users',
             'enrol_selma_create_intake',
+            'enrol_selma_add_intake_to_course',
             'enrol_selma_add_user_to_intake'
         ],
             'requiredcapability' =>

@@ -27,6 +27,162 @@ defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__ . '/lib.php');
 require_once(dirname(__FILE__, 3) . '/admin/tool/uploaduser/locallib.php');
 require_once(dirname(__FILE__, 3) . '/user/lib.php');
+require_once(dirname(__FILE__, 3) . '/group/lib.php');
+
+/**
+ * Function to add this intake to that course.
+ *
+ * @param   int     $intakeid ID of intake to add to course.
+ * @param   int     $courseid ID of course the intake should be added to.
+ * @return  array   Array of success status & bool of true if success, along with message.
+ */
+function enrol_selma_add_intake_to_course(int $intakeid, int $courseid) {
+    global $DB, $USER;
+
+    // Status tracker.
+    $notok = false;
+
+    // Set status to 'we don't know what went wrong'. We will set this to potential known causes further down.
+    $status = get_string('status_other', 'enrol_selma');
+    // Var 'added' of false means something didn't work. Changed if successfully added user to intake.
+    $added = false;
+    // Give more detailed response message to user.
+    $message = get_string('status_other_message', 'enrol_selma');
+
+    // TODO - Add intake to course.
+    // Check if course exists.
+    $courseexists = $DB->record_exists('course', array('id' => $courseid));
+
+    if ($courseexists) {
+        // Check if intake exists.
+        $intakeexists = $DB->record_exists('enrol_selma_intake', array('id' => $intakeid));
+
+        if ($intakeexists) {
+            // Add enrol_selma instance to course, if none.
+            // The course really should exist, as we check the DB for the ID above.
+            $course = get_course($courseid);
+
+            $enrolinstance = (new enrol_selma_plugin())->add_instance($course);
+
+            // TODO - Do I even need to return that we created a instance/group or not, or do we just do it and return success/fail?
+            // Could not add enrol_selma instance.
+            if (is_null($enrolinstance)) {
+                // Set status to 'forbidden'.
+                $status = get_string('status_almostok', 'enrol_selma');
+                // Give more detailed response message to user.
+                $message = get_string('status_almostok_message', 'enrol_selma') .
+                    get_string('forbidden_instance_add', 'enrol_selma', $courseid);
+                // Status demoted to 'almost ok'.
+                $notok = true;
+
+                // We can continue - no 'return', as the instance already exists.
+            }
+
+            // If we successfully added enrolinstance.
+            // Create group in course, if needed.
+            $groupfound = groups_get_group_by_idnumber($courseid, $intakeid);
+            $groupid = 0;
+
+            if ($groupfound === false) {
+                // Group not found, add one.
+
+                // The intake really should exist, as we check the DB for the ID above.
+                $intake = $DB->get_record('enrol_selma_intake', array('id' => $intakeid));
+
+                $group = new stdClass();
+                $group->name = $intake->name;
+                $group->courseid = $courseid;
+                $group->idnumber = $intakeid;
+
+                // Create group.
+                $newgroup = groups_create_group($group);
+
+                // Set status if we could not create group for some reason.
+                if (!isset($newgroup) || $newgroup === false) {
+                    // Set status to 'forbidden'.
+                    $status = get_string('status_almostok', 'enrol_selma');
+                    // Give more detailed response message to user.
+                    $message = get_string('status_almostok_message', 'enrol_selma') .
+                        get_string('forbidden_group_add', 'enrol_selma', array('intake' => $intakeid, 'course' => $courseid));
+                    // Status demoted to 'almost ok'.
+                    $notok = true;
+
+                    // We can continue - no 'return', as the process can technically continue without a group.
+                } else {
+                    // Group created.
+                    $groupid = $newgroup;
+                }
+            } else {
+                // Else, group exists already.
+                $groupid = $groupfound->id;
+            }
+
+            // Build relationship - group, course, enrol instance, intake.
+            // Create object to record relation between courses, intakes & groups.
+            $relate = new stdClass();
+            $relate->courseid = $courseid;
+            $relate->intakeid = $intakeid;
+            $relate->groupid = $groupid;
+            $relate->usermodified = $USER->id;
+
+            $exists = $DB->record_exists('enrol_selma_course_intake', array('courseid' => $relate->courseid, 'intakeid' => $relate->intakeid));
+
+            if ($exists) {
+                // Set status to 'nothing new here'.
+                $status = get_string('status_nonew', 'enrol_selma');
+                // Give more detailed response message to user.
+                $message = get_string('status_nonew_message', 'enrol_selma');
+
+                $notok = true;
+            } else {
+                // Store relation to DB.
+                $added = $DB->insert_record('enrol_selma_course_intake', $relate, false);
+            }
+
+            // If everything's gone perfectly so far, set the status as such.
+            if ($added && !$notok) {
+                // Set status to 'OK'.
+                $status = get_string('status_ok', 'enrol_selma');
+                // Give more detailed response message to user.
+                $message = get_string('status_ok_message', 'enrol_selma');
+            }
+
+            // If the intake was not added to the course, we have ultimately failed...
+            if (!$added && !$notok) {
+                // Set status to 'fail'.
+                $status = get_string('status_internalfail', 'enrol_selma');
+                // Give more detailed response message to user.
+                $message = get_string('status_internalfail_message', 'enrol_selma');
+            }
+
+            // Enrol users to course - use core functions, if possible. TODO - Queue?
+            // Use scheduled task?
+
+            // Returned details - success hopefully!
+            return ['status' => $status, 'added' => $added, 'message' => $message];
+        }
+
+        // Set status to 'not found'.
+        $status = get_string('status_notfound', 'enrol_selma');
+        // Give more detailed response message to user.
+        $message = get_string('status_notfound_message', 'enrol_selma') .
+            get_string('status_notfound_detailed_message', 'enrol_selma',
+                get_string('add_intake_to_course_parameters::intakeid', 'enrol_selma'));
+
+        // Returned details - failed...
+        return ['status' => $status, 'added' => $added, 'message' => $message];
+    }
+
+    // Set status to 'not found'.
+    $status = get_string('status_notfound', 'enrol_selma');
+    // Give more detailed response message to user.
+    $message = get_string('status_notfound_message', 'enrol_selma') .
+        get_string('status_notfound_detailed_message', 'enrol_selma', get_string('course'));
+
+
+    // Returned details - failed...
+    return ['status' => $status, 'added' => $added, 'message' => $message];
+}
 
 /**
  * The function to add the specified user to an intake.
