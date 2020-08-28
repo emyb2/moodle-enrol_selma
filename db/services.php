@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * SELMA enrolment plugin external functions and service definitions.
  *
@@ -22,78 +24,79 @@
  * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-$namespace = 'enrol_selma\local\external\\';
-
 $functions = [
-    'enrol_selma_create_course' => [                        // Name of the web service function that the client will call.
-        'classname'     => $namespace . 'create_course',    // Namespaced class in classes/external/external.php.
-        'methodname'    => 'create_course',                 // Implement this function into the above class.
+    'enrol_selma_create_course' => [
+        'classname'     => 'enrol_selma\local\external\create_course',
+        'methodname'    => 'create_course',
         'description'   => new lang_string(
                 'create_course::description',
                 'enrol_selma'
-        ),                                                  // Human-readable description displayed in generated API documentation.
-        'type'          => 'write',                         // Is 'write' if function does any database change, otherwise 'read'.
-        'ajax'          => false                            // If web service function callable via AJAX = true, otherwise false.
+        ),
+        'type'          => 'write',
+        'ajax'          => false,
+        'capabilities'  => ['moodle/course:create']
     ],
     'enrol_selma_get_all_courses' => [
-        'classname'     => $namespace . 'get_all_courses',
+        'classname'     => 'enrol_selma\local\external\get_all_courses',
         'methodname'    => 'get_all_courses',
         'description'   => new lang_string(
                 'get_all_courses::description',
                 'enrol_selma'
         ),
         'type'          => 'read',
-        'ajax'          => false
+        'ajax'          => false,
+        'capabilities'  => []
     ],
     'enrol_selma_create_users' => [
-        'classname'     => $namespace . 'create_users',
+        'classname'     => 'enrol_selma\local\external\create_users',
         'methodname'    => 'create_users',
         'description'   => new lang_string(
             'create_users::description',
             'enrol_selma'
         ),
         'type'          => 'write',
-        'ajax'          => false
+        'ajax'          => false,
+        'capabilities'  => ['moodle/user:create']
     ],
     'enrol_selma_create_intake' => [
-        'classname'     => $namespace . 'create_intake',
+        'classname'     => 'enrol_selma\local\external\create_intake',
         'methodname'    => 'create_intake',
         'description'   => new lang_string(
             'create_intake::description',
             'enrol_selma'
         ),
         'type'          => 'write',
-        'ajax'          => false
+        'ajax'          => false,
+        'capabilities'  => []
     ],
     'enrol_selma_add_intake_to_course' => [
-        'classname'     => $namespace . 'add_intake_to_course',
+        'classname'     => 'enrol_selma\local\external\add_intake_to_course',
         'methodname'    => 'add_intake_to_course',
         'description'   => new lang_string(
             'add_intake_to_course::description',
             'enrol_selma'
         ),
         'type'          => 'write',
-        'ajax'          => false
+        'ajax'          => false,
+        'capabilities'  => []
     ],
     'enrol_selma_add_user_to_intake' => [
-        'classname'     => $namespace . 'add_user_to_intake',
+        'classname'     => 'enrol_selma\local\external\add_user_to_intake',
         'methodname'    => 'add_user_to_intake',
         'description'   => new lang_string(
             'add_user_to_intake::description',
             'enrol_selma'
         ),
         'type'          => 'write',
-        'ajax'          => false
+        'ajax'          => false,
+        'capabilities'  => []
     ]
 ];
-
-// OPTIONAL
-// During the plugin installation/upgrade, Moodle installs these services as pre-built services.
-// A pre-built service is not editable by administrator.
 $services = [
-    'enrol_selma_webservice' => [                // The name of the web service.
-        'functions' => [                         // Web service functions of this service.
+    'enrol_selma' => [
+        'shortname' => 'enrol_selma',
+        'enabled' => 1,
+        'functions' => [
             'enrol_selma_create_course',
             'enrol_selma_get_all_courses',
             'enrol_selma_create_users',
@@ -101,10 +104,6 @@ $services = [
             'enrol_selma_add_intake_to_course',
             'enrol_selma_add_user_to_intake'
         ],
-            'requiredcapability' =>
-                    'enrol/selma:manage',   // Web service user needs this capability to access any function of this service.
-        'restrictedusers' => 0,
-        'enabled' => 1,                     // If enabled, the service can be reachable on a default installation.
-        'shortname' => 'selmawebservice'    // Optional – but needed if restrictedusers is set so as to allow logins.
+        'restrictedusers' => 0
     ]
 ];

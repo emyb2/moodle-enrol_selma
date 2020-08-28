@@ -286,3 +286,18 @@ $string['maximumcharacterlengthexceeded'] = 'Maximum character length exceeded';
 $string['unexpectedvalue'] = 'Unexpected value for `{$a}`';
 $string['invalidargument'] = 'Invalid argument for `{$a}`';
 $string['invalidargumentexpects'] = 'Invalid argument for `{$a->name}` expects type `{$a->type}`';
+
+$string['servicerolename'] = 'Web service';
+$string['serviceroledescription'] = 'Used by external systems to communicate with Moodle.';
+$string['serviceaccountfirstname'] = 'SELMA';
+$string['serviceaccountlastname'] = 'Service Account';
+$string['serviceconnectiondetails::subject'] = 'SELMA service connection setup details';
+$string['serviceconnectiondetails::message'] = '
+SELMA service connection setup details
+
+Service account username: {$a->username}
+Service account password: {$a->password}
+Service account token:    {$a->token}
+
+Please login {$a->site} and accept any privacy policies and reset password.
+';
