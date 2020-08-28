@@ -23,7 +23,7 @@ use core\event\group_deleted;
 use stdClass;
 
 /**
- * Class to deal with Moodle events that effect the plugin.
+ * Class to deal with Moodle events that affect the plugin.
  *
  * @package     enrol_selma
  * @copyright   2020 LearningWorks <selma@learningworks.co.nz>

@@ -652,3 +652,89 @@ function enrol_selma_remove_arrkey_substr(array $checkarray, string $substring) 
     // Return array with updated keys, if any.
     return $checkarray;
 }
+
+/**
+ *  Array of user profile fields we don't want to write to - for data integrity and security.
+ *
+ * @return  array   $keys Returns array of blacklisted user fields.
+ */
+function enrol_selma_get_blacklisted_user_fields() {
+    $keys = [
+        'id',
+        'auth',
+        'confirmed',
+        'policyagreed',
+        'deleted',
+        'suspended',
+        'mnethostid',
+        'password',
+        'emailstop',
+        'lang',
+        'calendartype',
+        'theme',
+        'timezone',
+        'firstaccess',
+        'lastaccess',
+        'lastlogin',
+        'currentlogin',
+        'lastip',
+        'secret',
+        'descriptionformat',
+        'mailformat',
+        'maildigest',
+        'maildisplay',
+        'autosubscribe',
+        'trackforums',
+        'timecreated',
+        'timemodified',
+        'trustbitmask'
+    ];
+
+    return $keys;
+}
+
+/**
+ *  Array of all custom user profile fields on the site.
+ *
+ * @return  array   $keys Returns array of custom profile fields.
+ */
+function enrol_selma_get_custom_user_fields() {
+    global $DB;
+    $customoptions = [];
+
+    // Get custom fields.
+    $customfields = $DB->get_records('user_info_field', [], null, 'shortname');
+
+    // If we found customprofile fields, we need to include those.
+    if (!empty($customfields) && isset($customfields)) {
+        // Prepend with 'profile_field_' to make identifiable as custom user field.
+        $customoptions = preg_filter('/^/', 'profile_field_', array_keys($customfields));
+    }
+
+    return $customoptions;
+}
+
+/**
+ *  Array of all allowed user profile fields - including custom fields and excluding blacklisted fields.
+ *
+ * @return  array   $keys Returns array of all allowed user fields.
+ */
+function enrol_selma_get_allowed_user_fields() {
+    // Get core fields.
+    $alloptions = get_user_fieldnames();
+
+    // List of user profile fields we don't want to write to - for data integrity and security.
+    $blacklistkeys = enrol_selma_get_blacklisted_user_fields();
+
+    // Get custom fields.
+    $customoptions = enrol_selma_get_custom_user_fields();
+
+    $alloptions = array_merge($alloptions, $customoptions);
+
+    // TODO - Need to re-create index with array_combine() - it sets each key to its value, to get shortname easier?
+    // Remove any blacklisted profile fields from the list of options.
+    $allowed = array_values(array_diff($alloptions, $blacklistkeys));
+    $allowed = array_combine($allowed, $allowed);
+
+    return $allowed;
+}

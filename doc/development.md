@@ -2,6 +2,9 @@
 
 - [Logging](#logging)
 - [Guzzle](#guzzle)
+- [PHPUnit](#phpunit)
+- [Grunt](#grunt)
+- [TravisCI](#travisci)
 
 ## Logging
 
@@ -22,7 +25,7 @@ ___
 
 The plugin uses Guzzle to send HTTP requests and receive HTTP responses.
 
-Guzzle's code repository is availablat at https://github.com/guzzle/guzzle
+Guzzle's code repository is available at https://github.com/guzzle/guzzle
 
 Guzzle is available at Packagist [(guzzlehttp/guzzle](https://packagist.org/packages/guzzlehttp/guzzle))
 and installable via [Composer](http://getcomposer.org/).
@@ -41,3 +44,9 @@ echo $response->getHeader('Content-Length')[0];
 ```
 
 [Read more...](https://readthedocs.org/projects/guzzle/).
+___
+## PHPUnit
+___
+## Grunt
+___
+## TravisCI
