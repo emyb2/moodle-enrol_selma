@@ -44,6 +44,9 @@ class user extends stdClass {
         // Set id so we know if we're creating a new user (0) or editing an existing user (>0)
         $this->id = $id;
 
+        // TODO - Better checking if user exists - check email ('allowaccountssameemail'), Moodle ID & SELMA ID.
+
+        // If Moodle ID is given, we're to load an existing user.
         if ($id !== 0) {
             $this->get_user($id);
         } else {
@@ -138,10 +141,13 @@ class user extends stdClass {
                 $this->username = uu_increment_username($this->username);
             }
 
+            // TODO - check for duplicate emails - respect setting 'allowaccountssameemail'.
+
             $saved = user_create_user($this);
             $this->id = $saved;
         } else {
             // Anything else means we're updating (or trying to, at least).
+            // TODO - check for duplicate emails - respect setting 'allowaccountssameemail'. Can also update if existing is found.
             // Function returns nothing, so update and set $saved for later use.
             user_update_user($this);
             $saved = $this->id;
@@ -181,7 +187,7 @@ class user extends stdClass {
             $element = $profilemapping[$field];
 
             // Set field to value.
-            $this->$element = $value;
+            $this->set_property($element, $value);
         }
     }
 
@@ -207,5 +213,27 @@ class user extends stdClass {
         }
 
         return $userdata;
+    }
+
+    /**
+     * Creates record in DB of relationship between user & intake.
+     *
+     * @param   int     $intakeid Intake ID user should be added to.
+     * @return  bool    $inserted Bool indicating success/failure of inserting record to DB.
+     */
+    public function add_user_to_intake($intakeid) {
+        global $DB, $USER;
+
+        // Contruct data object for DB.
+        $data = new stdClass();
+        $data->userid = $this->id;
+        $data->intakeid = $intakeid;
+        $data->usermodified = $USER->id;
+        $data->timecreated = time();
+        $data->timemodified = time();
+
+        $inserted = $DB->insert_record('enrol_selma_user_intake', $data, false);
+
+        return $inserted;
     }
 }

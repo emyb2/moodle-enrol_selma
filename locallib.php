@@ -22,6 +22,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use enrol_selma\local\user;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/lib.php');
@@ -192,7 +194,7 @@ function enrol_selma_add_intake_to_course(int $intakeid, int $courseid) {
  * @return  array   Array of success status & bool if successful/not, message.
  */
 function enrol_selma_add_user_to_intake(int $userid, int $intakeid) {
-    global $DB, $USER;
+    global $DB;
 
     // Set status to 'we don't know what went wrong'. We will set this to potential known causes further down.
     $status = get_string('status_other', 'enrol_selma');
@@ -233,17 +235,12 @@ function enrol_selma_add_user_to_intake(int $userid, int $intakeid) {
         return ['status' => $status, 'added' => $added, 'message' => $message];
     }
 
-    // Contruct data object for DB.
-    $data = new stdClass();
-    $data->userid = $muserid->id;
-    $data->intakeid = $intakeid;
-    $data->usermodified = $USER->id;
-    $data->timecreated = time();
-    $data->timemodified = time();
+    // Contruct enrol_selma user object to insert into DB.
+    $user = new user($muserid->id);
 
     // TODO - also eventually check if we need to enrol user into anything once we have all the necessary functions.
     // If added successfully, return success message.
-    if ($DB->insert_record('enrol_selma_user_intake', $data, false)) {
+    if ($user->add_user_to_intake($intakeid)) {
         // Set status to 'OK'.
         $status = get_string('status_ok', 'enrol_selma');
         // User added to intake.
@@ -387,72 +384,19 @@ function enrol_selma_create_users(array $users) {
     // Set to give more detailed response message to user.
     $message = get_string('status_other_message', 'enrol_selma');
 
-    // Use profile field mapping to capture user data.
-    $profilemapping = enrol_selma_get_profile_mapping();
-
     // For each user received, process...
     foreach ($users as $user) {
-        // Keep track of customfields & their values.
-        $usercustomfields = [];
-
         // If no username set, set to firstname.lastname format.
         if (!isset($user['username']) || empty($user['username'])) {
             $user['username'] = strtolower($user['forename'] . '.' . $user['lastname']);
         }
 
-        // TODO - If exist, update? Maybe check email too - respect `allowaccountssameemail` setting?
-        // First, check if user exists by SELMA id.
-        $tempuser = $DB->get_record('user', array($profilemapping['id'] => $user['id']));
-
-        if ($tempuser !== false) {
-            // Add to list of existing users found.
-            $existinguser[] = $user['id'];
-            continue;
-        }
-
-        // TODO - Different error, or just return the ID/email1? Any better way than 2 DB calls - $DB->get_records_select?
-        // Then, check if user exists with email - respect `allowaccountssameemail`.
-        $tempuser = $DB->get_record('user', array($profilemapping['email1'] => $user['email1']));
-        if (get_config('moodle', 'allowaccountssameemail') === '0' && $tempuser->email === $user['email1']) {
-            // Add to list of existing users found.
-            $existinguser[] = $user['email1'];
-            continue;
-        }
-
-        // Otherwise, create user.
-        // TODO - Which is better `create_user_record();` or `user_create_user();` - the latter is more thorough.
-        $newuser = new stdClass();
-
-        // Assign each user profile fields to the Moodle equivalent.
-        foreach ($user as $field => $value) {
-            // Translate to Moodle field.
-            $element = $profilemapping[$field];
-
-            // If customfield, track it for later, otherwise, add to user object.
-            if (preg_match('/^profile_field_/', $element)) {
-                $usercustomfields[preg_replace('/^profile_field_/', '', $element)] = $value;
-            } else {
-                // Set field to value.
-                $newuser->$element = $value;
-            }
-        }
-
-        // We only support local accounts.
-        $newuser->mnethostid = $CFG->mnet_localhost_id;
-
-        // TODO - increment username?
-        // Check if username exists and increment, if necessary.
-        if ($DB->get_record('user', array('username' => $newuser->username)) !== false) {
-            $newuser->username = uu_increment_username($newuser->username);
-        }
-
-        $createduserid = user_create_user($newuser);
-
-        // Handle custom profile fields.
-        profile_save_custom_fields($createduserid, $usercustomfields);
+        $createduser = new user();
+        $createduser->update_user_from_selma_data($user);
+        $createduser->save();
 
         // Add to list of created userids to be returned.
-        $userids[] = $createduserid;
+        $userids[] = $createduser->id;
     }
 
     // Check if existing users were found & update status/message.
