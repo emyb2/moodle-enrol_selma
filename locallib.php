@@ -633,7 +633,7 @@ function enrol_selma_get_profile_mapping() {
  *
  * @param   array   $checkarray The array to search through.
  * @param   string  $substring  The substring to search for.
- * @return  array   Returns array of the duplicated values used for profile field mapping.
+ * @return  array   Returns array with the substring removed from its keys.
  */
 function enrol_selma_remove_arrkey_substr(array $checkarray, string $substring) {
     // Note - can't use array_walk as we'll be updating the array structure (not only it's values).
@@ -647,6 +647,31 @@ function enrol_selma_remove_arrkey_substr(array $checkarray, string $substring) 
             $checkarray[$newkey] = $value;
             unset($checkarray[$key]);
         }
+    }
+
+    // Return array with updated keys, if any.
+    return $checkarray;
+}
+
+/**
+ * Loops through an array's keys and prepends any occurrence of the given substring.
+ *
+ * @param   array   $checkarray The array to search through.
+ * @param   string  $substring  The substring to search for.
+ * @return  array   Returns array with the substring prepended to its keys.
+ */
+function enrol_selma_prepend_arrkey_substr(array $checkarray, string $substring) {
+    // Note - can't use array_walk as we'll be updating the array structure (not only it's values).
+    // See https://www.php.net/manual/en/function.array-walk.php#refsect1-function.array-walk-parameters.
+    // Loop through the array to manually update the keys.
+    foreach ($checkarray as $key => $value) {
+        // Prepend substring to each key.
+        $newkey = $substring . $key;
+
+        // Set new key.
+        $checkarray[$newkey] = $value;
+        // Unset old key.
+        unset($checkarray[$key]);
     }
 
     // Return array with updated keys, if any.
@@ -698,7 +723,7 @@ function enrol_selma_get_blacklisted_user_fields() {
  *
  * @return  array   $keys Returns array of custom profile fields.
  */
-function enrol_selma_get_custom_user_fields() {
+function enrol_selma_get_custom_profile_fields() {
     global $DB;
     $customoptions = [];
 
@@ -727,7 +752,7 @@ function enrol_selma_get_allowed_user_fields() {
     $blacklistkeys = enrol_selma_get_blacklisted_user_fields();
 
     // Get custom fields.
-    $customoptions = enrol_selma_get_custom_user_fields();
+    $customoptions = enrol_selma_get_custom_profile_fields();
 
     $alloptions = array_merge($alloptions, $customoptions);
 

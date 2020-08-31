@@ -25,6 +25,8 @@
 use enrol_selma\local\user;
 
 require_once(dirname(__FILE__, 3) . '/config.php');
+require_once(dirname(__FILE__, 3) . '/user/profile/lib.php');
+
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,7 +36,9 @@ require_once(dirname(__FILE__, 3) . '/admin/tool/uploaduser/locallib.php');
 require_once(dirname(__FILE__, 3) . '/user/lib.php');
 require_once(dirname(__FILE__, 3) . '/group/lib.php');
 
-$selmauser = new user();
+global $DB;
+
+$selmauser = new user(34);
 
 echo "Hello World!<br><hr><br>";
 echo "<br>SELMA User<hr>";
@@ -45,23 +49,29 @@ print_object(enrol_selma_get_profile_mapping());
 
 echo "<br>Update user<hr>";
 
-$selmauserdata['dob'] =             '18/12/2020';
-$selmauserdata['email1'] =          'user@email.invalid';
-$selmauserdata['forename'] =        'User';
-$selmauserdata['gender'] =          'Male';
-$selmauserdata['id'] =              '123456789101';
-$selmauserdata['lastname'] =        'Lastname';
-$selmauserdata['mobilephone'] =     '021021021';
-$selmauserdata['nsn'] =             '123123123';
-$selmauserdata['preferredname'] =   'zpottie';
-$selmauserdata['secondaryphone'] =  '120120120';
-$selmauserdata['status'] =          'active';
-$selmauserdata['username'] =        'testingfile';
+//$selmauserdata['id'] =              '50';
+//$selmauserdata['dob'] =             '19/12/2020';
+//$selmauserdata['email1'] =          'user3@email.invalid';
+//$selmauserdata['forename'] =        'Users';
+//$selmauserdata['gender'] =          'Males';
+//$selmauserdata['id'] =              '12345678910';
+//$selmauserdata['lastname'] =        'Lastnames';
+//$selmauserdata['mobilephone'] =     '0210210211';
+//$selmauserdata['nsn'] =             '1231231231';
+//$selmauserdata['preferredname'] =   'zpottie2';
+//$selmauserdata['secondaryphone'] =  '1201201201';
+//$selmauserdata['status'] =          'active2';
+//$selmauserdata['username'] =        'testingfile1';
 
-$selmauser->update_user_from_selma_data($selmauserdata);
+//$selmauser->update_user_from_selma_data($selmauserdata);
+//print_object($selmauser);
+
+echo "<br>Get user<hr>";
+//$user = $selmauser->get_user(34);
 print_object($selmauser);
 
-echo "<br>Save user<hr>";
-$selmauser->save();
+//echo "<br>Save user<hr>";
+//$newuser = $selmauser->save();
+//print_object($DB->get_record('user', array('id' => $newuser->id)));
 
 die();

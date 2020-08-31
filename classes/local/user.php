@@ -33,16 +33,27 @@ require_once(dirname(__FILE__, 5) . '/user/profile/lib.php');
 class user extends stdClass {
 
     /** @var int $id User ID. */
-    public $id = 0;
+    public $id;
 
     /**
      * Class 'user' constructor. Sets up class with user profile fields as properties.
+     *
+     * @param   int $id User's Moodle id.
      */
-    function __construct() {
-        $properties = enrol_selma_get_allowed_user_fields();
+    function __construct(int $id = 0) {
+        // Set id so we know if we're creating a new user (0) or editing an existing user (>0)
+        $this->id = $id;
 
-        foreach ($properties as $property) {
-            $this->$property = '';
+        if ($id !== 0) {
+            $this->get_user($id);
+        } else {
+            // Get all the user fields we deal with.
+            $properties = enrol_selma_get_allowed_user_fields();
+
+            // Set up all properties dynamically (All strings currently).
+            foreach ($properties as $property) {
+                $this->$property = '';
+            }
         }
     }
 
@@ -50,11 +61,14 @@ class user extends stdClass {
      * Set a given property.
      *
      * @param   string  $property User's property - DB field.
-     * @param   int     $value Value property should be set to.
+     * @param   string  $value Value property should be set to.
      * @return  user    $this Return the user object.
      */
-    public function set_property(string $property, int $value) : self {
-        $this->$property = $value;
+    public function set_property(string $property, string $value) : self {
+        // Limit properties to only allowed fields.
+        if (!in_array($property, enrol_selma_get_blacklisted_user_fields())) {
+            $this->$property = $value;
+        }
         return $this;
     }
 
@@ -66,8 +80,40 @@ class user extends stdClass {
      */
     public function set_properties(array $properties) : self {
         foreach ($properties as $property => $value) {
-            $this->set_property($property, $value);
+            // We don't accept null values.
+            if ($value !== null) {
+                $this->set_property($property, $value);
+            }
         }
+        return $this;
+    }
+
+    /**
+     * Retrieves a user based on given (Moodle) ID.
+     *
+     * @param   int $id User's Moodle ID value.
+     */
+    public function get_user(int $id) : self {
+        global $DB;
+
+        // Set id, as it's on the blacklisted fields - we don't want the user to set the user's id.
+        $this->id = $id;
+
+        // Should only be one, so we use get_record. Also, only the allowed fields.
+        $user = (array) $DB->get_record('user', array('id' => $this->id));
+
+        // Set core fields/properties.
+        $this->set_properties($user);
+
+        // Get custom profile fields.
+        $customfields = $this->get_user_custom_field_data($this->id);
+
+        // Set custom profile fields.
+        if (isset($customfields)) {
+            $customfields = enrol_selma_prepend_arrkey_substr($customfields, 'profile_field_');
+            $this->set_properties($customfields);
+        }
+
         return $this;
     }
 
@@ -77,19 +123,42 @@ class user extends stdClass {
      * @return bool $saved.
      */
     public function save() :self {
-        global $DB;
+        global $DB, $CFG;
 
-        // Insert the user with core data.
-        $saved = $DB->insert_record('user', $this);
+        // TODO - Should we remove any entries with empty value? I think so.
+
+        // If id is 0, we're adding a new user.
+        if ($this->id === 0) {
+            // We only support local accounts.
+            $this->mnethostid = $CFG->mnet_localhost_id;
+
+            // TODO - increment username?
+            // Check if username exists and increment, if necessary.
+            if ($DB->get_record('user', array('username' => $this->username)) !== false) {
+                $this->username = uu_increment_username($this->username);
+            }
+
+            $saved = user_create_user($this);
+            $this->id = $saved;
+        } else {
+            // Anything else means we're updating (or trying to, at least).
+            // Function returns nothing, so update and set $saved for later use.
+            user_update_user($this);
+            $saved = $this->id;
+        }
 
         // Add custom profilefields for user.
-        $customfields = enrol_selma_get_custom_user_fields();
+        $customfields = enrol_selma_get_custom_profile_fields();
         $customproperties = [];
 
         foreach ($customfields as $customfield) {
-            $customproperties[] = $this->$customfield;
+            // We just need the shortname.
+            $shortname = str_replace('profile_field_', '', $customfield);
+
+            $customproperties[$shortname] = $this->$customfield;
         }
 
+        // Save the custom fields.
         profile_save_custom_fields($saved, $customproperties);
 
         // throw new dml_read_exception();
@@ -102,7 +171,7 @@ class user extends stdClass {
      *
      * @param   array   $selmauser SELMA user data to be transcribed to Moodle user data.
      */
-     public function  update_user_from_selma_data($selmauser) {
+     public function update_user_from_selma_data($selmauser) {
         // Use profile field mapping to capture user data.
         $profilemapping = enrol_selma_get_profile_mapping();
 
@@ -114,5 +183,29 @@ class user extends stdClass {
             // Set field to value.
             $this->$element = $value;
         }
+    }
+
+    /**
+     * Get all of a user's custom profile field data.
+     *
+     * @param   int     $id User's Moodle ID.
+     * @return  array   $customfields Associative array with customfield's shortname as key and user's data as value.
+     */
+    public function get_user_custom_field_data($id) {
+        global $DB;
+
+        // Keep track of given user's data.
+        $userdata = [];
+
+        // Get the fields and data for the user.
+        $customfields = profile_get_custom_fields();
+        $fielddata = $DB->get_records('user_info_data', array('userid' => $id), null, 'id, fieldid, data');
+
+        // Map the user's data to the corresponding customfield shortname.
+        foreach ($fielddata as $data) {
+            $userdata[$customfields[$data->fieldid]->shortname] = $data->data;
+        }
+
+        return $userdata;
     }
 }
