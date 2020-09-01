@@ -5,6 +5,7 @@
 - [PHPUnit](#phpunit)
 - [Grunt](#grunt)
 - [TravisCI](#travisci)
+- [GitLabCI](#gitlabci)
 
 ## Logging
 
@@ -50,3 +51,6 @@ ___
 ## Grunt
 ___
 ## TravisCI
+___
+## GitLabCI
+GitLab is also used and makes testing the plugin locally easier.

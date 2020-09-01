@@ -391,8 +391,7 @@ function enrol_selma_create_users(array $users) {
             $user['username'] = strtolower($user['forename'] . '.' . $user['lastname']);
         }
 
-        $createduser = new user();
-        $createduser->update_user_from_selma_data($user);
+        $createduser = enrol_selma_user_from_selma_data($user);
         $createduser->save();
 
         // Add to list of created userids to be returned.
@@ -706,4 +705,58 @@ function enrol_selma_get_allowed_user_fields() {
     $allowed = array_combine($allowed, $allowed);
 
     return $allowed;
+}
+
+/**
+ * Loads user based on given (Moodle) ID.
+ *
+ * @param   int $id User's Moodle ID value.
+ */
+function enrol_selma_user_from_id(int $id) {
+    global $DB;
+
+    $user = new user();
+
+    // Set id, as it's on the blacklisted fields - we don't want the user to set the user's id.
+    $user->id = $id;
+
+    // Should only be one, so we use get_record. Also, only the allowed fields.
+    $dbuser = (array) $DB->get_record('user', array('id' => $user->id));
+
+    // Set core fields/properties.
+    $user->set_properties($dbuser);
+
+    // Get custom profile fields.
+    $customfields = $user->get_user_custom_field_data($user->id);
+
+    // Set custom profile fields.
+    if (isset($customfields)) {
+        $customfields = enrol_selma_prepend_arrkey_substr($customfields, 'profile_field_');
+        $user->set_properties($customfields);
+    }
+
+    return $user;
+}
+
+/**
+ * Update the user's properties with the SELMA data.
+ *
+ * @param   array   $selmauser SELMA user data to be transcribed to Moodle user data.
+ */
+function enrol_selma_user_from_selma_data($selmauser) {
+    $user = new user();
+
+    // Use profile field mapping to capture user data.
+    $profilemapping = enrol_selma_get_profile_mapping();
+
+    // Assign each SELMA user profile field to the Moodle equivalent.
+    foreach ($selmauser as $field => $value) {
+        // Translate to Moodle field.
+        $element = $profilemapping[$field];
+
+        // Set field to value.
+        $user->set_property($element, $value);
+    }
+
+    return $user;
 }

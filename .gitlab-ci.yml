@@ -1,0 +1,69 @@
+#services:
+#  - mysql:latest
+
+variables:
+#  MOODLE_BRANCH: "MOODLE_35_STABLE"
+  DB: "mysqli"
+  MYSQL_ROOT_PASSWORD: "superrootpass"
+  TRAVIS_BUILD_DIR: "$CI_PROJECT_DIR"
+
+cache:
+  paths:
+    - $HOME/.composer/cache
+    - $HOME/.npm
+
+before_script:
+  - apt update && apt install git-core default-mysql-server npm -y
+  - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
+  - source ~/.bashrc
+  - nvm install 14.0.0
+  - nvm use 14.0.0
+#  - exit $EXIT_STATUS
+  - service mysql start
+  - which mysql
+  - service mysql status
+  - service mysql restart && service mysql status
+  - cd $CI_PROJECT_DIR/..
+  - curl -sS https://getcomposer.org/installer | php
+  - mv composer.phar /usr/local/bin/composer
+  - composer create-project -n --no-dev --prefer-dist blackboard-open-source/moodle-plugin-ci ci ^2
+  - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
+#  - chmod u+x ci/bin/moodle-plugin-ci
+#  - chmod u+x ci/bin/*
+#  - umask u+x
+  - moodle-plugin-ci install --db-user=root --db-pass=superrootpass --db-host=localhost -vvv
+
+.job_template: &job_definition
+  script:
+    - EXIT_STATUS=0
+    - moodle-plugin-ci phplint || EXIT_STATUS=$?
+    - moodle-plugin-ci phpcpd || EXIT_STATUS=$?
+    - moodle-plugin-ci phpmd || EXIT_STATUS=$?
+    - moodle-plugin-ci phpdoc || EXIT_STATUS=$?
+    - moodle-plugin-ci phpunit || EXIT_STATUS=$?
+    - moodle-plugin-ci codechecker || EXIT_STATUS=$?
+    - moodle-plugin-ci validate || EXIT_STATUS=$?
+    - moodle-plugin-ci grunt || EXIT_STATUS=$?
+    - moodle-plugin-ci csslint || EXIT_STATUS=$?
+#    - moodle-plugin-ci savepoints || EXIT_STATUS=$?
+    - exit $EXIT_STATUS
+
+# Test each active version of PHP.
+job1:
+  <<: *job_definition
+  image: moodlehq/moodle-php-apache:7.2
+  variables:
+    MOODLE_BRANCH: "MOODLE_35_STABLE"
+
+job2:
+  <<: *job_definition
+  image: moodlehq/moodle-php-apache:7.3
+  variables:
+    MOODLE_BRANCH: "MOODLE_35_STABLE"
+
+# Only test the earliest and latest supported version of Moodle.
+job3:
+  <<: *job_definition
+  image: moodlehq/moodle-php-apache:7.4
+  variables:
+    MOODLE_BRANCH: "MOODLE_39_STABLE"

@@ -21,6 +21,7 @@ defined('MOODLE_INTERNAL') || die();
 use stdClass;
 
 require_once(dirname(__FILE__, 5) . '/user/profile/lib.php');
+require_once(dirname(__FILE__, 3) . '/locallib.php');
 
 /**
  * Class to represent a User. Extends stdClass and has public properties but
@@ -48,7 +49,7 @@ class user extends stdClass {
 
         // If Moodle ID is given, we're to load an existing user.
         if ($id !== 0) {
-            $this->get_user($id);
+            enrol_selma_user_from_id($id);
         } else {
             // Get all the user fields we deal with.
             $properties = enrol_selma_get_allowed_user_fields();
@@ -88,35 +89,6 @@ class user extends stdClass {
                 $this->set_property($property, $value);
             }
         }
-        return $this;
-    }
-
-    /**
-     * Retrieves a user based on given (Moodle) ID.
-     *
-     * @param   int $id User's Moodle ID value.
-     */
-    public function get_user(int $id) : self {
-        global $DB;
-
-        // Set id, as it's on the blacklisted fields - we don't want the user to set the user's id.
-        $this->id = $id;
-
-        // Should only be one, so we use get_record. Also, only the allowed fields.
-        $user = (array) $DB->get_record('user', array('id' => $this->id));
-
-        // Set core fields/properties.
-        $this->set_properties($user);
-
-        // Get custom profile fields.
-        $customfields = $this->get_user_custom_field_data($this->id);
-
-        // Set custom profile fields.
-        if (isset($customfields)) {
-            $customfields = enrol_selma_prepend_arrkey_substr($customfields, 'profile_field_');
-            $this->set_properties($customfields);
-        }
-
         return $this;
     }
 
@@ -170,25 +142,6 @@ class user extends stdClass {
         // throw new dml_read_exception();
 
         return $this;
-    }
-
-    /**
-     * Update the user's properties with the SELMA data.
-     *
-     * @param   array   $selmauser SELMA user data to be transcribed to Moodle user data.
-     */
-     public function update_user_from_selma_data($selmauser) {
-        // Use profile field mapping to capture user data.
-        $profilemapping = enrol_selma_get_profile_mapping();
-
-        // Assign each SELMA user profile field to the Moodle equivalent.
-        foreach ($selmauser as $field => $value) {
-            // Translate to Moodle field.
-            $element = $profilemapping[$field];
-
-            // Set field to value.
-            $this->set_property($element, $value);
-        }
     }
 
     /**

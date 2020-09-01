@@ -63,12 +63,12 @@ echo "<br>Update user<hr>";
 //$selmauserdata['status'] =          'active2';
 //$selmauserdata['username'] =        'testingfile1';
 
-//$selmauser->update_user_from_selma_data($selmauserdata);
+//$selmauser = enrol_selma_user_from_selma_data($selmauserdata);
 //print_object($selmauser);
 
 echo "<br>Get user<hr>";
-//$user = $selmauser->get_user(34);
-print_object($selmauser);
+$user = enrol_selma_user_from_id(34);
+print_object($user);
 
 //echo "<br>Save user<hr>";
 //$newuser = $selmauser->save();
