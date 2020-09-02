@@ -31,11 +31,15 @@ before_script:
   - cd $CI_PROJECT_DIR/..
   - curl -sS https://getcomposer.org/installer | php
   - mv composer.phar /usr/local/bin/composer
+#   Cleaning up.
+  - echo "Trying to remove ./ci" && rm -rf ./ci
   - composer create-project -n --no-dev --prefer-dist blackboard-open-source/moodle-plugin-ci ci ^2
   - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
 #  - chmod u+x ci/bin/moodle-plugin-ci
 #  - chmod u+x ci/bin/*
 #  - umask u+x
+#   Cleaning up.
+  - echo "Trying to remove ./moodle" && rm -rf ./moodle
   - moodle-plugin-ci install --db-user=root --db-pass=superrootpass --db-host=localhost -vvv
 
 .job_template: &job_definition

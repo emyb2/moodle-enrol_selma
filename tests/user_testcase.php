@@ -43,6 +43,7 @@ class user_testcase extends provider_testcase {
 
     // Size of known DB fields.
     // Var types inserted to DB.
-    // Customfield - mapping & types -handling.
+    // Customfield - mapping & types - handling.
     // New vs existing user.
+    // Saving
 }
