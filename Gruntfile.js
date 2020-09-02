@@ -75,10 +75,10 @@ module.exports = function(grunt) {
         stylelint: {
             scss: {
                 options: {syntax: "scss"},
-                src: ["*/**/*.scss"]
+                src: ["scss/**/*.scss"]
             },
             css: {
-                src: ["*/**/*.css"],
+                src: ["styles.css"],
                 options: {
                     configOverrides: {
                         rules: {

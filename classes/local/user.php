@@ -34,41 +34,73 @@ require_once(dirname(__FILE__, 3) . '/locallib.php');
 class user extends stdClass {
 
     /** @var int $id User ID. */
-    public $id;
+    public $id = 0;
+
+    /** @var string $username User username. */
+    public $username = '';
+
+    /** @var string $firstname User first name. */
+    public $firstname = '';
+
+    /** @var string $lastname User last name. */
+    public $lastname = '';
+
+    /** @var string $email User email address. */
+    public $email = '';
+
+    /** @var int $idnumber User SELMA ID number. */
+    public $idnumber = 0;
+
+    /** @var string $phone1 User primary phone number. */
+    public $phone1 = '';
+
+    /** @var string $phone2 User secondary phone number. */
+    public $phone2 = '';
+
+    /** @var string $institution User institution. */
+    public $institution = '';
+
+    /** @var string $department User department. */
+    public $department = '';
+
+    /** @var string $address User address. */
+    public $address = '';
+
+    /** @var string $city User city. */
+    public $city = '';
+
+    /** @var string $country User country. */
+    public $country = '';
+
+    /** @var string $description User description. */
+    public $description = '';
+
+    /** @var string $middlename User middle name. */
+    public $middlename = '';
+
+    /** @var string $alternatename User alternate name. */
+    public $alternatename = '';
 
     /**
      * Class 'user' constructor. Sets up class with user profile fields as properties.
-     *
-     * @param   int $id User's Moodle id.
      */
-    function __construct(int $id = 0) {
-        // Set id so we know if we're creating a new user (0) or editing an existing user (>0)
-        $this->id = $id;
+    function __construct() {
 
-        // TODO - Better checking if user exists - check email ('allowaccountssameemail'), Moodle ID & SELMA ID.
-
-        // If Moodle ID is given, we're to load an existing user.
-        if ($id !== 0) {
-            enrol_selma_user_from_id($id);
-        } else {
-            // Get all the user fields we deal with.
-            $properties = enrol_selma_get_allowed_user_fields();
-
-            // Set up all properties dynamically (All strings currently).
-            foreach ($properties as $property) {
-                $this->$property = '';
-            }
-        }
+        // TODO - Better checking if user exists - check email ('allowaccountssameemail'), Moodle ID & SELMA ID?
+        // TODO - Load custom profile fields?
     }
 
     /**
      * Set a given property.
      *
      * @param   string  $property User's property - DB field.
-     * @param   string  $value Value property should be set to.
+     * @param   mixed   $value Value property should be set to.
      * @return  user    $this Return the user object.
      */
-    public function set_property(string $property, string $value) : self {
+    public function set_property(string $property, $value) : self {
+        // TODO - check propety type.
+        //utilities::get_debug_type();
+
         // Limit properties to only allowed fields.
         if (!in_array($property, enrol_selma_get_blacklisted_user_fields())) {
             $this->$property = $value;
@@ -142,51 +174,5 @@ class user extends stdClass {
         // throw new dml_read_exception();
 
         return $this;
-    }
-
-    /**
-     * Get all of a user's custom profile field data.
-     *
-     * @param   int     $id User's Moodle ID.
-     * @return  array   $customfields Associative array with customfield's shortname as key and user's data as value.
-     */
-    public function get_user_custom_field_data($id) {
-        global $DB;
-
-        // Keep track of given user's data.
-        $userdata = [];
-
-        // Get the fields and data for the user.
-        $customfields = profile_get_custom_fields();
-        $fielddata = $DB->get_records('user_info_data', array('userid' => $id), null, 'id, fieldid, data');
-
-        // Map the user's data to the corresponding customfield shortname.
-        foreach ($fielddata as $data) {
-            $userdata[$customfields[$data->fieldid]->shortname] = $data->data;
-        }
-
-        return $userdata;
-    }
-
-    /**
-     * Creates record in DB of relationship between user & intake.
-     *
-     * @param   int     $intakeid Intake ID user should be added to.
-     * @return  bool    $inserted Bool indicating success/failure of inserting record to DB.
-     */
-    public function add_user_to_intake($intakeid) {
-        global $DB, $USER;
-
-        // Contruct data object for DB.
-        $data = new stdClass();
-        $data->userid = $this->id;
-        $data->intakeid = $intakeid;
-        $data->usermodified = $USER->id;
-        $data->timecreated = time();
-        $data->timemodified = time();
-
-        $inserted = $DB->insert_record('enrol_selma_user_intake', $data, false);
-
-        return $inserted;
     }
 }

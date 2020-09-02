@@ -189,11 +189,11 @@ function enrol_selma_add_intake_to_course(int $intakeid, int $courseid) {
 /**
  * The function to add the specified user to an intake.
  *
- * @param   int     $userid SELMA ID of user to add to intake.
+ * @param   int     $selmauserid SELMA ID of user to add to intake.
  * @param   int     $intakeid SELMA intake ID the user should be added to.
  * @return  array   Array of success status & bool if successful/not, message.
  */
-function enrol_selma_add_user_to_intake(int $userid, int $intakeid) {
+function enrol_selma_add_user_to_intake(int $selmauserid, int $intakeid) {
     global $DB;
 
     // Set status to 'we don't know what went wrong'. We will set this to potential known causes further down.
@@ -208,7 +208,7 @@ function enrol_selma_add_user_to_intake(int $userid, int $intakeid) {
     $idmapping = enrol_selma_get_profile_mapping()['id'];
 
     // Get real Moodle user ID.
-    $muserid = $DB->get_record('user', array($idmapping => $userid), 'id');
+    $muserid = $DB->get_record('user', array($idmapping => $selmauserid), 'id');
 
     // If user doesn't exist yet (or they have not been 'linked' to SELMA yet).
     if (!$muserid) {
@@ -222,7 +222,7 @@ function enrol_selma_add_user_to_intake(int $userid, int $intakeid) {
     }
 
     // Check if they've already been linked?
-    $linked = $DB->record_exists('enrol_selma_user_intake', array('userid' => $muserid->id, 'intakeid' => $intakeid));
+    $linked = enrol_selma_user_is_in_intake($muserid->id, $intakeid);
 
     // If user's been linked before.
     if ($linked) {
@@ -235,12 +235,12 @@ function enrol_selma_add_user_to_intake(int $userid, int $intakeid) {
         return ['status' => $status, 'added' => $added, 'message' => $message];
     }
 
-    // Contruct enrol_selma user object to insert into DB.
-    $user = new user($muserid->id);
+    // Construct enrol_selma user object to insert into DB.
+    $user = enrol_selma_user_from_id($muserid->id);
 
     // TODO - also eventually check if we need to enrol user into anything once we have all the necessary functions.
     // If added successfully, return success message.
-    if ($user->add_user_to_intake($intakeid)) {
+    if (enrol_selma_relate_user_to_intake($user->id, $intakeid)) {
         // Set status to 'OK'.
         $status = get_string('status_ok', 'enrol_selma');
         // User added to intake.
@@ -637,6 +637,11 @@ function enrol_selma_get_blacklisted_user_fields() {
         'mnethostid',
         'password',
         'emailstop',
+        'icq',
+        'skype',
+        'yahoo',
+        'aim',
+        'msn',
         'lang',
         'calendartype',
         'theme',
@@ -647,6 +652,12 @@ function enrol_selma_get_blacklisted_user_fields() {
         'currentlogin',
         'lastip',
         'secret',
+        'picture',
+        'url',
+        'imagealt',
+        'lastnamephonetic',
+        'firstnamephonetic',
+        'moodlenetprofile',
         'descriptionformat',
         'mailformat',
         'maildigest',
@@ -727,7 +738,7 @@ function enrol_selma_user_from_id(int $id) {
     $user->set_properties($dbuser);
 
     // Get custom profile fields.
-    $customfields = $user->get_user_custom_field_data($user->id);
+    $customfields = enrol_selma_get_user_custom_field_data($user->id);
 
     // Set custom profile fields.
     if (isset($customfields)) {
@@ -759,4 +770,72 @@ function enrol_selma_user_from_selma_data($selmauser) {
     }
 
     return $user;
+}
+
+/**
+ * Creates record in DB of relationship between user & intake.
+ *
+ * @param   int     $userid User we're adding to an intake.
+ * @param   int     $intakeid Intake ID user should be added to.
+ * @return  bool    $inserted Bool indicating success/failure of inserting record to DB.
+ */
+function enrol_selma_relate_user_to_intake(int $userid, int $intakeid) {
+    global $DB, $USER;
+
+    // Todo - Should we be able to add users to an intake before the intake exists in Moodle (pre-create)?
+    // Check if intake exists.
+    if ($DB->record_exists('enrol_selma_intake', array('id' => $intakeid)) === false) {
+        return false;
+    }
+
+    // Contruct data object for DB.
+    $data = new stdClass();
+    $data->userid = $userid;
+    $data->intakeid = $intakeid;
+    $data->usermodified = $USER->id;
+    $data->timecreated = time();
+    $data->timemodified = time();
+
+    $inserted = $DB->insert_record('enrol_selma_user_intake', $data, false);
+
+    return $inserted;
+}
+
+/**
+ * Get all of a user's custom profile field data.
+ *
+ * @param   int     $id User's Moodle ID.
+ * @return  array   $customfields Associative array with customfield's shortname as key and user's data as value.
+ */
+function enrol_selma_get_user_custom_field_data($id) {
+    global $DB;
+
+    // Keep track of given user's data.
+    $userdata = [];
+
+    // Get the fields and data for the user.
+    $customfields = profile_get_custom_fields();
+    $fielddata = $DB->get_records('user_info_data', array('userid' => $id), null, 'id, fieldid, data');
+
+    // Map the user's data to the corresponding customfield shortname.
+    foreach ($fielddata as $data) {
+        $userdata[$customfields[$data->fieldid]->shortname] = $data->data;
+    }
+
+    return $userdata;
+}
+
+/**
+ * Checks if a user is associated to an intake.
+ *
+ * @param   int     $userid User we're check.
+ * @param   int     $intakeid Intake ID user should be checked against.
+ * @return  bool    $inserted Bool indicating if user is in intake.
+ */
+function enrol_selma_user_is_in_intake(int $userid, int $intakeid) {
+    global $DB;
+
+    $exists = $DB->record_exists('enrol_selma_user_intake', array('userid' => $userid, 'intakeid' => $intakeid));
+
+    return $exists;
 }

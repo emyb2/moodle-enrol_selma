@@ -74,4 +74,8 @@ print_object($user);
 //$newuser = $selmauser->save();
 //print_object($DB->get_record('user', array('id' => $newuser->id)));
 
+echo "<br>Add user to intake<hr>";
+$user = enrol_selma_add_user_to_intake(654321, 12312313);
+print_object($user);
+
 die();

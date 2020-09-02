@@ -54,3 +54,18 @@ ___
 ___
 ## GitLabCI
 GitLab is also used and makes testing the plugin locally easier.
+
+#### QUICK SETUP:
+* Install Runner - https://docs.gitlab.com/runner/install/
+  * During installation, use URL & token given in GitLab project > Settings > CI/CD > Runners. E.g.:<br>
+    [https://gitlab.com/myproject/-/settings/ci_cd](https://<gitlabdomain>/<project>/-/settings/ci_cd)
+  * Choose `docker` as executor (or whichever you prefer)
+  * You may need to set a default image (used if `.gitlab-ci.yml` doesn't specify one). Use any lampstack image from DockerHub. I used `marekhadas9/lampstack`
+* (Optional) Enable the runner to also pick up jobs without tags (to run jobs for feature branches, etc)<br>
+  Edit the runner from the same location as above. Tick "Run untagged jobs" checkbox, save
+
+#### Running Jobs Locally (Do above, then these)
+* Install Docker - for Mac run `brew cask install docker`<br>- credit: https://stackoverflow.com/a/44719239
+* Run Docker app (via GUI)
+* Run `gitlab-runner exec docker <job>`. Job name (e.g. `job1`) can be found in `.gitlab-ci.yml`<br>
+  (Can only run one job at a time) - https://docs.gitlab.com/runner/commands/#gitlab-runner-exec

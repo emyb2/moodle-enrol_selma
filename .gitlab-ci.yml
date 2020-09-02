@@ -1,8 +1,11 @@
-#services:
-#  - mysql:latest
+# QUICK SETUP:
+# Install Runner `brew install gitlab-runner` & `brew services start gitlab-runner` - https://docs.gitlab.com/runner/install/
+# Install Docker - `brew cask install docker`
+# Run Docker via GUI
+# Run `gitlab-runner exec docker <job>`
+# More info in ./doc/development.md
 
 variables:
-#  MOODLE_BRANCH: "MOODLE_35_STABLE"
   DB: "mysqli"
   MYSQL_ROOT_PASSWORD: "superrootpass"
   TRAVIS_BUILD_DIR: "$CI_PROJECT_DIR"
@@ -18,11 +21,13 @@ before_script:
   - source ~/.bashrc
   - nvm install 14.0.0
   - nvm use 14.0.0
-#  - exit $EXIT_STATUS
+#  - npm install -g grunt-cli --save-dev
+#  - npm install
   - service mysql start
-  - which mysql
-  - service mysql status
-  - service mysql restart && service mysql status
+#  - which mysql
+#  - service mysql status
+#  - service mysql restart
+#  - service mysql status
   - cd $CI_PROJECT_DIR/..
   - curl -sS https://getcomposer.org/installer | php
   - mv composer.phar /usr/local/bin/composer
@@ -37,15 +42,23 @@ before_script:
   script:
     - EXIT_STATUS=0
     - moodle-plugin-ci phplint || EXIT_STATUS=$?
+    - echo $EXIT_STATUS
     - moodle-plugin-ci phpcpd || EXIT_STATUS=$?
+    - echo $EXIT_STATUS
     - moodle-plugin-ci phpmd || EXIT_STATUS=$?
+    - echo $EXIT_STATUS
     - moodle-plugin-ci phpdoc || EXIT_STATUS=$?
+    - echo $EXIT_STATUS
     - moodle-plugin-ci phpunit || EXIT_STATUS=$?
+    - echo $EXIT_STATUS
     - moodle-plugin-ci codechecker || EXIT_STATUS=$?
+    - echo $EXIT_STATUS
     - moodle-plugin-ci validate || EXIT_STATUS=$?
-    - moodle-plugin-ci grunt || EXIT_STATUS=$?
-    - moodle-plugin-ci csslint || EXIT_STATUS=$?
-#    - moodle-plugin-ci savepoints || EXIT_STATUS=$?
+    - echo $EXIT_STATUS
+    # Thanks https://github.com/open-lms-open-source/moodle-plugin-ci/issues/72#issuecomment-358426352
+    - moodle-plugin-ci grunt -t css || EXIT_STATUS=$?
+    - echo $EXIT_STATUS
+    #    - moodle-plugin-ci savepoints || EXIT_STATUS=$?
     - exit $EXIT_STATUS
 
 # Test each active version of PHP.
