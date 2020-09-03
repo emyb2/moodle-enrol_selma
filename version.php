@@ -18,7 +18,7 @@
  * Plugin version and other meta-data are defined here.
  *
  * @package     enrol_selma
- * @copyright   2020 LearningWorks <selma@learningworks.ac.nz>
+ * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -26,6 +26,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component  = 'enrol_selma';
 $plugin->release    = '0.0.8 (MOOMA)';
-$plugin->version    = 2020082617;
+$plugin->version    = 2020090316;
 $plugin->requires   = 2019052000;
 $plugin->maturity   = MATURITY_ALPHA;
