@@ -26,13 +26,17 @@ before_script:
   - cd $CI_PROJECT_DIR/..
   - curl -sS https://getcomposer.org/installer | php
   - mv composer.phar /usr/local/bin/composer
-#   Cleaning up.
+  # Cleaning up.
   - echo "Trying to remove ./ci" && rm -rf ./ci
   - composer create-project --no-interaction --no-dev --prefer-dist --quiet blackboard-open-source/moodle-plugin-ci ci ^2
   - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
-#   Cleaning up.
+  # Cleaning up.
   - echo "Trying to remove ./moodle" && rm -rf ./moodle
-  - moodle-plugin-ci install -v
+  # Setting auth type to mysqlnative - essential for phpdoc to work, but probs good (for testing) anyway...
+  # Credit: https://stackoverflow.com/questions/39281594/error-1698-28000-access-denied-for-user-rootlocalhost
+  - mysql -e 'USE mysql; SELECT User, Host, plugin FROM mysql.user; UPDATE user SET plugin="mysql_native_password" WHERE User="root"; FLUSH PRIVILEGES; SELECT User, Host, plugin FROM mysql.user;'
+  - service mysql restart
+  - moodle-plugin-ci install --db-host=127.0.0.1 -v
 
 .job_template: &job_definition
   script:
@@ -40,7 +44,7 @@ before_script:
     - moodle-plugin-ci phplint || EXIT_STATUS=$? || echo $EXIT_STATUS
     - moodle-plugin-ci phpcpd || EXIT_STATUS=$? || echo $EXIT_STATUS
     - moodle-plugin-ci phpmd || EXIT_STATUS=$? || echo $EXIT_STATUS
-#    - moodle-plugin-ci phpdoc || EXIT_STATUS=$? || echo $EXIT_STATUS # TODO - phpdoc fails with DB connection attempt.
+    - moodle-plugin-ci phpdoc || EXIT_STATUS=$? || echo $EXIT_STATUS # TODO - phpdoc fails with DB connection attempt.
     - moodle-plugin-ci phpunit --coverage-text -vvv || EXIT_STATUS=$? || echo $EXIT_STATUS
     - moodle-plugin-ci codechecker || EXIT_STATUS=$? || echo $EXIT_STATUS
     - moodle-plugin-ci validate || EXIT_STATUS=$? || echo $EXIT_STATUS
