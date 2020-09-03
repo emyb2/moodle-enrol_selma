@@ -22,6 +22,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use enrol_selma\local\user;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/lib.php');
@@ -187,12 +189,12 @@ function enrol_selma_add_intake_to_course(int $intakeid, int $courseid) {
 /**
  * The function to add the specified user to an intake.
  *
- * @param   int     $userid SELMA ID of user to add to intake.
+ * @param   int     $selmauserid SELMA ID of user to add to intake.
  * @param   int     $intakeid SELMA intake ID the user should be added to.
  * @return  array   Array of success status & bool if successful/not, message.
  */
-function enrol_selma_add_user_to_intake(int $userid, int $intakeid) {
-    global $DB, $USER;
+function enrol_selma_add_user_to_intake(int $selmauserid, int $intakeid) {
+    global $DB;
 
     // Set status to 'we don't know what went wrong'. We will set this to potential known causes further down.
     $status = get_string('status_other', 'enrol_selma');
@@ -206,7 +208,7 @@ function enrol_selma_add_user_to_intake(int $userid, int $intakeid) {
     $idmapping = enrol_selma_get_profile_mapping()['id'];
 
     // Get real Moodle user ID.
-    $muserid = $DB->get_record('user', array($idmapping => $userid), 'id');
+    $muserid = $DB->get_record('user', array($idmapping => $selmauserid), 'id');
 
     // If user doesn't exist yet (or they have not been 'linked' to SELMA yet).
     if (!$muserid) {
@@ -220,7 +222,7 @@ function enrol_selma_add_user_to_intake(int $userid, int $intakeid) {
     }
 
     // Check if they've already been linked?
-    $linked = $DB->record_exists('enrol_selma_user_intake', array('userid' => $muserid->id, 'intakeid' => $intakeid));
+    $linked = enrol_selma_user_is_in_intake($muserid->id, $intakeid);
 
     // If user's been linked before.
     if ($linked) {
@@ -233,17 +235,12 @@ function enrol_selma_add_user_to_intake(int $userid, int $intakeid) {
         return ['status' => $status, 'added' => $added, 'message' => $message];
     }
 
-    // Contruct data object for DB.
-    $data = new stdClass();
-    $data->userid = $muserid->id;
-    $data->intakeid = $intakeid;
-    $data->usermodified = $USER->id;
-    $data->timecreated = time();
-    $data->timemodified = time();
+    // Construct enrol_selma user object to insert into DB.
+    $user = enrol_selma_user_from_id($muserid->id);
 
     // TODO - also eventually check if we need to enrol user into anything once we have all the necessary functions.
     // If added successfully, return success message.
-    if ($DB->insert_record('enrol_selma_user_intake', $data, false)) {
+    if (enrol_selma_relate_user_to_intake($user->id, $intakeid)) {
         // Set status to 'OK'.
         $status = get_string('status_ok', 'enrol_selma');
         // User added to intake.
@@ -387,72 +384,18 @@ function enrol_selma_create_users(array $users) {
     // Set to give more detailed response message to user.
     $message = get_string('status_other_message', 'enrol_selma');
 
-    // Use profile field mapping to capture user data.
-    $profilemapping = enrol_selma_get_profile_mapping();
-
     // For each user received, process...
     foreach ($users as $user) {
-        // Keep track of customfields & their values.
-        $usercustomfields = [];
-
         // If no username set, set to firstname.lastname format.
         if (!isset($user['username']) || empty($user['username'])) {
             $user['username'] = strtolower($user['forename'] . '.' . $user['lastname']);
         }
 
-        // TODO - If exist, update? Maybe check email too - respect `allowaccountssameemail` setting?
-        // First, check if user exists by SELMA id.
-        $tempuser = $DB->get_record('user', array($profilemapping['id'] => $user['id']));
-
-        if ($tempuser !== false) {
-            // Add to list of existing users found.
-            $existinguser[] = $user['id'];
-            continue;
-        }
-
-        // TODO - Different error, or just return the ID/email1? Any better way than 2 DB calls - $DB->get_records_select?
-        // Then, check if user exists with email - respect `allowaccountssameemail`.
-        $tempuser = $DB->get_record('user', array($profilemapping['email1'] => $user['email1']));
-        if (get_config('moodle', 'allowaccountssameemail') === '0' && $tempuser->email === $user['email1']) {
-            // Add to list of existing users found.
-            $existinguser[] = $user['email1'];
-            continue;
-        }
-
-        // Otherwise, create user.
-        // TODO - Which is better `create_user_record();` or `user_create_user();` - the latter is more thorough.
-        $newuser = new stdClass();
-
-        // Assign each user profile fields to the Moodle equivalent.
-        foreach ($user as $field => $value) {
-            // Translate to Moodle field.
-            $element = $profilemapping[$field];
-
-            // If customfield, track it for later, otherwise, add to user object.
-            if (preg_match('/^profile_field_/', $element)) {
-                $usercustomfields[preg_replace('/^profile_field_/', '', $element)] = $value;
-            } else {
-                // Set field to value.
-                $newuser->$element = $value;
-            }
-        }
-
-        // We only support local accounts.
-        $newuser->mnethostid = $CFG->mnet_localhost_id;
-
-        // TODO - increment username?
-        // Check if username exists and increment, if necessary.
-        if ($DB->get_record('user', array('username' => $newuser->username)) !== false) {
-            $newuser->username = uu_increment_username($newuser->username);
-        }
-
-        $createduserid = user_create_user($newuser);
-
-        // Handle custom profile fields.
-        profile_save_custom_fields($createduserid, $usercustomfields);
+        $createduser = enrol_selma_user_from_selma_data($user);
+        $createduser->save();
 
         // Add to list of created userids to be returned.
-        $userids[] = $createduserid;
+        $userids[] = $createduser->id;
     }
 
     // Check if existing users were found & update status/message.
@@ -633,7 +576,7 @@ function enrol_selma_get_profile_mapping() {
  *
  * @param   array   $checkarray The array to search through.
  * @param   string  $substring  The substring to search for.
- * @return  array   Returns array of the duplicated values used for profile field mapping.
+ * @return  array   Returns array with the substring removed from its keys.
  */
 function enrol_selma_remove_arrkey_substr(array $checkarray, string $substring) {
     // Note - can't use array_walk as we'll be updating the array structure (not only it's values).
@@ -651,4 +594,265 @@ function enrol_selma_remove_arrkey_substr(array $checkarray, string $substring) 
 
     // Return array with updated keys, if any.
     return $checkarray;
+}
+
+/**
+ * Loops through an array's keys and prepends any occurrence of the given substring.
+ *
+ * @param   array   $checkarray The array to search through.
+ * @param   string  $substring  The substring to search for.
+ * @return  array   Returns array with the substring prepended to its keys.
+ */
+function enrol_selma_prepend_arrkey_substr(array $checkarray, string $substring) {
+    // Note - can't use array_walk as we'll be updating the array structure (not only it's values).
+    // See https://www.php.net/manual/en/function.array-walk.php#refsect1-function.array-walk-parameters.
+    // Loop through the array to manually update the keys.
+    foreach ($checkarray as $key => $value) {
+        // Prepend substring to each key.
+        $newkey = $substring . $key;
+
+        // Set new key.
+        $checkarray[$newkey] = $value;
+        // Unset old key.
+        unset($checkarray[$key]);
+    }
+
+    // Return array with updated keys, if any.
+    return $checkarray;
+}
+
+/**
+ *  Array of user profile fields we don't want to write to - for data integrity and security.
+ *
+ * @return  array   $keys Returns array of blacklisted user fields.
+ */
+function enrol_selma_get_blacklisted_user_fields() {
+    $keys = [
+        'id',
+        'auth',
+        'confirmed',
+        'policyagreed',
+        'deleted',
+        'suspended',
+        'mnethostid',
+        'password',
+        'emailstop',
+        'icq',
+        'skype',
+        'yahoo',
+        'aim',
+        'msn',
+        'lang',
+        'calendartype',
+        'theme',
+        'timezone',
+        'firstaccess',
+        'lastaccess',
+        'lastlogin',
+        'currentlogin',
+        'lastip',
+        'secret',
+        'picture',
+        'url',
+        'imagealt',
+        'lastnamephonetic',
+        'firstnamephonetic',
+        'moodlenetprofile',
+        'descriptionformat',
+        'mailformat',
+        'maildigest',
+        'maildisplay',
+        'autosubscribe',
+        'trackforums',
+        'timecreated',
+        'timemodified',
+        'trustbitmask'
+    ];
+
+    return $keys;
+}
+
+/**
+ *  Array of all custom user profile fields on the site.
+ *
+ * @return  array   $customoptions Returns array of custom profile fields.
+ */
+function enrol_selma_get_custom_profile_fields() {
+    global $DB;
+    $customoptions = [];
+
+    // Get custom fields.
+    $customfields = $DB->get_records('user_info_field', [], null, 'shortname');
+
+    // If we found customprofile fields, we need to include those.
+    if (!empty($customfields) && isset($customfields)) {
+        // Prepend with 'profile_field_' to make identifiable as custom user field.
+        $customoptions = preg_filter('/^/', 'profile_field_', array_keys($customfields));
+    }
+
+    return $customoptions;
+}
+
+/**
+ *  Load all custom profile fields on the site into user object as properties.
+ *
+ * @param   user    $user User object to load fields into.
+ * @return  user    $user Returns array of custom profile fields.
+ */
+function enrol_selma_load_custom_profile_fields(user $user) {
+    $allcustomfields = enrol_selma_get_custom_profile_fields();
+
+    foreach ($allcustomfields as $field) {
+        // TODO - set to string by default for now - add checks for type.
+        $user->$field = '';
+    }
+
+    return $user;
+}
+
+/**
+ *  Array of all allowed user profile fields - including custom fields and excluding blacklisted fields.
+ *
+ * @return  array   $keys Returns array of all allowed user fields.
+ */
+function enrol_selma_get_allowed_user_fields() {
+    // Get core fields.
+    $alloptions = get_user_fieldnames();
+
+    // List of user profile fields we don't want to write to - for data integrity and security.
+    $blacklistkeys = enrol_selma_get_blacklisted_user_fields();
+
+    // Get custom fields.
+    $customoptions = enrol_selma_get_custom_profile_fields();
+
+    $alloptions = array_merge($alloptions, $customoptions);
+
+    // TODO - Need to re-create index with array_combine() - it sets each key to its value, to get shortname easier?
+    // Remove any blacklisted profile fields from the list of options.
+    $allowed = array_values(array_diff($alloptions, $blacklistkeys));
+    $allowed = array_combine($allowed, $allowed);
+
+    return $allowed;
+}
+
+/**
+ * Loads user based on given (Moodle) ID.
+ *
+ * @param   int $id User's Moodle ID value.
+ */
+function enrol_selma_user_from_id(int $id) {
+    global $DB;
+
+    $user = new user();
+
+    // Set id, as it's on the blacklisted fields - we don't want the user to set the user's id.
+    $user->id = $id;
+
+    // Should only be one, so we use get_record. Also, only the allowed fields.
+    $dbuser = (array) $DB->get_record('user', array('id' => $user->id));
+
+    // Set core fields/properties.
+    $user->set_properties($dbuser);
+
+    // Get custom profile fields.
+    $customfields = enrol_selma_get_user_custom_field_data($user->id);
+
+    // Set custom profile fields.
+    if (isset($customfields)) {
+        $customfields = enrol_selma_prepend_arrkey_substr($customfields, 'profile_field_');
+        $user->set_properties($customfields);
+    }
+
+    return $user;
+}
+
+/**
+ * Update the user's properties with the SELMA data.
+ *
+ * @param   array   $selmauser SELMA user data to be transcribed to Moodle user data.
+ */
+function enrol_selma_user_from_selma_data($selmauser) {
+    $user = new user();
+
+    // Use profile field mapping to capture user data.
+    $profilemapping = enrol_selma_get_profile_mapping();
+
+    // Assign each SELMA user profile field to the Moodle equivalent.
+    foreach ($selmauser as $field => $value) {
+        // Translate to Moodle field.
+        $element = $profilemapping[$field];
+
+        // Set field to value.
+        $user->set_property($element, $value);
+    }
+
+    return $user;
+}
+
+/**
+ * Creates record in DB of relationship between user & intake.
+ *
+ * @param   int     $userid User we're adding to an intake.
+ * @param   int     $intakeid Intake ID user should be added to.
+ * @return  bool    $inserted Bool indicating success/failure of inserting record to DB.
+ */
+function enrol_selma_relate_user_to_intake(int $userid, int $intakeid) {
+    global $DB, $USER;
+
+    // Todo - Should we be able to add users to an intake before the intake exists in Moodle (pre-create)?
+    // Check if intake exists.
+    if ($DB->record_exists('enrol_selma_intake', array('id' => $intakeid)) === false) {
+        return false;
+    }
+
+    // Contruct data object for DB.
+    $data = new stdClass();
+    $data->userid = $userid;
+    $data->intakeid = $intakeid;
+    $data->usermodified = $USER->id;
+    $data->timecreated = time();
+    $data->timemodified = time();
+
+    $inserted = $DB->insert_record('enrol_selma_user_intake', $data, false);
+
+    return $inserted;
+}
+
+/**
+ * Get all of a user's custom profile field data.
+ *
+ * @param   int     $id User's Moodle ID.
+ * @return  array   $customfields Associative array with customfield's shortname as key and user's data as value.
+ */
+function enrol_selma_get_user_custom_field_data($id) {
+    global $DB;
+
+    // Keep track of given user's data.
+    $userdata = [];
+
+    // Get the fields and data for the user.
+    $customfields = profile_get_custom_fields();
+    $fielddata = $DB->get_records('user_info_data', array('userid' => $id), null, 'id, fieldid, data');
+
+    // Map the user's data to the corresponding customfield shortname.
+    foreach ($fielddata as $data) {
+        $userdata[$customfields[$data->fieldid]->shortname] = $data->data;
+    }
+
+    return $userdata;
+}
+
+/**
+ * Checks if a user is associated to an intake.
+ *
+ * @param   int     $userid User we're check.
+ * @param   int     $intakeid Intake ID user should be checked against.
+ * @return  bool    $inserted Bool indicating if user is in intake.
+ */
+function enrol_selma_user_is_in_intake(int $userid, int $intakeid) {
+    global $DB;
+
+    $exists = $DB->record_exists('enrol_selma_user_intake', array('userid' => $userid, 'intakeid' => $intakeid));
+
+    return $exists;
 }

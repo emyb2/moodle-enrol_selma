@@ -29,7 +29,7 @@ require_once('locallib.php');
 require_once('settingslib.php');
 
 global $ADMIN;
-if ($hassiteconfig) {
+if ($ADMIN->fulltree) {
     // https://docs.moodle.org/dev/Admin_settings
     $component = 'enrol_selma';
 
@@ -137,57 +137,8 @@ if ($hassiteconfig) {
         $usersettings->add($setting);
     }
 
-    // List of user profile fields we don't want to write to - for data integrity and security.
-    $blacklistkeys =
-        [
-            'id',
-            'auth',
-            'confirmed',
-            'policyagreed',
-            'deleted',
-            'suspended',
-            'mnethostid',
-            'password',
-            'emailstop',
-            'lang',
-            'calendartype',
-            'theme',
-            'timezone',
-            'firstaccess',
-            'lastaccess',
-            'lastlogin',
-            'currentlogin',
-            'lastip',
-            'secret',
-            'descriptionformat',
-            'mailformat',
-            'maildigest',
-            'maildisplay',
-            'autosubscribe',
-            'trackforums',
-            'timecreated',
-            'timemodified',
-            'trustbitmask'
-        ];
-
-    // Get core fields.
-    $alloptions = get_user_fieldnames();
-
-    // Get custom fields.
-    $customfields = $DB->get_records('user_info_field', [], null, 'shortname');
-
-    // If we found customprofile fields, we need to include those.
-    if (!empty($customfields) && isset($customfields)) {
-        // Prepend with 'profile_field_' to make identifiable as custom user field.
-        $customoptions = preg_filter('/^/', 'profile_field_', array_keys($customfields));
-        // Add to list of options.
-        $alloptions = array_merge($alloptions, $customoptions);
-    }
-
-    // TODO - Need to re-create index with array_combine() - it sets each key to its value, to get shortname easier?
-    // Remove any blacklisted profile fields from the list of options.
-    $options = array_values(array_diff($alloptions, $blacklistkeys));
-    $options = array_combine($options, $options);
+    // Get all the allowed fields for the options.
+    $options = enrol_selma_get_allowed_user_fields();
 
     // Username.
     $setting = new admin_setting_configselect_with_enabled(
