@@ -17,6 +17,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 use \core_privacy\tests\provider_testcase;
+use enrol_selma\local\user;
 
 /**
  * Testing for the enrol_selma 'user' class.
@@ -39,6 +40,13 @@ class user_testcase extends provider_testcase {
         $this->plugingenerator = $this->getDataGenerator()->get_plugin_generator('enrol_selma');
         $this->plugingenerator->enable_plugin();
         $this->resetAfterTest();
+    }
+
+    public function test_user_idnumber_length_exceeded() {
+        $this->expectException(moodle_exception::class);
+        $code = $this->plugingenerator->generate_random_string(1000);
+        $intake = new user();
+        $intake->set_property('idnumber', $code);
     }
 
     // Size of known DB fields.

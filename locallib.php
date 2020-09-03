@@ -675,7 +675,7 @@ function enrol_selma_get_blacklisted_user_fields() {
 /**
  *  Array of all custom user profile fields on the site.
  *
- * @return  array   $keys Returns array of custom profile fields.
+ * @return  array   $customoptions Returns array of custom profile fields.
  */
 function enrol_selma_get_custom_profile_fields() {
     global $DB;
@@ -691,6 +691,23 @@ function enrol_selma_get_custom_profile_fields() {
     }
 
     return $customoptions;
+}
+
+/**
+ *  Load all custom profile fields on the site into user object as properties.
+ *
+ * @param   user    $user User object to load fields into.
+ * @return  user    $user Returns array of custom profile fields.
+ */
+function enrol_selma_load_custom_profile_fields(user $user) {
+    $allcustomfields = enrol_selma_get_custom_profile_fields();
+
+    foreach ($allcustomfields as $field) {
+        // TODO - set to string by default for now - add checks for type.
+        $user->$field = '';
+    }
+
+    return $user;
 }
 
 /**

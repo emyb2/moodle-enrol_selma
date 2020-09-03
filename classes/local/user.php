@@ -18,6 +18,8 @@ namespace enrol_selma\local;
 
 defined('MOODLE_INTERNAL') || die();
 
+use core_text;
+use moodle_exception;
 use stdClass;
 
 require_once(dirname(__FILE__, 5) . '/user/profile/lib.php');
@@ -88,6 +90,9 @@ class user extends stdClass {
 
         // TODO - Better checking if user exists - check email ('allowaccountssameemail'), Moodle ID & SELMA ID?
         // TODO - Load custom profile fields?
+        // LOAD USER CUSTOMFIELDS FUNCTION - accept user class, check if id set, get data if it is, otherwise, set clean properties with defaults.
+        // Just do it, as we have checks in function.
+        enrol_selma_load_custom_profile_fields($this);
     }
 
     /**
@@ -103,6 +108,16 @@ class user extends stdClass {
 
         // Limit properties to only allowed fields.
         if (!in_array($property, enrol_selma_get_blacklisted_user_fields())) {
+            switch ($property) {
+                case 'idnumber':
+                    if (core_text::strlen($value) <= 11) {
+                        break;
+                    }
+                    throw new moodle_exception('maximumcharacterlengthexceeded', 'enrol_selma', null, 255);
+
+                // Add more cases here.
+            }
+
             $this->$property = $value;
         }
         return $this;

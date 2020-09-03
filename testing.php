@@ -38,7 +38,7 @@ require_once(dirname(__FILE__, 3) . '/group/lib.php');
 
 global $DB;
 
-$selmauser = new user(34);
+$selmauser = new user();
 
 echo "Hello World!<br><hr><br>";
 echo "<br>SELMA User<hr>";
@@ -47,32 +47,35 @@ print_object(array_keys(get_object_vars($selmauser)));
 echo "<br>Profile Mapping<hr>";
 print_object(enrol_selma_get_profile_mapping());
 
-echo "<br>Update user<hr>";
+echo "<br>User object from selma data<hr>";
 
-//$selmauserdata['id'] =              '50';
-//$selmauserdata['dob'] =             '19/12/2020';
-//$selmauserdata['email1'] =          'user3@email.invalid';
-//$selmauserdata['forename'] =        'Users';
-//$selmauserdata['gender'] =          'Males';
-//$selmauserdata['id'] =              '12345678910';
-//$selmauserdata['lastname'] =        'Lastnames';
-//$selmauserdata['mobilephone'] =     '0210210211';
-//$selmauserdata['nsn'] =             '1231231231';
-//$selmauserdata['preferredname'] =   'zpottie2';
-//$selmauserdata['secondaryphone'] =  '1201201201';
-//$selmauserdata['status'] =          'active2';
-//$selmauserdata['username'] =        'testingfile1';
+$selmauserdata['id'] =              '9010';
+$selmauserdata['dob'] =             '19/12/2020';
+$selmauserdata['email1'] =          'user3@email.invalid';
+$selmauserdata['forename'] =        'Users';
+$selmauserdata['gender'] =          'Males';
+$selmauserdata['id'] =              '12345678910';
+$selmauserdata['lastname'] =        'Lastnames';
+$selmauserdata['mobilephone'] =     '9999999999';
+$selmauserdata['nsn'] =             '1231231231';
+$selmauserdata['preferredname'] =   'zpottie2';
+$selmauserdata['secondaryphone'] =  '1201201201';
+$selmauserdata['status'] =          'active2';
+$selmauserdata['username'] =        'testingfile1';
 
-//$selmauser = enrol_selma_user_from_selma_data($selmauserdata);
-//print_object($selmauser);
+$selmauser = enrol_selma_user_from_selma_data($selmauserdata);
+print_object($selmauser);
 
 echo "<br>Get user<hr>";
 $user = enrol_selma_user_from_id(34);
+print_object($user->lastname);
+print_object($user);
+$user->lastname = "Ted";
 print_object($user);
 
-//echo "<br>Save user<hr>";
-//$newuser = $selmauser->save();
-//print_object($DB->get_record('user', array('id' => $newuser->id)));
+echo "<br>Save user<hr>";
+$newuser = $user->save();
+print_object($DB->get_record('user', array('id' => $newuser->id)));
 
 echo "<br>Add user to intake<hr>";
 $user = enrol_selma_add_user_to_intake(654321, 12312313);
