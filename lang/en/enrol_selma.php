@@ -288,11 +288,12 @@ $string['updatefunctions'] = '    Updating the SELMA webservices functions witho
 $string['updatefunctionsdone'] = '    The new webservice functions should be visible.';
 $string['executiontime'] = '  Script execution took {$a} seconds.';
 
-$string['characterlengthexceeded'] = 'Character length exceeded expected `{$a-expected}` recieved `{$a->recieved}`';
+$string['characterlengthexceeded'] = 'Character length exceeded expected \'{$a-expected}\' received \'{$a->recieved}\'';
 $string['maximumcharacterlengthexceeded'] = 'Maximum character length exceeded';
-$string['unexpectedvalue'] = 'Unexpected value for `{$a}`';
-$string['invalidargument'] = 'Invalid argument for `{$a}`';
-$string['invalidargumentexpects'] = 'Invalid argument for `{$a->name}` expects type `{$a->type}`';
+$string['maximumcharacterlengthforexceeded'] = 'Maximum character length for \'{$a}\' exceeded';
+$string['unexpectedvalue'] = 'Unexpected value for \'{$a}\'';
+$string['invalidargument'] = 'Invalid argument for \'{$a}\'';
+$string['invalidargumentexpects'] = 'Invalid argument for \'{$a->name}\' expects type \'{$a->type}\'';
 
 $string['servicerolename'] = 'Web service';
 $string['serviceroledescription'] = 'Used by external systems to communicate with Moodle.';
