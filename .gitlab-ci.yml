@@ -27,15 +27,16 @@ before_script:
   - curl -sS https://getcomposer.org/installer | php
   - mv composer.phar /usr/local/bin/composer
   # Cleaning up.
-  - echo "Trying to remove ./ci" && rm -rf ./ci
+  - echo "Trying to remove ./ci" && rm -rf $CI_PROJECT_DIR/ci
   - composer create-project --no-interaction --no-dev --prefer-dist --quiet blackboard-open-source/moodle-plugin-ci ci ^2
   - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
   # Cleaning up.
-  - echo "Trying to remove ./moodle" && rm -rf ./moodle
+  - echo "Trying to remove ./moodle" && rm -rf $CI_PROJECT_DIR/moodle
   # Setting auth type to mysqlnative - essential for phpdoc to work, but probs good (for testing) anyway...
   # Credit: https://stackoverflow.com/questions/39281594/error-1698-28000-access-denied-for-user-rootlocalhost
   - mysql -e 'USE mysql; SELECT User, Host, plugin FROM mysql.user; UPDATE user SET plugin="mysql_native_password" WHERE User="root"; FLUSH PRIVILEGES; SELECT User, Host, plugin FROM mysql.user;'
   - service mysql restart
+  # Change localhost to 127.0.0.1 for phpdoc.
   - moodle-plugin-ci install --db-host=127.0.0.1 -v
 
 .job_template: &job_definition
