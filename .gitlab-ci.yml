@@ -42,15 +42,15 @@ before_script:
 .job_template: &job_definition
   script:
     - EXIT_STATUS=0
-    - moodle-plugin-ci phplint || EXIT_STATUS=$? || echo $EXIT_STATUS
-    - moodle-plugin-ci phpcpd || EXIT_STATUS=$? || echo $EXIT_STATUS
-    - moodle-plugin-ci phpmd || EXIT_STATUS=$? || echo $EXIT_STATUS
-    - moodle-plugin-ci phpdoc || EXIT_STATUS=$? || echo $EXIT_STATUS # TODO - phpdoc fails with DB connection attempt.
-    - moodle-plugin-ci phpunit --coverage-text -vvv || EXIT_STATUS=$? || echo $EXIT_STATUS
-    - moodle-plugin-ci codechecker || EXIT_STATUS=$? || echo $EXIT_STATUS
-    - moodle-plugin-ci validate || EXIT_STATUS=$? || echo $EXIT_STATUS
-    - moodle-plugin-ci grunt -t css || EXIT_STATUS=$? || echo $EXIT_STATUS # Thanks https://github.com/open-lms-open-source/moodle-plugin-ci/issues/72#issuecomment-358426352
-    #    - moodle-plugin-ci savepoints || EXIT_STATUS=$? || echo $EXIT_STATUS
+    - moodle-plugin-ci phplint || EXIT_STATUS=$? ; echo "EXIT STATUS - $EXIT_STATUS"
+    - moodle-plugin-ci phpcpd || EXIT_STATUS=$? ; echo "EXIT STATUS - $EXIT_STATUS"
+    - moodle-plugin-ci phpmd || EXIT_STATUS=$? ; echo "EXIT STATUS - $EXIT_STATUS"
+    - moodle-plugin-ci phpdoc || EXIT_STATUS=$? ; echo "EXIT STATUS - $EXIT_STATUS"
+    - moodle-plugin-ci phpunit --coverage-text -vvv || EXIT_STATUS=$? ; echo "EXIT STATUS - $EXIT_STATUS"
+    - moodle-plugin-ci codechecker || EXIT_STATUS=$? ; echo "EXIT STATUS - $EXIT_STATUS"
+    - moodle-plugin-ci validate || EXIT_STATUS=$? ; echo "EXIT STATUS - $EXIT_STATUS"
+    - moodle-plugin-ci grunt -t css || EXIT_STATUS=$? ; echo "EXIT STATUS - $EXIT_STATUS" # Thanks https://github.com/open-lms-open-source/moodle-plugin-ci/issues/72#issuecomment-358426352
+    #    - moodle-plugin-ci savepoints || EXIT_STATUS=$? ; echo "EXIT STATUS - $(tput bold)$EXIT_STATUS$(tput sgr0)"
     - exit $EXIT_STATUS
 
 # Test each active version of PHP.

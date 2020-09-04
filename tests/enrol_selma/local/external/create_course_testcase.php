@@ -14,10 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+// As per https://docs.moodle.org/dev/Coding_style#Namespaces_within_.2A.2A.2Ftests_directories.
+namespace enrol_selma\local\external;
+
 defined('MOODLE_INTERNAL') || die();
 
-use enrol_selma\local\user;
 use enrol_selma\local\external;
+use enrol_selma_generator;
+use externallib_advanced_testcase;
 
 /**
  * Testing for the enrol_selma 'user' class.
@@ -26,32 +30,21 @@ use enrol_selma\local\external;
  * @copyright   2020 LearningWorks <selma@learningworks.ac.nz>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_testcase extends externallib_advanced_testcase {
+class create_course_testcase extends externallib_advanced_testcase {
 
     /**
      *  @var enrol_selma_generator $plugingenerator handle to plugin generator.
      */
     protected $plugingenerator;
 
-    public function setUp() {
+    protected function setUp() {
+        parent::setUp();
         global $CFG;
-        require_once($CFG->dirroot . '/enrol/selma/lib.php');
         require_once($CFG->dirroot . '/enrol/selma/locallib.php');
         $this->plugingenerator = $this->getDataGenerator()->get_plugin_generator('enrol_selma');
         $this->plugingenerator->enable_plugin();
         $this->resetAfterTest();
     }
 
-    public function test_user_idnumber_length_exceeded() {
-        $this->expectException(moodle_exception::class);
-        $code = $this->plugingenerator->generate_random_string(1000);
-        $intake = new user();
-        $intake->set_property('idnumber', $code);
-    }
-
-    // Size of known DB fields.
-    // Var types inserted to DB.
-    // Customfield - mapping & types - handling.
-    // New vs existing user.
-    // Saving
+    // Call function.
 }

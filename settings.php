@@ -25,11 +25,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once('locallib.php');
-require_once('settingslib.php');
+require_once(dirname(__FILE__) . '/locallib.php');
+require_once(dirname(__FILE__) . '/settingslib.php');
 
 global $ADMIN;
-if ($ADMIN->fulltree) {
+
+if ($hassiteconfig) {
     // https://docs.moodle.org/dev/Admin_settings
     $component = 'enrol_selma';
 

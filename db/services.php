@@ -34,7 +34,7 @@ $functions = [
         ),
         'type'          => 'write',
         'ajax'          => false,
-        'capabilities'  => ['moodle/course:create']
+        'capabilities'  => 'moodle/course:create'
     ],
     'enrol_selma_get_all_courses' => [
         'classname'     => 'enrol_selma\local\external\get_all_courses',
@@ -45,7 +45,7 @@ $functions = [
         ),
         'type'          => 'read',
         'ajax'          => false,
-        'capabilities'  => []
+        'capabilities'  => ''
     ],
     'enrol_selma_create_users' => [
         'classname'     => 'enrol_selma\local\external\create_users',
@@ -56,7 +56,7 @@ $functions = [
         ),
         'type'          => 'write',
         'ajax'          => false,
-        'capabilities'  => ['moodle/user:create']
+        'capabilities'  => 'moodle/user:create'
     ],
     'enrol_selma_create_intake' => [
         'classname'     => 'enrol_selma\local\external\create_intake',
@@ -67,7 +67,7 @@ $functions = [
         ),
         'type'          => 'write',
         'ajax'          => false,
-        'capabilities'  => []
+        'capabilities'  => ''
     ],
     'enrol_selma_add_intake_to_course' => [
         'classname'     => 'enrol_selma\local\external\add_intake_to_course',
@@ -78,7 +78,7 @@ $functions = [
         ),
         'type'          => 'write',
         'ajax'          => false,
-        'capabilities'  => []
+        'capabilities'  => ''
     ],
     'enrol_selma_add_user_to_intake' => [
         'classname'     => 'enrol_selma\local\external\add_user_to_intake',
@@ -89,7 +89,7 @@ $functions = [
         ),
         'type'          => 'write',
         'ajax'          => false,
-        'capabilities'  => []
+        'capabilities'  => ''
     ]
 ];
 $services = [

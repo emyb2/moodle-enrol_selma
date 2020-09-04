@@ -96,7 +96,10 @@ class create_course extends external_api {
             [
                 'status' => new external_value(PARAM_TEXT, get_string('create_course_returns::status', 'enrol_selma')),
                 'courseid' => new external_value(PARAM_INT, get_string('create_course_returns::courseid', 'enrol_selma')),
-                'message' => new external_value(PARAM_TEXT, get_string('create_course_returns::message', 'enrol_selma')),
+                'message' => new external_value(PARAM_TEXT, get_string('create_course_returns::message', 'enrol_selma'))
+                // TODO - Maybe we should be returning 'warning' values, instead of in the message.
+                // As per - https://docs.moodle.org/dev/Errors_handling_in_web_services#Warning_messages
+                // For example, refer to mod/assign/externallib.php:614.
             ],
             get_string('create_course_returns', 'enrol_selma')
         );
