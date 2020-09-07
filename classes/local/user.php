@@ -40,11 +40,12 @@ class user extends stdClass {
     /** @var int $id User ID. */
     public $id = 0;
 
+    /** @var string $auth Authentication method. */
     public $auth = 'manual';
 
     public $confirmed = 1;
 
-    public $mnethostid;
+    public $mnethostid = 0;
 
     /** @var string $username User username. */
     public $username;
@@ -85,6 +86,7 @@ class user extends stdClass {
     /** @var string $lang User language. */
     public $lang;
 
+    /** @var  */
     public $calendartype;
 
     /** @var string $middlename User middle name. */
@@ -103,37 +105,14 @@ class user extends stdClass {
 
     public $trackforums;
 
-    private $customprofilefields;
-
     /**
-     * user constructor.
-     *
-     * Others fields will be set for a new user by user_create_user function.
-     *
+     * Utility method to check a property length against associated varchar database column.
      */
-    public function __construct() {
-        global $CFG;
-        $this->mnethostid = $CFG->mnet_localhost_id;
-        $this->customprofilefields = [];
-        foreach (profile_get_custom_fields() as $profilefield) {
-            $this->customprofilefields[$profilefield->shortname] = $profilefield;
-        }
-    }
-
     protected function check_length($name, $value) {
         $column = utilities::get_column_information('user', $name);
         if (core_text::strlen($value) > $column->max_length) {
             throw new moodle_exception('maximumcharacterlengthforexceeded', 'enrol_selma', null, $name);
         }
-    }
-
-    public static function required_properties() : array {
-        return [
-            'firstname',
-            'lastname',
-            'email',
-            'idnumber',
-        ];
     }
 
     public function set_id(int $id) : self {
@@ -192,11 +171,18 @@ class user extends stdClass {
 
     public function set_profile_field(string $name, $value) {
         global $CFG;
+        static $customprofilefields;
+        if (!isset($customprofilefields)) {
+            $customprofilefields = [];
+            foreach (profile_get_custom_fields() as $profilefield) {
+                $customprofilefields[$profilefield->shortname] = $profilefield;
+            }
+        }
         $shortname = str_replace('profile_field_', '', $name);
-        if (!in_array($shortname, array_keys($this->customprofilefields))) {
+        if (!in_array($shortname, array_keys($customprofilefields))) {
             throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'name');
         }
-        $field = $this->customprofilefields[$shortname];
+        $field = $customprofilefields[$shortname];
         require_once($CFG->dirroot . '/user/profile/field/' . $field->datatype . '/field.class.php');
         $profilefieldname = 'profile_field_' . $field->shortname;
         $classname = 'profile_field_' . $field->datatype;
@@ -210,30 +196,48 @@ class user extends stdClass {
         return $this;
     }
 
+    /**
+     * Method for saving user to database. Provides extra property checks and then hands off to core user_create_user
+     * and user_update_user functions. Also saves user profile field data.
+     *
+     * @return bool
+     * @throws \coding_exception
+     * @throws \dml_exception
+     * @throws moodle_exception
+     */
     public function save() {
         global $CFG, $DB;
-        // General check that required properties are set.
-        foreach (static::required_properties() as $property) {
-            if (!isset($this->{$property}) || is_null($this->{$property})) {
-                throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, $property);
-            }
+        // Check minimum required properties have a value.
+        if (trim($this->firstname) === '') {
+            throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'firstname');
+        }
+        if (trim($this->lastname) === '') {
+            throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'lastname');
+        }
+        if (trim($this->email) === '') {
+            throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'email');
+        }
+        if (trim($this->idnumber) === '') {
+            throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'idnumber');
         }
         if ($this->id <= 0) {
             // Email duplicates check.
             $allowaccountssameemail = $CFG->allowaccountssameemail ?? 0;
             if (!$allowaccountssameemail) {
                 // Make a case-insensitive query for the given email address.
-                $select = $DB->sql_equal('email', ':email', false) . ' AND mnethostid = :mnethostid';
+                $select = $DB->sql_equal('email', ':email', false) .
+                    ' AND mnethostid = :mnethostid AND deleted <> :deleted';
                 $params = array(
                     'email' => $this->email,
-                    'mnethostid' => $CFG->mnet_localhost_id
+                    'mnethostid' => $CFG->mnet_localhost_id,
+                    'deleted' => 1
                 );
                 if ($DB->record_exists_select('user', $select, $params)) {
-                    throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'email'); // @todo Provide a better explaination in exception.
+                    throw new moodle_exception('duplicateemailaddressesnotallowed', 'enrol_selma');
                 }
             }
             // Unique ID number check.
-            $exists = $DB->record_exists('user', ['idnumber' => $this->idnumber, 'mnethostid' => $CFG->mnet_localhost_id]);
+            $exists = $DB->record_exists('user', ['idnumber' => $this->idnumber, 'mnethostid' => $CFG->mnet_localhost_id, 'deleted' => 0]);
             if ($exists) {
                 throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'idnumber'); // @todo Provide a better explaination in exception.
             }
@@ -241,6 +245,7 @@ class user extends stdClass {
                 $username = utilities::generate_username($this->firstname, $this->lastname);
                 $this->set_username($username);
             }
+            $this->mnethostid = $CFG->mnet_localhost_id; // Always set to local for a new user.
             $this->id = user_create_user($this, false, true);
             set_user_preference('enrol_selma_new_student_create_password', 1, $this);
         } else {
