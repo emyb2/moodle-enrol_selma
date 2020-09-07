@@ -38,11 +38,11 @@ require_once(dirname(__FILE__, 3) . '/locallib.php');
 class user extends stdClass {
 
     /** @var int $id User ID. */
-    public $id;
+    public $id = 0;
 
-    public $auth;
+    public $auth = 'manual';
 
-    public $confirmed;
+    public $confirmed = 1;
 
     public $mnethostid;
 
@@ -62,25 +62,25 @@ class user extends stdClass {
     public $idnumber;
 
     /** @var string $phone1 User primary phone number. */
-    public $phone1;
+    public $phone1 = '';
 
     /** @var string $phone2 User secondary phone number. */
-    public $phone2;
+    public $phone2 = '';
 
     /** @var string $institution User institution. */
-    public $institution;
+    public $institution = '';
 
     /** @var string $department User department. */
-    public $department;
+    public $department = '';
 
     /** @var string $address User address. */
-    public $address;
+    public $address = '';
 
     /** @var string $city User city. */
-    public $city;
+    public $city = '';
 
     /** @var string $country User country. */
-    public $country;
+    public $country = '';
 
     /** @var string $lang User language. */
     public $lang;
@@ -88,10 +88,10 @@ class user extends stdClass {
     public $calendartype;
 
     /** @var string $middlename User middle name. */
-    public $middlename;
+    public $middlename = '';
 
     /** @var string $alternatename User alternate name. */
-    public $alternatename;
+    public $alternatename = '';
 
     public $mailformat;
 
@@ -113,19 +113,7 @@ class user extends stdClass {
      */
     public function __construct() {
         global $CFG;
-        $this->id = 0;
-        $this->auth = 'manual';
         $this->mnethostid = $CFG->mnet_localhost_id;
-        $this->confirmed = 1;
-        $this->phone1 = '';
-        $this->phone2 = '';
-        $this->institution = '';
-        $this->department = '';
-        $this->address = '';
-        $this->city = '';
-        $this->country = '';
-        $this->middlename = '';
-        $this->alternatename = '';
         $this->customprofilefields = [];
         foreach (profile_get_custom_fields() as $profilefield) {
             $this->customprofilefields[$profilefield->shortname] = $profilefield;
