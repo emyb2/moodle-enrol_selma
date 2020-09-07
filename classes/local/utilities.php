@@ -55,12 +55,12 @@ final class utilities {
         }
         if ($DB->sql_regex_supported()) {
             $REGEXP = $DB->sql_regex(true);
-            $select = "username $REGEXP :usernamepattern AND mnethostid = :mnethostid";
+            $select = "username $REGEXP :usernamepattern AND mnethostid = :mnethostid AND deleted <> :deleted";
             $usernamepattern = "$username([0-9]+)?";
-            $params = ['usernamepattern' => $usernamepattern, 'mnethostid' => $CFG->mnet_localhost_id];
+            $params = ['usernamepattern' => $usernamepattern, 'mnethostid' => $CFG->mnet_localhost_id, 'deleted' => 1];
         } else {
-            $select = "username = :username AND mnethostid = :mnethostid";
-            $params = ['username' => $username, 'mnethostid' => $CFG->mnet_localhost_id];
+            $select = "username = :username AND mnethostid = :mnethostid AND deleted <> :deleted";
+            $params = ['username' => $username, 'mnethostid' => $CFG->mnet_localhost_id, 'deleted' => 1];
         }
         $existingusers = $DB->get_records_select(
             'user',
