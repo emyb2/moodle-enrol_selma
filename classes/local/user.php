@@ -20,7 +20,9 @@ defined('MOODLE_INTERNAL') || die();
 
 use core_text;
 use moodle_exception;
+use profile_field_base;
 use stdClass;
+use enrol_selma\local\utilities;
 
 require_once(dirname(__FILE__, 5) . '/user/profile/lib.php');
 require_once(dirname(__FILE__, 3) . '/locallib.php');
@@ -36,158 +38,250 @@ require_once(dirname(__FILE__, 3) . '/locallib.php');
 class user extends stdClass {
 
     /** @var int $id User ID. */
-    public $id = 0;
+    public $id;
+
+    public $auth;
+
+    public $confirmed;
+
+    public $policyagreed;
+
+    public $suspended;
+
+    public $mnethostid;
 
     /** @var string $username User username. */
-    public $username = '';
+    public $username;
 
     /** @var string $firstname User first name. */
-    public $firstname = '';
+    public $firstname;
 
     /** @var string $lastname User last name. */
-    public $lastname = '';
+    public $lastname;
 
     /** @var string $email User email address. */
-    public $email = '';
+    public $email;
+
+    public $emailstop;
 
     /** @var int $idnumber User SELMA ID number. */
-    public $idnumber = 0;
+    public $idnumber;
 
     /** @var string $phone1 User primary phone number. */
-    public $phone1 = '';
+    public $phone1;
 
     /** @var string $phone2 User secondary phone number. */
-    public $phone2 = '';
+    public $phone2;
 
     /** @var string $institution User institution. */
-    public $institution = '';
+    public $institution;
 
     /** @var string $department User department. */
-    public $department = '';
+    public $department;
 
     /** @var string $address User address. */
-    public $address = '';
+    public $address;
 
     /** @var string $city User city. */
-    public $city = '';
+    public $city;
 
     /** @var string $country User country. */
-    public $country = '';
+    public $country;
+
+    /** @var string $lang User language. */
+    public $lang;
+
+    public $calendartype;
 
     /** @var string $description User description. */
-    public $description = '';
+    public $description;
+
+    public $descriptionformat;
 
     /** @var string $middlename User middle name. */
-    public $middlename = '';
+    public $middlename;
 
     /** @var string $alternatename User alternate name. */
-    public $alternatename = '';
+    public $alternatename;
+
+    public $mailformat;
+
+    public $maildigest;
+
+    public $maildisplay;
+
+    public $autosubscribe;
+
+    public $trackforums;
+
+    private $customprofilefields;
 
     /**
-     * Class 'user' constructor. Sets up class with user profile fields as properties.
+     * user constructor.
+     *
+     * Others fields will be set for a new user by user_create_user function.
+     *
      */
-    function __construct() {
-
-        // TODO - Better checking if user exists - check email ('allowaccountssameemail'), Moodle ID & SELMA ID?
-        // TODO - Load custom profile fields?
-        // LOAD USER CUSTOMFIELDS FUNCTION - accept user class, check if id set, get data if it is, otherwise, set clean properties with defaults.
-        // Just do it, as we have checks in function.
-        enrol_selma_load_custom_profile_fields($this);
+    public function __construct() {
+        global $CFG;
+        $this->id = 0;
+        $this->auth = 'manual';
+        $this->mnethostid = $CFG->mnet_localhost_id;
+        $this->confirmed = 1;
+        $this->policyagreed = 0;
+        $this->suspended = 0;
+        $this->emailstop = 0;
+        $this->phone1 = '';
+        $this->phone2 = '';
+        $this->institution = '';
+        $this->department = '';
+        $this->address = '';
+        $this->city = '';
+        $this->country = '';
+        $this->description = '';
+        $this->descriptionformat = FORMAT_MOODLE;
+        $this->middlename = '';
+        $this->alternatename = '';
+        $this->customprofilefields = [];
+        foreach (profile_get_custom_fields() as $profilefield) {
+            $this->customprofilefields[$profilefield->shortname] = $profilefield;
+        }
     }
 
-    /**
-     * Set a given property.
-     *
-     * @param   string  $property User's property - DB field.
-     * @param   mixed   $value Value property should be set to.
-     * @return  user    $this Return the user object.
-     */
-    public function set_property(string $property, $value) : self {
-        // TODO - check propety type.
-        //utilities::get_debug_type();
-
-        // Limit properties to only allowed fields.
-        if (!in_array($property, enrol_selma_get_blacklisted_user_fields())) {
-            switch ($property) {
-                case 'idnumber':
-                    if (core_text::strlen($value) <= 11) {
-                        break;
-                    }
-                    throw new moodle_exception('maximumcharacterlengthexceeded', 'enrol_selma', null, 255);
-
-                // Add more cases here.
-            }
-
-            $this->$property = $value;
+    protected function check_length($name, $value) {
+        $column = utilities::get_column_information('user', $name);
+        if (core_text::strlen($value) > $column->max_length) {
+            throw new moodle_exception('maximumcharacterlengthforexceeded', 'enrol_selma', null, $name);
         }
+    }
+
+    public static function required_properties() : array {
+        return [
+            'auth',
+            'mnethostid',
+            'confirmed',
+            'policyagreed',
+            'suspended',
+            'firstname',
+            'lastname',
+            'email',
+            'idnumber',
+            'emailstop'
+        ];
+    }
+
+    public function set_id(int $id) : self {
+        $this->id = $id;
         return $this;
     }
 
-    /**
-     * Set given properties.
-     *
-     * @param   array   $properties Associative array of user's property - DB field - as key and it's intended value as the value.
-     * @return  user    $this Return the user object.
-     */
-    public function set_properties(array $properties) : self {
-        foreach ($properties as $property => $value) {
-            // We don't accept null values.
-            if ($value !== null) {
-                $this->set_property($property, $value);
-            }
+    public function set_username(string $username) : self {
+        if ($username !== clean_param($username, PARAM_USERNAME)) {
+            throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'username');
         }
+        $this->check_length('username', $username);
+        $this->username = $username;
         return $this;
     }
 
-    /**
-     * Update the DB with the current properties & values.
-     *
-     * @return bool $saved.
-     */
-    public function save() :self {
-        global $DB, $CFG;
+    public function set_first_name(string $firstname) : self {
+        $this->check_length('firstname', $firstname);
+        $this->firstname = $firstname;
+        return $this;
+    }
 
-        // TODO - Should we remove any entries with empty value? I think so.
+    public function set_last_name(string $lastname) : self {
+        $this->check_length('lastname', $lastname);
+        $this->lastname = $lastname;
+        return $this;
+    }
 
-        // If id is 0, we're adding a new user.
-        if ($this->id === 0) {
-            // We only support local accounts.
-            $this->mnethostid = $CFG->mnet_localhost_id;
+    public function set_email(string $email) : self {
+        global $CFG, $DB;
+        if (!validate_email($email)) {
+            throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'email');
+        }
+        $this->check_length('email', $email);
+        $this->email = $email;
+        return $this;
+    }
 
-            // TODO - increment username?
-            // Check if username exists and increment, if necessary.
-            if ($DB->get_record('user', array('username' => $this->username)) !== false) {
-                $this->username = uu_increment_username($this->username);
-            }
+    public function set_idnumber(string $idnumber) : self {
+        $this->check_length('idnumber', $idnumber);
+        $this->idnumber= $idnumber;
+        return $this;
+    }
 
-            // TODO - check for duplicate emails - respect setting 'allowaccountssameemail'.
+    public function set_phone1(string $phone1) : self {
+        $this->check_length('phone1', $phone1);
+        $this->phone1 = $phone1;
+        return $this;
+    }
 
-            $saved = user_create_user($this);
-            $this->id = $saved;
+    public function set_phone2(string $phone2) : self {
+        $this->check_length('phone2', $phone2);
+        $this->phone2 = $phone2;
+        return $this;
+    }
+
+    public function set_profile_field(string $name, $value) {
+        global $CFG;
+        $shortname = str_replace('profile_field_', '', $name);
+        if (!in_array($shortname, array_keys($this->customprofilefields))) {
+            throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'name');
+        }
+        $field = $this->customprofilefields[$shortname];
+        require_once($CFG->dirroot . '/user/profile/field/' . $field->datatype . '/field.class.php');
+        $profilefieldname = 'profile_field_' . $field->shortname;
+        $classname = 'profile_field_' . $field->datatype;
+        /** @var profile_field_base $profilefield */
+        $profilefield = new $classname($field->id, $this->id, $field);
+        if (method_exists($profilefield, 'edit_save_data_preprocess')) {
+            $this->{$profilefieldname} = $profilefield->edit_save_data_preprocess($value, null);
         } else {
-            // Anything else means we're updating (or trying to, at least).
-            // TODO - check for duplicate emails - respect setting 'allowaccountssameemail'. Can also update if existing is found.
-            // Function returns nothing, so update and set $saved for later use.
-            user_update_user($this);
-            $saved = $this->id;
+            $this->{$profilefieldname} = $value;
         }
-
-        // Add custom profilefields for user.
-        $customfields = enrol_selma_get_custom_profile_fields();
-        $customproperties = [];
-
-        foreach ($customfields as $customfield) {
-            // We just need the shortname.
-            $shortname = str_replace('profile_field_', '', $customfield);
-
-            $customproperties[$shortname] = $this->$customfield;
-        }
-
-        // Save the custom fields.
-        profile_save_custom_fields($saved, $customproperties);
-
-        // throw new dml_read_exception();
-
         return $this;
     }
+
+    public function save() {
+        global $CFG, $DB;
+        // General check that required properties are set.
+        foreach (static::required_properties() as $property) {
+            if (!isset($this->{$property}) || is_null($this->{$property})) {
+                throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, $property);
+            }
+        }
+        if ($this->id <= 0) {
+            // Email duplicates check.
+            $allowaccountssameemail = $CFG->allowaccountssameemail ?? 0;
+            if (!$allowaccountssameemail) {
+                // Make a case-insensitive query for the given email address.
+                $select = $DB->sql_equal('email', ':email', false) . ' AND mnethostid = :mnethostid';
+                $params = array(
+                    'email' => $this->email,
+                    'mnethostid' => $CFG->mnet_localhost_id
+                );
+                if ($DB->record_exists_select('user', $select, $params)) {
+                    throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'email'); // @todo Provide a better explaination in exception.
+                }
+            }
+            // Unique ID number check.
+            $exists = $DB->record_exists('user', ['idnumber' => $this->idnumber, 'mnethostid' => $CFG->mnet_localhost_id]);
+            if ($exists) {
+                throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'idnumber'); // @todo Provide a better explaination in exception.
+            }
+            if (empty($this->username)) {
+                $username = utilities::generate_username($this->firstname, $this->lastname);
+                $this->set_username($username);
+            }
+            $this->id = user_create_user($this, false, true);
+            set_user_preference('enrol_selma_new_student_create_password', 1, $this);
+        } else {
+            user_update_user($this);
+        }
+        profile_save_data($this);
+        return true;
+    }
+
 }
