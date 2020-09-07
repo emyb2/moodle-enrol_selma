@@ -44,10 +44,6 @@ class user extends stdClass {
 
     public $confirmed;
 
-    public $policyagreed;
-
-    public $suspended;
-
     public $mnethostid;
 
     /** @var string $username User username. */
@@ -61,8 +57,6 @@ class user extends stdClass {
 
     /** @var string $email User email address. */
     public $email;
-
-    public $emailstop;
 
     /** @var int $idnumber User SELMA ID number. */
     public $idnumber;
@@ -92,11 +86,6 @@ class user extends stdClass {
     public $lang;
 
     public $calendartype;
-
-    /** @var string $description User description. */
-    public $description;
-
-    public $descriptionformat;
 
     /** @var string $middlename User middle name. */
     public $middlename;
@@ -128,9 +117,6 @@ class user extends stdClass {
         $this->auth = 'manual';
         $this->mnethostid = $CFG->mnet_localhost_id;
         $this->confirmed = 1;
-        $this->policyagreed = 0;
-        $this->suspended = 0;
-        $this->emailstop = 0;
         $this->phone1 = '';
         $this->phone2 = '';
         $this->institution = '';
@@ -138,8 +124,6 @@ class user extends stdClass {
         $this->address = '';
         $this->city = '';
         $this->country = '';
-        $this->description = '';
-        $this->descriptionformat = FORMAT_MOODLE;
         $this->middlename = '';
         $this->alternatename = '';
         $this->customprofilefields = [];
@@ -157,16 +141,10 @@ class user extends stdClass {
 
     public static function required_properties() : array {
         return [
-            'auth',
-            'mnethostid',
-            'confirmed',
-            'policyagreed',
-            'suspended',
             'firstname',
             'lastname',
             'email',
             'idnumber',
-            'emailstop'
         ];
     }
 
