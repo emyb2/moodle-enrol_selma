@@ -407,7 +407,7 @@ if ($hassiteconfig) {
         "{$component}/newcoursecat",
         new lang_string('newcoursecat', $component),
         new lang_string('newcoursecat::description', $component),
-        $options[1],
+        key($options),
         $options
     );
     $coursesettings->add($setting);

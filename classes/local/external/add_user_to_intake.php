@@ -25,15 +25,16 @@
 
 namespace enrol_selma\local\external;
 
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/course/lib.php');
+require_once($CFG->libdir . '/externallib.php');
+require_once(dirname(__FILE__, 4) . '/locallib.php');
+
 use context_system;
 use external_api;
 use external_function_parameters;
 use external_value;
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->dirroot . '/course/lib.php');
-require_once(dirname(__FILE__, 4) . '/locallib.php');
 
 /**
  * Class add_user_to_intake used to add a given user to a given intake.

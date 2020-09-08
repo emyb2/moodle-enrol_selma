@@ -238,6 +238,13 @@ $string['add_user_to_intake_returns::status'] = 'Returns success status code.';
 $string['add_user_to_intake_returns::added'] = 'Bool of whether the user could be added or not.';
 $string['add_user_to_intake_returns::message'] = 'Message returned along with the response.';
 
+// Web services warnings.
+$string['warning_code_notcapable'] = 'notcapable';
+$string['warning_message_notcapable'] = 'This user does not have the following capability: \'{$a}\'.';
+$string['warning_code_noconfig'] = 'noconfig';
+$string['warning_message_noconfig'] = 'This config has not been set yet: \'{$a}\'.';
+$string['error_noconfig'] = 'This config has not been set yet: \'{$a}\'.';
+
 // Web services statuses.
 $string['status_ok'] = '200';
 $string['status_ok_message'] = 'OK - Expected response received.';

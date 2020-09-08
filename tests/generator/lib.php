@@ -36,6 +36,19 @@ class enrol_selma_generator extends testing_module_generator {
         set_config('enrol_plugins_enabled', implode(',', $enabled));
     }
 
+    /**
+     * Disable the plugin.
+     */
+    public function disable_plugin() {
+        $enabled = enrol_get_plugins(true);
+        unset($enabled['selma']);
+        $enabled = array_keys($enabled);
+        set_config('enrol_plugins_enabled', implode(',', $enabled));
+    }
+
+    /**
+     * @return  array[] Array with test intake data.
+     */
     public function get_intake_data() : array {
         return [
             [
@@ -68,6 +81,33 @@ class enrol_selma_generator extends testing_module_generator {
         ];
     }
 
+    /**
+     * @return  array[] Array with most basic course data we need.
+     */
+    public function get_selma_course_data() : array {
+        return [
+            'valid' => [
+                'fullname' => 'Adult and Tertiary Teaching 4',
+                'shortname' => 'ATT4',
+                'idnumber' => 10479434
+            ],
+            'invalid' => [
+                'fullname' => 'First Line Management 4',
+                'shortname' => 'FLM4',
+                'idnumber' => 10479434
+            ],
+            'complete' => [
+                'fullname' => 'Introduction to Team Leadership 3',
+                'shortname' => 'ITL3',
+                'idnumber' => 10479434
+            ]
+        ];
+    }
+
+    /**
+     * @param   int     $length The number of characters the random string should have.
+     * @return  string  Generated random string.
+     */
     public function generate_random_string(int $length) {
         $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         $randomstring = '';

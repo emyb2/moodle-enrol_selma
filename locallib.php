@@ -263,6 +263,8 @@ function enrol_selma_add_user_to_intake(int $selmauserid, int $intakeid) {
  * @return  array   Array containing the status of the request, created course's ID, and appropriate message.
  */
 function enrol_selma_create_course(array $course) {
+    global $CFG;
+
     // Set status to 'we don't know what went wrong'. We will set this to potential known causes further down.
     $status = get_string('status_other', 'enrol_selma');
     // Courseid of null means something didn't work. Changed if successfully created a course.
@@ -270,11 +272,41 @@ function enrol_selma_create_course(array $course) {
     // Set to give more detailed response message to user.
     $message = get_string('status_other_message', 'enrol_selma');
 
+    // Check and validate everything that's needed (as minimum) by this function.
+    // Capabilities
+    // Configs
+    $warnings = [];
+
+    $context = context_system::instance();
+
+    // Check if user has permission to create a course.
+    require_capability('moodle/course:create', $context);
+
+    // Check if we have a place to put the course.
+    if (get_config('enrol_selma', 'newcoursecat') === false) {
+        throw new moodle_exception('error_noconfig', 'enrol_selma', $CFG->wwwroot . '/admin/settings.php?section=usersettingsselma', 'newcoursecat');
+    }
+
+    // Check if config(s) we use later have been set. These are optional, so just warn.
+    if (get_config('enrol_selma', 'selmacoursetags') === false) {
+        $warnings[] = [
+            'item' => get_string('pluginname', 'enrol_selma'),
+            'itemid' => 1,
+            'warningcode' => get_string('warning_code_noconfig', 'enrol_selma'),
+            'message' => get_string('warning_message_noconfig', 'enrol_selma', 'selmacoursetags')
+        ];
+        // Not essential, so can continue - but warn.
+    }
+
     // Prep tags - find & replace text and convert to array.
     $tags = get_config('enrol_selma', 'selmacoursetags');
-    // Course name.
-    $tags = str_replace(['{{fullname}}', '{{shortname}}'], [$course['fullname'], $course['shortname']], $tags);
-    $tags = explode(',', $tags);
+
+    if ($tags !== false) {
+        $tags = str_replace(['{{fullname}}', '{{shortname}}'], [$course['fullname'], $course['shortname']], $tags);
+        $tags = explode(',', $tags);
+    } else {
+        $tags = '';
+    }
 
     // Construct course object.
     $coursedata = new stdClass();
@@ -286,7 +318,7 @@ function enrol_selma_create_course(array $course) {
     $coursedata->tags = $tags;                                          // Add the user specified in 'selmacoursetags' setting.
 
     // Consider course_updated() in lib.php? Check out lib/enrollib.php:409.
-    $coursecreated = \create_course($coursedata);
+    $coursecreated = create_course($coursedata);
     // Check out course/externallib.php:831.
 
     // TODO - Add enrol_selma to course. Is this enough? What to do if false is returned?
@@ -297,18 +329,26 @@ function enrol_selma_create_course(array $course) {
     // Check if course created successfully.
     if (isset($coursecreated->id) && $coursecreated->id > 1) {
         $status = get_string('status_ok', 'enrol_selma');
-        $message = get_string('status_ok_message', 'enrol_selma');
         $courseid = $coursecreated->id;
+        $message = get_string('status_ok_message', 'enrol_selma');
 
         // Returned details - success!
-        return ['status' => $status, 'courseid' => $courseid, 'message' => $message];
+        if (empty($warnings)) {
+            return ['status' => $status, 'courseid' => $courseid, 'message' => $message];
+        } else {
+            return ['status' => $status, 'courseid' => $courseid, 'message' => $message, 'warnings' => $warnings];
+        }
     }
 
     $status = get_string('status_internalfail', 'enrol_selma');
     $message = get_string('status_internalfail_message', 'enrol_selma');
 
     // Returned details - failed...
-    return ['status' => $status, 'courseid' => $courseid, 'message' => $message];
+    if (empty($warnings)) {
+        return ['status' => $status, 'courseid' => $courseid, 'message' => $message];
+    } else {
+        return ['status' => $status, 'courseid' => $courseid, 'message' => $message, 'warnings' => $warnings];
+    }
 }
 
 /**
