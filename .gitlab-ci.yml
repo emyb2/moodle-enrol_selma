@@ -17,7 +17,8 @@ cache:
     - $HOME/.npm
 
 before_script:
-  - apt update && apt install git-core default-mysql-server npm -y > /dev/null
+  - cat /etc/os-release
+  - apt update && apt install git-core mariadb-server npm -y > /dev/null
   - curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
   - source ~/.bashrc
   - nvm install 14.0.0
@@ -37,7 +38,7 @@ before_script:
   - mysql -e 'USE mysql; SELECT User, Host, plugin FROM mysql.user; UPDATE user SET plugin="mysql_native_password" WHERE User="root"; FLUSH PRIVILEGES; SELECT User, Host, plugin FROM mysql.user;'
   - service mysql restart
   # Change localhost to 127.0.0.1 for phpdoc.
-  - moodle-plugin-ci install --db-host=127.0.0.1 -v
+  - moodle-plugin-ci install --db-host=127.0.0.1 --db-type=mariadb -v
 
 .job_template: &job_definition
   script:
@@ -46,7 +47,7 @@ before_script:
     - moodle-plugin-ci phpcpd || EXIT_STATUS=$? ; echo "EXIT STATUS - $EXIT_STATUS"
     - moodle-plugin-ci phpmd || EXIT_STATUS=$? ; echo "EXIT STATUS - $EXIT_STATUS"
     - moodle-plugin-ci phpdoc || EXIT_STATUS=$? ; echo "EXIT STATUS - $EXIT_STATUS"
-    - moodle-plugin-ci phpunit --coverage-text -vvv || EXIT_STATUS=$? ; echo "EXIT STATUS - $EXIT_STATUS"
+    - moodle-plugin-ci phpunit --coverage-html -vvv || EXIT_STATUS=$? ; echo "EXIT STATUS - $EXIT_STATUS"
     - moodle-plugin-ci codechecker || EXIT_STATUS=$? ; echo "EXIT STATUS - $EXIT_STATUS"
     - moodle-plugin-ci validate || EXIT_STATUS=$? ; echo "EXIT STATUS - $EXIT_STATUS"
     - moodle-plugin-ci grunt -t css || EXIT_STATUS=$? ; echo "EXIT STATUS - $EXIT_STATUS" # Thanks https://github.com/open-lms-open-source/moodle-plugin-ci/issues/72#issuecomment-358426352
@@ -55,22 +56,22 @@ before_script:
 
 
 # Setup jobs as stages to run sequentially.
-stages:
-  - job1
-  - job2
-  - job3
+#stages:
+#  - job1
+#  - job2
+#  - job3
 
 # Test each active version of PHP.
 job1:
   <<: *job_definition
-  stage: job1
+#  stage: job1
   image: moodlehq/moodle-php-apache:7.2
   variables:
     MOODLE_BRANCH: "MOODLE_35_STABLE"
 
 job2:
   <<: *job_definition
-  stage: job2
+#  stage: job2
   image: moodlehq/moodle-php-apache:7.3
   variables:
     MOODLE_BRANCH: "MOODLE_35_STABLE"
@@ -78,7 +79,7 @@ job2:
 # Only test the earliest and latest supported version of Moodle.
 job3:
   <<: *job_definition
-  stage: job3
+#  stage: job3
   image: moodlehq/moodle-php-apache:7.4
   variables:
     MOODLE_BRANCH: "MOODLE_39_STABLE"
