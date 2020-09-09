@@ -18,11 +18,6 @@ namespace enrol_selma\local;
 
 defined('MOODLE_INTERNAL') || die();
 
-use stdClass;
-use moodle_exception;
-
-require_once($CFG->dirroot . '/user/profile/lib.php');
-
 /**
  * Basic property map.
  *
@@ -30,122 +25,135 @@ require_once($CFG->dirroot . '/user/profile/lib.php');
  * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_property_map {
+class user_property_map extends property_map {
 
-    private $properties;
-
-    private $propertynameprefix;
-
-    public function __construct(string $propertynameprefix = 'upm_') {
-        $this->propertynameprefix = $propertynameprefix;
-        $this->properties = [
-            'firstname' => [
-                'shortname' => 'firstname',
-                'name' => get_string('firstname'),
-                'required' => 1,
-                'mappedproperty' => null,
-                'default' => 'forename'
-            ],
-            'lastname' => [
-                'shortname' => 'lastname',
-                'name' => get_string('lastname'),
-                'required' => 1,
-                'mappedproperty' => null,
-                'default' => 'lastname'
-            ],
-            'email' => [
-                'shortname' => 'email',
-                'name' => get_string('email'),
-                'required' => 1,
-                'mappedproperty' => null,
-                'default' => 'email1'
-            ],
-            'idnumber' => [
-                'shortname' => 'idnumber',
-                'name' => get_string('idnumber'),
-                'required' => 1,
-                'mappedproperty' => null,
-                'default' => 'id'
-            ],
-            'institution' => [
-                'shortname' => 'institution',
-                'name' => get_string('institution'),
-                'required' => 0,
-                'mappedproperty' => null,
-                'default' => null
-            ],
-            'department' => [
-                'shortname' => 'department',
-                'name' => get_string('department'),
-                'required' => 0,
-                'mappedproperty' => null,
-                'default' => null
-            ],
-            'phone1' => [
-                'shortname' => 'phone1',
-                'name' => get_string('phone1'),
-                'required' => 0,
-                'mappedproperty' => null,
-                'default' => null
-            ],
-            'phone2' => [
-                'shortname' => 'phone2',
-                'name' => get_string('phone2'),
-                'required' => 0,
-                'mappedproperty' => null,
-                'default' => null
-            ],
-            'middlename' => [
-                'shortname' => 'middlename',
-                'name' => get_string('middlename'),
-                'required' => 0,
-                'mappedproperty' => null,
-                'default' => null
-            ],
-            'alternatename' => [
-                'shortname' => 'alternatename',
-                'name' => get_string('alternatename'),
-                'required' => 0,
-                'mappedproperty' => null,
-                'default' => null
-            ]
-        ];
+    public function define(): void {
+        $this->add_mapped_property(
+            new mapped_property(
+                $this->object,
+                'firstname',
+                get_string('firstname'),
+                null,
+                'firstname',
+                true,
+                'set_first_name'
+            )
+        );
+        $this->add_mapped_property(
+            new mapped_property(
+                $this->object,
+                'lastname',
+                get_string('lastname'),
+                null,
+                'lastname',
+                true,
+                'set_last_name'
+            )
+        );
+        $this->add_mapped_property(
+            new mapped_property(
+                $this->object,
+                'email',
+                get_string('email'),
+                null,
+                'email',
+                true,
+                'set_email'
+            )
+        );
+        $this->add_mapped_property(
+            new mapped_property(
+                $this->object,
+                'idnumber',
+                get_string('idnumber'),
+                null,
+                'studentid',
+                true,
+                'set_idnumber'
+            )
+        );
+        $this->add_mapped_property(
+            new mapped_property(
+                $this->object,
+                'institution',
+                get_string('institution'),
+                null,
+                null,
+                false,
+                null
+            )
+        );
+        $this->add_mapped_property(
+            new mapped_property(
+                $this->object,
+                'department',
+                get_string('department'),
+                null,
+                null,
+                false,
+                null
+            )
+        );
+        $this->add_mapped_property(
+            new mapped_property(
+                $this->object,
+                'phone1',
+                get_string('phone1'),
+                null,
+                null,
+                false,
+                'set_phone1'
+            )
+        );
+        $this->add_mapped_property(
+            new mapped_property(
+                $this->object,
+                'phone2',
+                get_string('phone2'),
+                null,
+                null,
+                false,
+                'set_phone2'
+            )
+        );
+        $this->add_mapped_property(
+            new mapped_property(
+                $this->object,
+                'middlename',
+                get_string('middlename'),
+                null,
+                null,
+                false,
+                null
+            )
+        );
+        $this->add_mapped_property(
+            new mapped_property(
+                $this->object,
+                'alternatename',
+                get_string('alternatename'),
+                null,
+                null,
+                false,
+                null
+            )
+        );
         foreach (profile_get_custom_fields() as $customfield) {
-            $fieldname = 'profile_field_' . $customfield->shortname;
-            $this->properties[$fieldname] = [
-                'shortname' => $customfield->shortname,
-                'name' => $customfield->name,
-                'required' => $customfield->required,
-                'mappedproperty' => null,
-                'default' => null
-            ];
-        }
-        foreach ($this->properties as $propertyname => $options) {
-            $this->properties[$propertyname]['configname'] = $this->propertynameprefix . $propertyname;
+            $name = 'profile_field_' . $customfield->shortname;
+            $this->add_mapped_property(
+                new mapped_property(
+                    $this->object,
+                    $name,
+                    $customfield->name,
+                    null,
+                    null,
+                    false,
+                    null
+                )
+            );
         }
     }
 
-    public function is_required(string $propertyname) : bool {
-        if (!isset($this->properties[$propertyname])) {
-            throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'propertyname');
-        }
-        return (bool) $this->properties[$propertyname]['required'] ?? 0;
-    }
-
-    public function load_from_config(stdClass $config) {
-        foreach (get_object_vars($config) as $userproperty => $mappedproperty) {
-            $pattern = '/^' . $this->propertynameprefix . '/';
-            $userproperty = preg_replace($pattern, '', $userproperty, 1);
-            if (isset($this->properties[$userproperty])) {
-                $this->properties[$userproperty]['mappedproperty'] = $mappedproperty;
-            }
-        }
-        return $this;
-    }
-
-    public function get_map() {
-        return $this->properties;
-    }
 
     public function validate() {
         foreach ($this->properties as $property) {
