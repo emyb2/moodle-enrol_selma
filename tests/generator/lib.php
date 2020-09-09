@@ -134,4 +134,28 @@ class enrol_selma_generator extends testing_module_generator {
         return $randomstring;
     }
 
+    public function create_profile_field_category(string $name) {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/user/profile/lib.php');
+        require_once($CFG->dirroot . '/user/profile/definelib.php');
+        $id = $DB->insert_record('user_info_category', ['name' => $name]);
+        return $DB->get_record('user_info_category', ['id' => $id], '*', MUST_EXIST);
+    }
+
+    public function create_profile_field(string $datatype, array $data) {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/user/profile/lib.php');
+        require_once($CFG->dirroot . '/user/profile/definelib.php');
+        $datatypes = profile_list_datatypes();
+        if (!isset($datatypes[$datatype])) {
+            throw new coding_exception('invalidvalue:datatype');
+        }
+        $data['datatype'] = $datatype;
+        require_once($CFG->dirroot . '/user/profile/field/' . $datatype . '/define.class.php');
+        $newfield = 'profile_define_' . $datatype;
+        /** @var profile_define_base $formfield */
+        $formfield = new $newfield();
+        $formfield->define_save((object) $data);
+    }
+
 }
