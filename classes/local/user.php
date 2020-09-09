@@ -24,8 +24,8 @@ use profile_field_base;
 use stdClass;
 use enrol_selma\local\utilities;
 
-require_once(dirname(__FILE__, 5) . '/user/profile/lib.php');
-require_once(dirname(__FILE__, 3) . '/locallib.php');
+require_once($CFG->dirroot . '/user/profile/lib.php');
+require_once($CFG->dirroot . '/enrol/selma/locallib.php');
 
 /**
  * Class to represent a User. Extends stdClass and has public properties but
@@ -106,6 +106,16 @@ class user extends stdClass {
     public $trackforums;
 
     /**
+     * User profile fields are non-existing properties as we will follow the profilelib functions
+     * profile_load_data and profile_save_data for loading and saving data from the stdClass.
+     */
+    public function __set($name, $value) {
+        if (strpos($name, 'profile_field_') === 0) {
+            $this->set_profile_field($name, $value);
+        }
+    }
+
+    /**
      * Utility method to check a property length against associated varchar database column.
      */
     protected function check_length($name, $value) {
@@ -169,10 +179,18 @@ class user extends stdClass {
         return $this;
     }
 
+    /**
+     * Set a user profile field. Use the fields preprocess method if available.
+     *
+     * @param string $name
+     * @param $value
+     * @return $this
+     * @throws moodle_exception
+     */
     public function set_profile_field(string $name, $value) {
         global $CFG;
-        static $customprofilefields;
-        if (!isset($customprofilefields)) {
+        static $customprofilefields = null;
+        if (is_null($customprofilefields)) {
             $customprofilefields = [];
             foreach (profile_get_custom_fields() as $profilefield) {
                 $customprofilefields[$profilefield->shortname] = $profilefield;
@@ -183,15 +201,18 @@ class user extends stdClass {
             throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'name');
         }
         $field = $customprofilefields[$shortname];
-        require_once($CFG->dirroot . '/user/profile/field/' . $field->datatype . '/field.class.php');
-        $profilefieldname = 'profile_field_' . $field->shortname;
-        $classname = 'profile_field_' . $field->datatype;
-        /** @var profile_field_base $profilefield */
-        $profilefield = new $classname($field->id, $this->id, $field);
-        if (method_exists($profilefield, 'edit_save_data_preprocess')) {
-            $this->{$profilefieldname} = $profilefield->edit_save_data_preprocess($value, null);
-        } else {
-            $this->{$profilefieldname} = $value;
+        $classfilepath = $CFG->dirroot . '/user/profile/field/' . $field->datatype . '/field.class.php';
+        if (file_exists($classfilepath)) {
+            require_once($classfilepath);
+            $profilefieldname = 'profile_field_' . $field->shortname;
+            $classname = 'profile_field_' . $field->datatype;
+            /** @var profile_field_base $profilefield */
+            $profilefield = new $classname($field->id, $this->id, $field);
+            if (method_exists($profilefield, 'edit_save_data_preprocess')) {
+                $this->{$profilefieldname} = $profilefield->edit_save_data_preprocess($value, null);
+            } else {
+                $this->{$profilefieldname} = $value;
+            }
         }
         return $this;
     }
