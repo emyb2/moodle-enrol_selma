@@ -23,6 +23,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
+require_once($CFG->libdir . '/externallib.php');
 
 /**
  * Testing for the enrol_selma 'user' class.
