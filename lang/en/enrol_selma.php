@@ -313,3 +313,16 @@ Please login {$a->site} and accept any privacy policies and reset password.
 // Exceptions.
 $string['exception_bepositive'] = "Parameters must be positive values";
 $string['duplicateemailaddressesnotallowed'] = 'Duplicate email addresses not allowed by configuration';
+$string['studentsinglestructure'] = 'External data structure for a student.';
+$string['middlename'] = 'Middle name';
+$string['preferredname'] = 'Preferred name';
+$string['email'] = 'Email address';
+$string['mobilephone'] = 'Mobile phone number';
+$string['secondaryphone'] = 'Phone number';
+$string['gender'] = 'Gender of user';
+$string['dateofbirth'] = 'Date of Birth';
+$string['nsn'] = 'National Student Number';
+$string['studentid'] = 'Student ID number';
+$string['otherid'] = 'Other ID number';
+$string['moodleuserid'] = 'Moodle User ID';
+$string['noclasspropertymutator'] = 'No class property mutator for property {$a->propertyt} in class {$a->class}.';
