@@ -122,18 +122,18 @@ if ($hassiteconfig) {
     );
     $usersettings->add($setting);
 
-    $userpropertymap = new enrol_selma\local\user_property_map('upm_');
-    foreach ($userpropertymap->get_map() as $propertyname => $item) {
-        $itemobject = (object) $item;
+    $user = new enrol_selma\local\user();
+    $userpropertymap = new enrol_selma\local\user_property_map($user);
+    foreach ($userpropertymap as $propertyname => $mappedproperty) {
+        /** @var \enrol_selma\local\mapped_property $mappedproperty */
         $setting = new admin_setting_configtext(
-            "{$component}/{$itemobject->configname}",
-            $itemobject->name,
+            "{$component}/{$userpropertymap->get_config_grouping_prefix()}{$mappedproperty->get_name()}",
+            $mappedproperty->get_name(),
             null,
-            $itemobject->default
+            $mappedproperty->get_default_mapped_property_name()
         );
         $usersettings->add($setting);
     }
-
 
     // Duplicates checking.
     $duplicates = enrol_selma_validate_profile_mapping();
