@@ -14,14 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace enrol_selma\local;
+namespace enrol_selma\local\factory;
 
 defined('MOODLE_INTERNAL') || die();
 
 use stdClass;
 use enrol_selma\local\user;
-
-require_once($CFG->dirroot . '/user/profile/lib.php');
 
 /**
  * Factory to build user, course, and intake entities.
@@ -32,7 +30,7 @@ require_once($CFG->dirroot . '/user/profile/lib.php');
  */
 class entity_factory {
 
-    public function build_user_from_stdclass(stdClass $record) {
+    public function build_user_from_stdclass(stdClass $record) : user {
         $user = new user();
         foreach (get_object_vars($record) as $propertyname => $value) {
             $user->{$propertyname} = $value;
