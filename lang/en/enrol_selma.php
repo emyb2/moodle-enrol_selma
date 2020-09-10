@@ -325,4 +325,6 @@ $string['nsn'] = 'National Student Number';
 $string['studentid'] = 'Student ID number';
 $string['otherid'] = 'Other ID number';
 $string['moodleuserid'] = 'Moodle User ID';
+
 $string['noclasspropertymutator'] = 'No class property mutator for property {$a->propertyt} in class {$a->class}.';
+$string['mappedpropertybadsetup'] = 'Mapped property {$a} incorrectly setup.';
