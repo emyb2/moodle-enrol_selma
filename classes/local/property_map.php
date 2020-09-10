@@ -65,6 +65,13 @@ class property_map implements IteratorAggregate {
         return $this->object;
     }
 
+    public function get_property(string $name) : mapped_property {
+        if (!isset($this->mappedproperties[$name])) {
+            throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'name');
+        }
+        return $this->mappedproperties[$name];
+    }
+
     public function get_mapped_properties() {
         return $this->mappedproperties;
     }
