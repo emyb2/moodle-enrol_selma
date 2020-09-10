@@ -123,11 +123,12 @@ if ($hassiteconfig) {
     $usersettings->add($setting);
 
     $user = new enrol_selma\local\user();
-    $userpropertymap = new enrol_selma\local\user_property_map($user);
+    $propertymapfactory = new enrol_selma\local\factory\property_map_factory();
+    $userpropertymap = $propertymapfactory->build_user_property_map($user);
     foreach ($userpropertymap as $propertyname => $mappedproperty) {
         /** @var \enrol_selma\local\mapped_property $mappedproperty */
         $setting = new admin_setting_configtext(
-            "{$component}/{$userpropertymap->get_config_grouping_prefix()}{$mappedproperty->get_name()}",
+            "{$component}/{$userpropertymap->get_config_name_grouping_prefix()}{$mappedproperty->get_name()}",
             $mappedproperty->get_name(),
             null,
             $mappedproperty->get_default_mapped_property_name()
