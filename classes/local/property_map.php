@@ -20,6 +20,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use ArrayIterator;
 use IteratorAggregate;
+use moodle_exception;
 use stdClass;
 
 /**
@@ -33,16 +34,18 @@ class property_map implements IteratorAggregate {
 
     protected $object;
 
-    protected $configgroupingprefix;
+    protected $confignamegroupingprefix;
+
+    protected $errors;
 
     /** @var mapped_property[] $mappedproperties Array of mapped properties. */
     protected $mappedproperties;
 
-    public function __construct(&$object, string $configgroupingprefix = 'upm_') {
+    public function __construct(&$object) {
         $this->object = $object;
-        $this->configgroupingprefix = $configgroupingprefix;
+        $this->confignamegroupingprefix = '';
         $this->mappedproperties = [];
-        $this->define();
+        $this->errors = [];
     }
 
     public function add_mapped_property(mapped_property $mappedproperty) : self {
@@ -50,11 +53,16 @@ class property_map implements IteratorAggregate {
         return $this;
     }
 
-    public function define() : void {
+    public function get_config_name_grouping_prefix() {
+        return $this->confignamegroupingprefix;
     }
 
-    public function get_config_grouping_prefix() {
-        return $this->configgroupingprefix;
+    public function get_last_error() {
+        return end($this->errors);
+    }
+
+    public function get_object() {
+        return $this->object;
     }
 
     public function get_mapped_properties() {
@@ -67,7 +75,7 @@ class property_map implements IteratorAggregate {
 
     public function set_mapped_properties_from_config(stdClass $config) {
         foreach (get_object_vars($config) as $configproperty => $mappedproperty) {
-            $pattern = '/^' . $this->configgroupingprefix . '/';
+            $pattern = '/^' . $this->confignamegroupingprefix . '/';
             $property = preg_replace($pattern, '', $configproperty, 1);
             if (!is_null($property) && $property != $configproperty && isset($this->mappedproperties[$property])) {
                 $this->mappedproperties[$property]->set_mapped_property_name($mappedproperty);
@@ -75,7 +83,32 @@ class property_map implements IteratorAggregate {
         }
         return $this;
     }
-    public function write_data($arrayorobject) {
 
+    public function set_config_name_grouping_prefix(string $confignamegroupingprefix) {
+        $this->confignamegroupingprefix = $confignamegroupingprefix;
+        return $this;
     }
+
+    public function write_data(array $data) {
+       foreach ($this->mappedproperties as $property) {
+           if ($property->is_required() && !isset($data[$property->get_mapped_property_name()])) {
+               throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, $property->get_name());
+           }
+           if (!is_null($property->get_mapped_property_name()) && isset($data[$property->get_mapped_property_name()])) {
+               $value = $data[$property->get_mapped_property_name()];
+               $property->set_value($value);
+           }
+       }
+    }
+
+    public function is_valid() : bool {
+        foreach ($this->mappedproperties as $mappedproperty) {
+            if (!$mappedproperty->is_valid()) {
+                $this->errors[] = get_string('mappedpropertybadsetup', 'enrol_selma', $mappedproperty->get_name());
+                return false;
+            }
+        }
+        return true;
+    }
+
 }
