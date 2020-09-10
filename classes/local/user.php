@@ -48,6 +48,9 @@ class user extends stdClass {
     public $mnethostid = 0;
 
     /** @var string $username User username. */
+
+    public $newpassword;
+
     public $username;
 
     /** @var string $firstname User first name. */
@@ -104,6 +107,10 @@ class user extends stdClass {
     public $autosubscribe;
 
     public $trackforums;
+
+    public $timecreated;
+
+    public $timemodified;
 
     /**
      * User profile fields are non-existing properties as we will follow the profilelib functions
@@ -241,6 +248,7 @@ class user extends stdClass {
         if (trim($this->idnumber) === '') {
             throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'idnumber');
         }
+        $this->password = $this->newpassword;
         if ($this->id <= 0) {
             // Email duplicates check.
             $allowaccountssameemail = $CFG->allowaccountssameemail ?? 0;
@@ -268,9 +276,12 @@ class user extends stdClass {
             }
             $this->mnethostid = $CFG->mnet_localhost_id; // Always set to local for a new user.
             $this->id = user_create_user($this, false, true);
-            set_user_preference('enrol_selma_new_student_create_password', 1, $this);
+
         } else {
             user_update_user($this);
+            if ($this->newpassword) {
+                set_user_preference('auth_forcepasswordchange', 1, $this);
+            }
         }
         profile_save_data($this);
         return true;
