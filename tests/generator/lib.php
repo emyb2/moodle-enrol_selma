@@ -94,12 +94,28 @@ class enrol_selma_generator extends testing_module_generator {
             'invalid' => [
                 'fullname' => 'First Line Management 4',
                 'shortname' => 'FLM4',
-                'idnumber' => 10479434
+                'idnumber' => '9999999'
             ],
             'complete' => [
                 'fullname' => 'Introduction to Team Leadership 3',
                 'shortname' => 'ITL3',
                 'idnumber' => 10479434
+            ]
+        ];
+    }
+
+    /**
+     * @return  array[] Array with most basic course data we need.
+     */
+    public function get_selma_get_course_data() : array {
+        return [
+            'valid' => [
+                'amount' => 10,
+                'page' => 1,
+            ],
+            'invalid' => [
+                'amount' => 10,
+                'page' => 1,
             ]
         ];
     }

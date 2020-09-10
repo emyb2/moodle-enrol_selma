@@ -35,7 +35,7 @@ require_once($CFG->libdir . '/externallib.php');
 class get_all_courses_external_testcase extends externallib_advanced_testcase {
 
     /**
-     *  @var enrol_selma_generator $plugingenerator handle to plugin generator.
+     * @var enrol_selma_generator $plugingenerator handle to plugin generator.
      */
     protected $plugingenerator;
 
@@ -43,9 +43,6 @@ class get_all_courses_external_testcase extends externallib_advanced_testcase {
      * Prepares for the test.
      */
     protected function setUp() {
-        //global $CFG;
-        //require_once($CFG->dirroot . '/enrol/selma/locallib.php');
-
         // Run parent setup first, if any.
         parent::setUp();
 
@@ -59,164 +56,30 @@ class get_all_courses_external_testcase extends externallib_advanced_testcase {
     /**
      * Tests if exception is thrown when trying to create course without capability to do so.
      */
-    public function test_missing_required_capability() {
-        // Get context to assign capability.
-        $contextid = context_system::instance()->id;
-
-        // We give this user capability to 'view' but not 'create' (yet).
-        $roleid = $this->assignUserCapability('moodle/course:view', $contextid);
-
+    public function test_working_get_all_course_capability() {
         // Get test course data.
-        $params = $this->plugingenerator->get_selma_course_data()['valid'];
+        $params = $this->plugingenerator->get_selma_get_course_data()['valid'];
 
-        // We expect to be thrown a 'required capability' exception.
-        $this->expectException(required_capability_exception::class);
-
-        // User should not be able to create yet..
-        $result = create_course::create_course($params);
-
-        }
-
-    /**
-     * Tests if exception is thrown when required configs have not been set up yet.
-     */
-    public function test_missing_required_config() {
-        // Get context to assign capability.
-        $contextid = context_system::instance()->id;
-
-        // Give user ability to create courses.
-        $roleid = $this->assignUserCapability('moodle/course:create', $contextid);
-
-        // Get test course data.
-        $params = $this->plugingenerator->get_selma_course_data()['valid'];
-
-        // We expect to be thrown a generic 'moodle' exception.
-        $this->expectException(moodle_exception::class);
-
-        // Plugin configs not set up at this point yet.
-        $result = create_course::create_course($params);
-    }
-
-    /**
-     * Tests if warning is returned when optional configs have not been set up yet.
-     */
-    public function test_missing_optional_config() {
-        // Get context to assign capability.
-        $contextid = context_system::instance()->id;
-
-        // Give user ability to create courses.
-        $roleid = $this->assignUserCapability('moodle/course:create', $contextid);
-
-        // TODO - make this a custom/new category, so we can test if the config was respected later. Hard to know if default used.
-        // Now 'fix' the previous issue(s) to continue. 1 = Miscellaneous (default category).
-        set_config('newcoursecat', 1,'enrol_selma');
-
-        // Get test course data.
-        $params = $this->plugingenerator->get_selma_course_data()['valid'];
-
-
-        // Plugin configs not set up at this point yet.
-        $result = create_course::create_course($params);
+        // User should get all course resturned.
+        $result = get_all_courses::get_all_courses($params['amount'], $params['page']);
 
         // We need to execute the return values cleaning process to simulate the web service server
-        $returnedvalue = external_api::clean_returnvalue(create_course::create_course_returns(), $result);
+        $returnedvalue = external_api::clean_returnvalue(get_all_courses::get_all_courses_returns(), $result);
 
+        // No courses exist yet.
         $expectedvalue = [
             'status' => get_string('status_ok', 'enrol_selma'),
-            'courseid' => $returnedvalue['courseid'], // Slight cheat here, but the course ID will be generated.
-            'message' => get_string('status_ok_message', 'enrol_selma'),
-            'warnings' => array(
-                0 => [
-                    'item' => get_string('pluginname', 'enrol_selma'),
-                    'itemid' => 1,
-                    'warningcode' => get_string('warning_code_noconfig', 'enrol_selma'),
-                    'message' => get_string('warning_message_noconfig', 'enrol_selma', 'selmacoursetags')
-                ]
-            )
-        ];
-
-        // Assert we got warnings, as expected.
-        $this->assertArrayHasKey('warnings', $returnedvalue);
-        // Assert we got what we expected.
-        $this->assertEquals($expectedvalue, $returnedvalue);
-    }
-
-    /**
-     * Tests the most simple (working) setup of a course.
-     */
-    public function test_simple_working_course() {
-        // Get context to assign capability.
-        $contextid = context_system::instance()->id;
-
-        // Give user ability to create courses.
-        $roleid = $this->assignUserCapability('moodle/course:create', $contextid);
-
-        // TODO - make this a custom/new category, so we can test if the config was respected later. Hard to know if default used.
-        // Now 'fix' the previous issue(s) to continue. 1 = Miscellaneous (default category).
-        set_config('newcoursecat', 1,'enrol_selma');
-
-        // Now 'fix' the previous issue(s) to continue. Set some tags.
-        set_config('selmacoursetags', '{{name}},selma','enrol_selma');
-
-        // Get test course data.
-        $params = $this->plugingenerator->get_selma_course_data()['valid'];
-
-        // Plugin configs not set up at this point yet.
-        $result = create_course::create_course($params);
-
-        // We need to execute the return values cleaning process to simulate the web service server
-        $returnedvalue = external_api::clean_returnvalue(create_course::create_course_returns(), $result);
-
-        $expectedvalue = [
-            'status' => get_string('status_ok', 'enrol_selma'),
-            'courseid' => $returnedvalue['courseid'], // Slight cheat here, but the course ID will be generated.
+            'courses' => [],
+            'nextpage' => $params['page']++,
             'message' => get_string('status_ok_message', 'enrol_selma'),
         ];
+
+        var_dump($returnedvalue);
+        var_dump($expectedvalue);
 
         // Assert we don't have any warnings.
         $this->assertArrayNotHasKey('warnings', $returnedvalue);
         // Assert we got what we expected.
         $this->assertEquals($expectedvalue, $returnedvalue);
-    }
-
-    /**
-     * Tests the handling of a duplicate course being created.
-     */
-    public function test_simple_duplicate_course() {
-        // Get context to assign capability.
-        $contextid = context_system::instance()->id;
-
-        // Give user ability to create courses.
-        $roleid = $this->assignUserCapability('moodle/course:create', $contextid);
-
-        // TODO - make this a custom/new category, so we can test if the config was respected later. Hard to know if default used.
-        // Now 'fix' the previous issue(s) to continue. 1 = Miscellaneous (default category).
-        set_config('newcoursecat', 1,'enrol_selma');
-
-        // Now 'fix' the previous issue(s) to continue. Set some tags.
-        set_config('selmacoursetags', '{{name}},selma','enrol_selma');
-
-        // Get test course data.
-        $params = $this->plugingenerator->get_selma_course_data()['valid'];
-
-        // We expect to be thrown a generic 'moodle' exception.
-        $this->expectException(moodle_exception::class);
-
-        // Plugin configs not set up at this point yet.
-        $result = create_course::create_course($params);
-
-        //// We need to execute the return values cleaning process to simulate the web service server
-        //$returnedvalue = external_api::clean_returnvalue(create_course::create_course_returns(), $result);
-        //
-        //$expectedvalue = [
-        //    'status' => get_string('status_ok', 'enrol_selma'),
-        //    'courseid' => $returnedvalue['courseid'], // Slight cheat here, but the course ID will be generated.
-        //    'message' => get_string('status_ok_message', 'enrol_selma'),
-        //];
-        //
-        //// Assert we don't have any warnings.
-        //$this->assertArrayNotHasKey('warnings', $returnedvalue);
-        //// Assert we got what we expected.
-        //$this->assertEquals($expectedvalue, $returnedvalue);
     }
 }

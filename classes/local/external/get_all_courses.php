@@ -29,7 +29,6 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/course/lib.php');
 require_once(dirname(__FILE__, 4) . '/locallib.php');
-require_once($CFG->libdir . '/externallib.php');
 
 use context_system;
 use external_api;
@@ -52,8 +51,8 @@ class get_all_courses extends external_api {
     public static function get_all_courses_parameters() {
         return new external_function_parameters(
             [
-                'amount' => new external_value(PARAM_INT, get_string('get_all_courses_parameters::amount', 'enrol_selma'),VALUE_OPTIONAL),
-                'page' => new external_value(PARAM_INT, get_string('get_all_courses_parameters::page', 'enrol_selma'), VALUE_OPTIONAL)
+                'amount' => new external_value(PARAM_INT, get_string('get_all_courses_parameters::amount', 'enrol_selma')),
+                'page' => new external_value(PARAM_INT, get_string('get_all_courses_parameters::page', 'enrol_selma'))
             ], get_string('get_all_courses_parameters', 'enrol_selma')
         );
     }
@@ -90,7 +89,7 @@ class get_all_courses extends external_api {
             [
                 'status' => new external_value(PARAM_TEXT, get_string('get_all_courses_returns::status', 'enrol_selma')),
                 'courses' => new external_multiple_structure(self::get_course_structure(), get_string('get_all_courses_returns::courses', 'enrol_selma')),
-                'nextpage' => new external_value(PARAM_INT, get_string('get_all_courses_returns::nextpage', 'enrol_selma'), VALUE_OPTIONAL),
+                'nextpage' => new external_value(PARAM_INT, get_string('get_all_courses_returns::nextpage', 'enrol_selma')),
                 'message' => new external_value(PARAM_TEXT, get_string('get_all_courses_returns::message', 'enrol_selma'))
             ], get_string('get_all_courses_returns', 'enrol_selma')
         );

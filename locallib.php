@@ -482,6 +482,8 @@ function enrol_selma_get_all_courses(int $amount = 0, int $page = 1) {
     // To keep track of which DB 'page' to look on.
     $dbpage = $page;
 
+    $nextpage = -1;
+
     // Set status to 'we don't know what went wrong'. We will set this to potential known causes further down.
     $status = get_string('status_other', 'enrol_selma');
     // If courses = null, then it means we didn't find anything/something went wrong. Changed if successfully found a course(s).
@@ -547,14 +549,14 @@ function enrol_selma_get_all_courses(int $amount = 0, int $page = 1) {
     $status = get_string('status_ok', 'enrol_selma');
     // Var $courses already set.
     $message = get_string('status_ok_message', 'enrol_selma');
-    // Check if nextpage needs to be sent.
-    if (isset($nextpage)) {
-        // Returned details (incl. nextpage).
-        return ['status' => $status, 'courses' => $courses, 'nextpage' => $nextpage, 'message' => $message];
-    }
+    //// Check if nextpage needs to be sent.
+    //if ($nextpage > -1) {
+    //    // Returned details (incl. nextpage).
+    //    return ['status' => $status, 'courses' => $courses, 'nextpage' => $nextpage, 'message' => $message];
+    //}
 
     // Returned details (excl. nextpage).
-    return ['status' => $status, 'courses' => $courses, 'message' => $message];
+    return ['status' => $status, 'courses' => $courses, 'nextpage' => $nextpage, 'message' => $message];
 }
 
 /**

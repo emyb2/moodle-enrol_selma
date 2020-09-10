@@ -28,7 +28,6 @@ namespace enrol_selma\local\external;
 defined('MOODLE_INTERNAL') || die();
 
 require_once(dirname(__FILE__, 4) . '/locallib.php');
-require_once($CFG->libdir . '/externallib.php');
 
 use context_system;
 use external_api;
