@@ -18,7 +18,7 @@ namespace enrol_selma\local;
 
 defined('MOODLE_INTERNAL') || die();
 
-use coding_exception;
+use moodle_exception;
 
 /**
  * A mapped property.
@@ -37,6 +37,7 @@ class mapped_property {
     private $required;
     private $mutatorproperty;
     private $mutatormethod;
+    private $allownonexistent;
 
     public function __construct(
         &$object,
@@ -45,7 +46,8 @@ class mapped_property {
         ? string $mappedpropertyname = null,
         ? string $defaultmappedpropertyname = null,
         bool $required = false,
-        ? string $mutatormethod = null
+        ? string $mutatormethod = null,
+        bool $allownonexistent = true
     ) {
         $this->object = $object;
         $this->name = $name;
@@ -54,6 +56,7 @@ class mapped_property {
         $this->defaultmappedpropertyname = $defaultmappedpropertyname;
         $this->required = $required;
         $this->mutatormethod = $mutatormethod;
+        $this->allownonexistent = $allownonexistent;
     }
 
     public function get_name() : string {
@@ -77,10 +80,10 @@ class mapped_property {
     }
 
     public function is_valid() : bool {
-        if ($this->required && !is_null($this->get_mapped_property_name())) {
-            return true;
+        if ($this->required && is_null($this->get_mapped_property_name())) {
+            return false;
         }
-        return false;
+        return true;
     }
 
     public function set_mapped_property_name(string $mappedpropertyname) : self {
@@ -89,15 +92,13 @@ class mapped_property {
     }
 
     public function set_value($value) {
-        if (!is_null($this->mutatormethod) && trim($this->mutatormethod) !== '') {
-            $object->{$this->mutatormethod}($value);
-        } else if (property_exists($object, $this->get_name())) {
-            $object->{$this->name} = $value;
+        if (isset($this->mutatormethod) && method_exists($this->object, $this->mutatormethod)) {
+            $this->object->{$this->mutatormethod}($value);
+        } else if (property_exists($this->object, $this->name)) {
+            $this->object->{$this->name} = $value;
+        } else if (!property_exists($this->object, $this->name) && $this->allownonexistent) {
+            $this->object->{$this->name} = $value;
         }
-        throw new moodle_exception(
-            'noclasspropertymutator', 'enrol_selma', null,
-            ['property' => $this->name, 'class' => get_class($object)]
-        );
     }
 
 }
