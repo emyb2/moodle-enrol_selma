@@ -25,11 +25,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $ADMIN;
+
 require_once(dirname(__FILE__) . '/locallib.php');
 require_once(dirname(__FILE__) . '/settingslib.php');
-require_once(dirname(__FILE__, 3) . '/course/classes/category.php');
-
-global $ADMIN;
 
 if ($hassiteconfig) {
     // https://docs.moodle.org/dev/Admin_settings

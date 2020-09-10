@@ -17,7 +17,7 @@
 // As per https://docs.moodle.org/dev/Coding_style#Namespaces_within_.2A.2A.2Ftests_directories.
 //namespace enrol_selma;
 
-use enrol_selma\local\external\create_course;
+use enrol_selma\local\external\get_all_courses;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -32,7 +32,7 @@ require_once($CFG->libdir . '/externallib.php');
  * @copyright   2020 LearningWorks <selma@learningworks.ac.nz>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class create_course_external_testcase extends externallib_advanced_testcase {
+class get_all_courses_external_testcase extends externallib_advanced_testcase {
 
     /**
      *  @var enrol_selma_generator $plugingenerator handle to plugin generator.
@@ -43,6 +43,9 @@ class create_course_external_testcase extends externallib_advanced_testcase {
      * Prepares for the test.
      */
     protected function setUp() {
+        //global $CFG;
+        //require_once($CFG->dirroot . '/enrol/selma/locallib.php');
+
         // Run parent setup first, if any.
         parent::setUp();
 
@@ -57,8 +60,6 @@ class create_course_external_testcase extends externallib_advanced_testcase {
      * Tests if exception is thrown when trying to create course without capability to do so.
      */
     public function test_missing_required_capability() {
-        $this->resetAfterTest();
-
         // Get context to assign capability.
         $contextid = context_system::instance()->id;
 
@@ -73,14 +74,13 @@ class create_course_external_testcase extends externallib_advanced_testcase {
 
         // User should not be able to create yet..
         $result = create_course::create_course($params);
-    }
+
+        }
 
     /**
      * Tests if exception is thrown when required configs have not been set up yet.
      */
     public function test_missing_required_config() {
-        $this->resetAfterTest();
-
         // Get context to assign capability.
         $contextid = context_system::instance()->id;
 
@@ -101,8 +101,6 @@ class create_course_external_testcase extends externallib_advanced_testcase {
      * Tests if warning is returned when optional configs have not been set up yet.
      */
     public function test_missing_optional_config() {
-        $this->resetAfterTest();
-
         // Get context to assign capability.
         $contextid = context_system::instance()->id;
 
@@ -147,8 +145,6 @@ class create_course_external_testcase extends externallib_advanced_testcase {
      * Tests the most simple (working) setup of a course.
      */
     public function test_simple_working_course() {
-        $this->resetAfterTest();
-
         // Get context to assign capability.
         $contextid = context_system::instance()->id;
 
@@ -181,16 +177,12 @@ class create_course_external_testcase extends externallib_advanced_testcase {
         $this->assertArrayNotHasKey('warnings', $returnedvalue);
         // Assert we got what we expected.
         $this->assertEquals($expectedvalue, $returnedvalue);
-
-
     }
 
     /**
      * Tests the handling of a duplicate course being created.
      */
     public function test_simple_duplicate_course() {
-        $this->resetAfterTest();
-
         // Get context to assign capability.
         $contextid = context_system::instance()->id;
 
