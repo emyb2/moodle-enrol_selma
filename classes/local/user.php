@@ -276,7 +276,7 @@ class user extends stdClass {
             }
             $this->mnethostid = $CFG->mnet_localhost_id; // Always set to local for a new user.
             $this->id = user_create_user($this, false, true);
-
+            set_user_preference('enrol_selma_new_student_create_password', 1, $this);
         } else {
             user_update_user($this);
             if ($this->newpassword) {
