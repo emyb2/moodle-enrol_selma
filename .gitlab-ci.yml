@@ -41,13 +41,11 @@ before_script:
   - >
     if [ $DB == "mysqli" ] || [ $DB == "mariadb" ]; then
       mysql -e 'USE mysql; SELECT User, Host, plugin FROM mysql.user; UPDATE user SET plugin="mysql_native_password" WHERE User="root"; FLUSH PRIVILEGES; SELECT User, Host, plugin FROM mysql.user;'
-      service $DBSERVICE restart
     elif [ $DB == "pgsql" ]; then
-      ls -lahR /etc/postgresql
+      ls -lah /etc/postgresql
       echo "host    all         all         127.0.0.1/32          trust" >| /etc/postgresql/11/main/pg_hba.conf
-      service $DBSERVICE restart
-      less /etc/postgresql/11/main/pg_hba.conf
     fi
+  - service $DBSERVICE restart
   #      echo "host    all         all         127.0.0.1          trust"  | tee -a /var/lib/pgsql/data/pg_hba.conf
   #      find / pg_hba.conf -type f -exec echo "host    all         all         127.0.0.1          trust"  | tee -a {} \;
   # Change localhost to 127.0.0.1 for phpdoc.
@@ -66,7 +64,6 @@ before_script:
     - moodle-plugin-ci grunt -t css || EXIT_STATUS=$? ; echo "EXIT STATUS - $EXIT_STATUS" # Thanks https://github.com/open-lms-open-source/moodle-plugin-ci/issues/72#issuecomment-358426352
     #    - moodle-plugin-ci savepoints || EXIT_STATUS=$? ; echo "EXIT STATUS - $(tput bold)$EXIT_STATUS$(tput sgr0)"
     - exit $EXIT_STATUS
-
 
 # TODO - Make mysql work. Switch to different distro or install mysql.
 # Setup jobs as stages to run sequentially.

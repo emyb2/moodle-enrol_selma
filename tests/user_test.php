@@ -17,7 +17,10 @@
 defined('MOODLE_INTERNAL') || die();
 
 use enrol_selma\local\user;
-use enrol_selma\local\external;
+
+global $CFG;
+require_once($CFG->dirroot . '/webservice/tests/helpers.php');
+require_once($CFG->libdir . '/phpunit/classes/advanced_testcase.php');
 
 /**
  * Testing for the enrol_selma 'user' class.
@@ -26,7 +29,7 @@ use enrol_selma\local\external;
  * @copyright   2020 LearningWorks <selma@learningworks.ac.nz>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_testcase extends provider_testcase {
+class user_testcase extends advanced_testcase {
 
     /**
      *  @var enrol_selma_generator $plugingenerator handle to plugin generator.
