@@ -6,7 +6,6 @@
 # More info in ./doc/development.md
 
 variables:
-  DBPASS: "pass"
   TRAVIS_BUILD_DIR: "$CI_PROJECT_DIR"
   IGNORE_PATHS: "vendor,node_modules"
   PHPUNIT_IGNORE_PATHS: "$IGNORE_PATHS,cli"

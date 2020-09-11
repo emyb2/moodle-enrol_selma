@@ -26,7 +26,7 @@ use enrol_selma\local\external;
  * @copyright   2020 LearningWorks <selma@learningworks.ac.nz>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_testcase extends externallib_advanced_testcase {
+class user_testcase extends provider_testcase {
 
     /**
      *  @var enrol_selma_generator $plugingenerator handle to plugin generator.
