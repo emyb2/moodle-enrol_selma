@@ -38,6 +38,9 @@ require_once(dirname(__FILE__, 3) . '/group/lib.php');
 
 global $DB;
 
+// Configs.
+var_dump(get_config('enrol_selma', 'faake'));
+
 $selmauser = new user();
 
 echo "Hello World!<br><hr><br>";

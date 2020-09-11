@@ -25,16 +25,17 @@
 
 namespace enrol_selma\local\external;
 
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/course/lib.php');
+require_once(dirname(__FILE__, 4) . '/locallib.php');
+
 use context_system;
 use external_api;
 use external_function_parameters;
 use external_single_structure;
 use external_value;
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->dirroot . '/course/lib.php');
-require_once(dirname(__FILE__, 4) . '/locallib.php');
+use external_warnings;
 
 /**
  * Class create_course used to create course from SELMA.
@@ -97,6 +98,10 @@ class create_course extends external_api {
                 'status' => new external_value(PARAM_TEXT, get_string('create_course_returns::status', 'enrol_selma')),
                 'courseid' => new external_value(PARAM_INT, get_string('create_course_returns::courseid', 'enrol_selma')),
                 'message' => new external_value(PARAM_TEXT, get_string('create_course_returns::message', 'enrol_selma')),
+                // TODO - Maybe we should be returning 'warning' values, instead of in the message.
+                // As per - https://docs.moodle.org/dev/Errors_handling_in_web_services#Warning_messages
+                // For example, refer to mod/assign/externallib.php:614.
+                'warnings' => new external_warnings()
             ],
             get_string('create_course_returns', 'enrol_selma')
         );

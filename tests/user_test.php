@@ -16,8 +16,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-use \core_privacy\tests\provider_testcase;
 use enrol_selma\local\user;
+use enrol_selma\local\external;
 
 /**
  * Testing for the enrol_selma 'user' class.

@@ -25,16 +25,15 @@
 
 namespace enrol_selma\local\external;
 
-use context_system;
-use external_api;
-use external_function_parameters;
-use external_multiple_structure;
-use external_single_structure;
-use external_value;
-
 defined('MOODLE_INTERNAL') || die();
 
 require_once(dirname(__FILE__, 4) . '/locallib.php');
+
+use context_system;
+use external_api;
+use external_function_parameters;
+use external_single_structure;
+use external_value;
 
 /**
  * Class create_intake used to create a record of a SELMA intake and metadata.

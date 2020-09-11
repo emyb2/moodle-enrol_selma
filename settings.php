@@ -25,11 +25,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once('locallib.php');
-require_once('settingslib.php');
-
 global $ADMIN;
-if ($ADMIN->fulltree) {
+
+require_once(dirname(__FILE__) . '/locallib.php');
+require_once(dirname(__FILE__) . '/settingslib.php');
+
+if ($hassiteconfig) {
     // https://docs.moodle.org/dev/Admin_settings
     $component = 'enrol_selma';
 
@@ -399,14 +400,20 @@ if ($ADMIN->fulltree) {
     );
     $coursesettings->add($setting);
 
-    $options = core_course_category::make_categories_list();
+    // TODO - Or just use 'class_exists()'?
+    // Use new method for Moodle 3.6+
+    if (class_exists('core_course_category')) {
+        $options = core_course_category::make_categories_list();
+    } else {
+        $options = coursecat::make_categories_list();
+    }
 
     // Where new courses are created.
     $setting = new admin_setting_configselect(
         "{$component}/newcoursecat",
         new lang_string('newcoursecat', $component),
         new lang_string('newcoursecat::description', $component),
-        $options[1],
+        key($options),
         $options
     );
     $coursesettings->add($setting);

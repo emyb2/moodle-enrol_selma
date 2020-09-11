@@ -25,16 +25,16 @@
 
 namespace enrol_selma\local\external;
 
+defined('MOODLE_INTERNAL') || die();
+
+require_once(dirname(__FILE__, 4) . '/locallib.php');
+
 use context_system;
 use external_api;
 use external_function_parameters;
 use external_multiple_structure;
 use external_single_structure;
 use external_value;
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once(dirname(__FILE__, 4) . '/locallib.php');
 
 /**
  * Class create_users used to create users from SELMA.
