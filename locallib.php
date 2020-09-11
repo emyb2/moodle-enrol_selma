@@ -912,6 +912,7 @@ function enrol_selma_user_is_in_intake(int $userid, int $intakeid) {
  * @throws moodle_exception
  */
 function enrol_selma_create_student_from_selma(array $selmadata, stdClass $config) {
+    require_capability('moodle/user:create', context_system::instance());
     $user = new enrol_selma\local\user();
     $propertymapfactory = new enrol_selma\local\factory\property_map_factory();
     $userpropertymap = $propertymapfactory->build_user_property_map($user, $config);
@@ -936,6 +937,7 @@ function enrol_selma_create_student_from_selma(array $selmadata, stdClass $confi
  */
 function enrol_selma_update_student_from_selma(array $selmadata, stdClass $config, $userlinkfield = 'idnumber') {
     global $DB;
+    require_capability('moodle/user:update', context_system::instance());
     if (trim($userlinkfield) === '') {
         throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'userlinkfield');
     }
