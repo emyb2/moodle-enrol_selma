@@ -94,7 +94,7 @@ class enrol_selma_generator extends testing_module_generator {
             'invalid' => [
                 'fullname' => 'First Line Management 4',
                 'shortname' => 'FLM4',
-                'idnumber' => '9999999'
+                'idnumber' => ['invalid' => '<strong>~!@#$%^&*()_+</strong>']
             ],
             'complete' => [
                 'fullname' => 'Introduction to Team Leadership 3',
@@ -114,8 +114,8 @@ class enrol_selma_generator extends testing_module_generator {
                 'page' => 1,
             ],
             'invalid' => [
-                'amount' => 10,
-                'page' => 1,
+                'amount' => -2,
+                'page' => -5,
             ]
         ];
     }

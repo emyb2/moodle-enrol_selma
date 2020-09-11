@@ -8,6 +8,7 @@ dist: xenial
 
 services:
   - mysql
+  - mariadb
   - postgresql
 
 php:
@@ -29,6 +30,7 @@ env:
   matrix:
     - DB=pgsql
     - DB=mysqli
+    - DB=mariadb
 
 jobs:
   # This will fail the build if a single job fails (except those in allow_failures).

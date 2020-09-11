@@ -308,3 +308,6 @@ Service account token:    {$a->token}
 
 Please login {$a->site} and accept any privacy policies and reset password.
 ';
+
+// Exceptions.
+$string['exception_bepositive'] = "Parameters must be positive values";

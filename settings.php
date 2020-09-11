@@ -400,7 +400,13 @@ if ($hassiteconfig) {
     );
     $coursesettings->add($setting);
 
-    $options = core_course_category::make_categories_list();
+    // TODO - Or just use 'class_exists()'?
+    // Use new method for Moodle 3.6+
+    if (class_exists('core_course_category')) {
+        $options = core_course_category::make_categories_list();
+    } else {
+        $options = coursecat::make_categories_list();
+    }
 
     // Where new courses are created.
     $setting = new admin_setting_configselect(

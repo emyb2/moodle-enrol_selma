@@ -54,32 +54,73 @@ class get_all_courses_external_testcase extends externallib_advanced_testcase {
     }
 
     /**
-     * Tests if exception is thrown when trying to create course without capability to do so.
+     * Tests if exception is thrown when trying to pass invalid parameters.
      */
-    public function test_working_get_all_course_capability() {
+    public function test_negative_params_get_all_courses() {
+        // Get test course data.
+        $params = $this->plugingenerator->get_selma_get_course_data()['invalid'];
+
+        $this->expectException(moodle_exception::class);
+
+        // User should get all course returned.
+        $result = get_all_courses::get_all_courses($params['amount'], $params['page']);
+        // We need to execute the return values cleaning process to simulate the web service server
+        $returnedvalue = external_api::clean_returnvalue(get_all_courses::get_all_courses_returns(), $result);
+    }
+
+    /**
+     * Tests if exception is thrown when trying to get courses when none exist.
+     */
+    public function test_no_courses_get_all_courses() {
         // Get test course data.
         $params = $this->plugingenerator->get_selma_get_course_data()['valid'];
 
-        // User should get all course resturned.
+        // User should get all course returned.
         $result = get_all_courses::get_all_courses($params['amount'], $params['page']);
-
         // We need to execute the return values cleaning process to simulate the web service server
         $returnedvalue = external_api::clean_returnvalue(get_all_courses::get_all_courses_returns(), $result);
 
-        // No courses exist yet.
         $expectedvalue = [
-            'status' => get_string('status_ok', 'enrol_selma'),
+            'status' => get_string('status_notfound', 'enrol_selma'),
             'courses' => [],
-            'nextpage' => $params['page']++,
-            'message' => get_string('status_ok_message', 'enrol_selma'),
+            'nextpage' => -1,
+            'message' => get_string('status_notfound_message', 'enrol_selma'),
         ];
 
-        var_dump($returnedvalue);
-        var_dump($expectedvalue);
-
-        // Assert we don't have any warnings.
-        $this->assertArrayNotHasKey('warnings', $returnedvalue);
         // Assert we got what we expected.
         $this->assertEquals($expectedvalue, $returnedvalue);
     }
+
+    /**
+     * Tests if exception is thrown when trying to create course without capability to do so.
+     */
+    //public function test_working_get_all_courses() {
+    //    // Get test course data.
+    //    $params = $this->plugingenerator->get_selma_get_course_data()['valid'];
+    //
+    //    // TODO - Create some courses.
+    //    //create_course();
+    //
+    //    // User should get all course returned.
+    //    $result = get_all_courses::get_all_courses($params['amount'], $params['page']);
+    //
+    //    // We need to execute the return values cleaning process to simulate the web service server
+    //    $returnedvalue = external_api::clean_returnvalue(get_all_courses::get_all_courses_returns(), $result);
+    //
+    //    // What's expected?
+    //    $expectedvalue = [
+    //        'status' => get_string('status_notfound', 'enrol_selma'),
+    //        'courses' => [],
+    //        'nextpage' => -1,
+    //        'message' => get_string('status_notfound_message', 'enrol_selma'),
+    //    ];
+    //
+    //    var_dump($returnedvalue);
+    //    var_dump($expectedvalue);
+    //
+    //    // Assert we don't have any warnings.
+    //    $this->assertArrayNotHasKey('warnings', $returnedvalue);
+    //    // Assert we got what we expected.
+    //    $this->assertEquals($expectedvalue, $returnedvalue);
+    //}
 }

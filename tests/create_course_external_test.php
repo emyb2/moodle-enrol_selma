@@ -232,7 +232,7 @@ class create_course_external_testcase extends externallib_advanced_testcase {
         $params = $this->plugingenerator->get_selma_course_data()['invalid'];
 
         // We expect to be thrown a generic 'moodle' exception.
-        $this->expectException(moodle_exception::class);
+        $this->expectException(invalid_parameter_exception::class);
 
         // Plugin configs not set up at this point yet.
         $result = create_course::create_course($params);

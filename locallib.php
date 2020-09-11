@@ -470,14 +470,18 @@ function enrol_selma_create_users(array $users) {
 /**
  * Get all the courses that's not in any excluded category - excludecoursecat setting.
  *
- * @param   int     $amount Number of records to retrieve - get all by default.
- * @param   int     $page Which 'page' to retrieve from the DB - works in conjunction with $amount.
- * @return  array   Array containing the status of the request, courses found, and appropriate message.
+ * @param   int                 $amount Number of records to retrieve - get all by default.
+ * @param   int                 $page   Which 'page' to retrieve from the DB - works in conjunction with $amount.
+ * @return  array               Array containing the status of the request, courses found, and appropriate message.
+ * @throws  moodle_exception    Exception thrown when invalid/negative params are given.
  */
 function enrol_selma_get_all_courses(int $amount = 0, int $page = 1) {
     global $DB;
 
     // TODO - $amount & $page needs to be positive values.
+    if ($amount < 0 || $page < 0) {
+        throw new moodle_exception('exception_bepositive', 'enrol_selma');
+    }
 
     // To keep track of which DB 'page' to look on.
     $dbpage = $page;
@@ -537,7 +541,7 @@ function enrol_selma_get_all_courses(int $amount = 0, int $page = 1) {
         $message = get_string('status_notfound_message', 'enrol_selma');
 
         // Return status.
-        return ['status' => $status, 'courses' => $courses, 'message' => $message];
+        return ['status' => $status, 'courses' => $courses, 'nextpage' => $nextpage, 'message' => $message];
     }
 
     // The next page the requester should request.
