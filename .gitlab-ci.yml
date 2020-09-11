@@ -72,12 +72,12 @@ before_script:
 # TODO - Make mysql work. Switch to different distro or install mysql.
 # Setup jobs as stages to run sequentially.
 stages:
-#  - job1
-#  - job2
-#  - job3
-#  - job4
-#  - job5
-#  - job6
+  - job1
+  - job2
+  - job3
+  - job4
+  - job5
+  - job6
   - job7
   - job8
   - job9
