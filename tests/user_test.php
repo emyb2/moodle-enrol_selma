@@ -20,6 +20,8 @@ use enrol_selma\local\user;
 use enrol_selma\local\external;
 use enrol_selma\local\user_property_map;
 
+use core_privacy\tests\provider_testcase;
+
 /**
  * Testing for the enrol_selma 'user' class.
  *
@@ -51,6 +53,7 @@ class user_testcase extends provider_testcase {
 
     public function test_create_student_ok() {
         global $CFG, $DB;
+        $this->setAdminUser();
         $category1 = $this->plugingenerator->create_profile_field_category('other');
         $this->plugingenerator->create_profile_field(
             'datetime',
@@ -78,7 +81,7 @@ class user_testcase extends provider_testcase {
             'firstname' => 'Jack',
             'lastname' => 'Tors',
             'email' => 'jack.tors@jerkyboys.net',
-            'studentid' => 'XXX-XXX',
+            'studentid' => '0000',
             'dateofbirth' => '15-10-1976'
         ];
         $user = enrol_selma_create_student_from_selma($selmadata, $config);
@@ -87,6 +90,7 @@ class user_testcase extends provider_testcase {
 
     public function test_update_student_ok() {
         global $CFG, $DB;
+        $this->setAdminUser();
         $category1 = $this->plugingenerator->create_profile_field_category('other');
         $this->plugingenerator->create_profile_field(
             'datetime',
