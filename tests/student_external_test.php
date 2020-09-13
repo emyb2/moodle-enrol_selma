@@ -89,7 +89,7 @@ class student_external_testcase extends externallib_advanced_testcase {
             'firstname' => $this->plugingenerator->generate_random_string(500),
             'lastname' => 'The best last name in Cambridge',
             'email' => 'jack.tors@jerkyboys.net',
-            'studentid' => '555-XXX-55555'
+            'studentid' => '55555555'
         ];
         $returnvalue = create_student::create_student($params);
         // We need to execute the return values cleaning process to simulate the web service server
@@ -106,7 +106,7 @@ class student_external_testcase extends externallib_advanced_testcase {
             'firstname' => 'Firsty',
             'lastname' => 'The best last name in Cambridge',
             'email' => 'jack.tors@jerkyboys.net',
-            'idnumber' => '555-XXX-55555'
+            'idnumber' => '55555555'
         ];
         $user = $this->getDataGenerator()->create_user($params);
         unset($params);
@@ -114,7 +114,7 @@ class student_external_testcase extends externallib_advanced_testcase {
             'firstname' => 'Firsty',
             'lastname' => 'Lasty',
             'email' => 'jack.tors@jerkyboys.net',
-            'studentid' => '555-XXX-55555'
+            'studentid' => '55555555'
         ];
         $returnvalue = update_student::update_student($params);
         $returnvalue = external_api::clean_returnvalue(update_student::update_student_returns(), $returnvalue);
