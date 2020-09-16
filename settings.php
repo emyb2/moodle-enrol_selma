@@ -122,6 +122,20 @@ if ($hassiteconfig) {
     );
     $usersettings->add($setting);
 
+    $user = new enrol_selma\local\user();
+    $propertymapfactory = new enrol_selma\local\factory\property_map_factory();
+    $userpropertymap = $propertymapfactory->build_user_property_map($user);
+    foreach ($userpropertymap as $propertyname => $mappedproperty) {
+        /** @var \enrol_selma\local\mapped_property $mappedproperty */
+        $setting = new admin_setting_configtext(
+            "{$component}/{$userpropertymap->get_config_name_grouping_prefix()}{$mappedproperty->get_name()}",
+            $mappedproperty->get_name(),
+            null,
+            $mappedproperty->get_default_mapped_property_name()
+        );
+        $usersettings->add($setting);
+    }
+
     // Duplicates checking.
     $duplicates = enrol_selma_validate_profile_mapping();
     $duplist = implode(', ', $duplicates);

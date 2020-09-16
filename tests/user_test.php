@@ -18,6 +18,9 @@ defined('MOODLE_INTERNAL') || die();
 
 use enrol_selma\local\user;
 use enrol_selma\local\external;
+use enrol_selma\local\user_property_map;
+
+use core_privacy\tests\provider_testcase;
 
 /**
  * Testing for the enrol_selma 'user' class.
@@ -42,16 +45,95 @@ class user_testcase extends provider_testcase {
         $this->resetAfterTest();
     }
 
-    public function test_user_idnumber_length_exceeded() {
+    public function test_create_student_setter_exception() {
         $this->expectException(moodle_exception::class);
-        $code = $this->plugingenerator->generate_random_string(1000);
-        $intake = new user();
-        $intake->set_property('idnumber', $code);
+        $user = new user();
+        $user->set_first_name($this->plugingenerator->generate_random_string(500));
     }
 
-    // Size of known DB fields.
-    // Var types inserted to DB.
-    // Customfield - mapping & types - handling.
-    // New vs existing user.
-    // Saving
+    public function test_create_student_ok() {
+        global $CFG, $DB;
+        $this->setAdminUser();
+        $category1 = $this->plugingenerator->create_profile_field_category('other');
+        $this->plugingenerator->create_profile_field(
+            'datetime',
+            [
+                'categoryid' => $category1->id,
+                'shortname' => 'dob',
+                'name' => 'Date of birth',
+                'startday' => 1,
+                'startmonth' => 1,
+                'startyear' => '1970',
+                'param1' => '1970',
+                'endday' => 1,
+                'endmonth' => 1,
+                'endyear' => '2050',
+                'param2' => '2050'
+            ]
+        );
+        $config = new stdClass();
+        $config->upm_firstname = 'firstname';
+        $config->upm_lastname = 'lastname';
+        $config->upm_email = 'email';
+        $config->upm_idnumber = 'studentid';
+        $config->upm_profile_field_dob = 'dateofbirth';
+        $selmadata = [
+            'firstname' => 'Jack',
+            'lastname' => 'Tors',
+            'email' => 'jack.tors@jerkyboys.net',
+            'studentid' => '0000',
+            'dateofbirth' => '15-10-1976'
+        ];
+        $user = enrol_selma_create_student_from_selma($selmadata, $config);
+        $this->assertTrue($DB->record_exists('user', ['id' => $user->id]));
+    }
+
+    public function test_update_student_ok() {
+        global $CFG, $DB;
+        $this->setAdminUser();
+        $category1 = $this->plugingenerator->create_profile_field_category('other');
+        $this->plugingenerator->create_profile_field(
+            'datetime',
+            [
+                'categoryid' => $category1->id,
+                'shortname' => 'dob',
+                'name' => 'Date of birth',
+                'startday' => 1,
+                'startmonth' => 1,
+                'startyear' => '1970',
+                'param1' => '1970',
+                'endday' => 1,
+                'endmonth' => 1,
+                'endyear' => '2050',
+                'param2' => '2050'
+            ]
+        );
+
+        $user = $this->getDataGenerator()->create_user(
+            [
+                'firstname' => 'Jack',
+                'lastname' => 'Tors',
+                'email' => 'jack.tors@noemail.net',
+                'idnumber' => '0000'
+            ]
+        );
+        $this->assertTrue($DB->record_exists('user', ['idnumber' => '0000']));
+        $config = new stdClass();
+        $config->upm_firstname = 'firstname';
+        $config->upm_lastname = 'lastname';
+        $config->upm_email = 'email';
+        $config->upm_idnumber = 'studentid';
+        $config->upm_profile_field_dob = 'dateofbirth';
+        $selmadata = [
+            'firstname' => 'Jacky',
+            'lastname' => 'Tors',
+            'email' => 'jack.tors@jerkyboys.net',
+            'studentid' => '0000',
+            'gender' => 'male',
+        ];
+        $user = enrol_selma_update_student_from_selma($selmadata, $config);
+        $this->assertTrue($DB->record_exists('user', ['idnumber' => '0000']));
+        $this->assertTrue($DB->record_exists('user', ['firstname' => 'Jacky']));
+        $this->assertTrue($DB->record_exists('user', ['email' => 'jack.tors@jerkyboys.net']));
+    }
 }

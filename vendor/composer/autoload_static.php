@@ -14,10 +14,6 @@ class ComposerStaticInit6777539767b37c0c5f09ff1b5c795b78
     );
 
     public static $prefixLengthsPsr4 = array (
-        'S' => 
-        array (
-            'Symfony\\Component\\OptionsResolver\\' => 34,
-        ),
         'P' => 
         array (
             'Psr\\Log\\' => 8,
@@ -37,10 +33,6 @@ class ComposerStaticInit6777539767b37c0c5f09ff1b5c795b78
     );
 
     public static $prefixDirsPsr4 = array (
-        'Symfony\\Component\\OptionsResolver\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/options-resolver',
-        ),
         'Psr\\Log\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/log/Psr/Log',

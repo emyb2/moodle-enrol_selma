@@ -90,6 +90,28 @@ $functions = [
         'type'          => 'write',
         'ajax'          => false,
         'capabilities'  => ''
+    ],
+    'enrol_selma_create_student' => [
+        'classname'     => 'enrol_selma\local\external\create_student',
+        'methodname'    => 'create_student',
+        'description'   => new lang_string(
+            'createstudent::servicedescription',
+            'enrol_selma'
+        ),
+        'type'          => 'write',
+        'ajax'          => false,
+        'capabilities'  => 'moodle/user:create'
+    ],
+    'enrol_selma_update_student' => [
+        'classname'     => 'enrol_selma\local\external\update_student',
+        'methodname'    => 'update_student',
+        'description'   => new lang_string(
+            'updatestudent::servicedescription',
+            'enrol_selma'
+        ),
+        'type'          => 'write',
+        'ajax'          => false,
+        'capabilities'  => 'moodle/user:update'
     ]
 ];
 $services = [
