@@ -38,7 +38,6 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright   2020 Troy Williams <troy.williams@learningworks.co.nz>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class log_levels {
 
     public const DEBUG     = 100;

@@ -18,8 +18,8 @@
  * The enrol plugin selma is defined here.
  *
  * @package     enrol_selma
- * @copyright   2020 LearningWorks <selma@learningworks.ac.nz>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -30,6 +30,9 @@ defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__ . '/vendor/autoload.php');
 /**
  * Class enrol_selma_plugin.
+ *
+ * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class enrol_selma_plugin extends enrol_plugin {
 
@@ -98,11 +101,10 @@ class enrol_selma_plugin extends enrol_plugin {
     /**
      * Adds form elements to add/edit instance form.
      *
+     * @param object          $instance Enrol instance or null if does not exist yet.
+     * @param MoodleQuickForm $mform    Instance editing mform form.
+     * @param context         $context  Context in Moodle.
      * @since Moodle 3.1.
-     * @param object $instance Enrol instance or null if does not exist yet.
-     * @param MoodleQuickForm $mform.
-     * @param context $context.
-     * @return void
      */
     public function edit_instance_form($instance, MoodleQuickForm $mform, $context) {
         // Do nothing by default.
@@ -125,10 +127,10 @@ class enrol_selma_plugin extends enrol_plugin {
     }
 
     /**
-     * Single instance add programmatically. One instance per course.
+     * Single instance added programmatically. One instance per course.
      *
-     * @param int $courseid.
-     * @return bool.
+     * @param   int     $courseid Course ID attempting to add instance to.
+     * @return  bool    Bool whether instance can be added.
      */
     public function can_add_instance($courseid) {
         return false;

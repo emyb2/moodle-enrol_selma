@@ -553,17 +553,14 @@ function enrol_selma_get_all_courses(int $amount = 0, int $page = 1) {
     $status = get_string('status_ok', 'enrol_selma');
     // Var $courses already set.
     $message = get_string('status_ok_message', 'enrol_selma');
-    //// Check if nextpage needs to be sent.
-    //if ($nextpage > -1) {
-    //    // Returned details (incl. nextpage).
-    //    return ['status' => $status, 'courses' => $courses, 'nextpage' => $nextpage, 'message' => $message];
-    //}
 
-    // Returned details (excl. nextpage).
+    // Returned details.
     return ['status' => $status, 'courses' => $courses, 'nextpage' => $nextpage, 'message' => $message];
 }
 
 /**
+ * Validates and checks if profilemapping is in order.
+ *
  * @return  array   Returns array of the duplicated values used for profile field mapping.
  */
 function enrol_selma_validate_profile_mapping() {
@@ -592,6 +589,8 @@ function enrol_selma_validate_profile_mapping() {
 }
 
 /**
+ * Finds which SELMA student fields are mapped to which Moodle profile fields.
+ *
  * @return  array   Returns array of which Moodle fields the SELMA fields are mapped to.
  */
 function enrol_selma_get_profile_mapping() {

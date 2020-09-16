@@ -19,14 +19,17 @@
  *
  * @package     enrol_selma
  * @category    admin
- * @copyright   2020 LearningWorks <selma@learningworks.ac.nz>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * Extends the core select setting to allow specifying whether the field should be enabled or not.
+ *
+ * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class admin_setting_configselect_with_enabled extends admin_setting_configselect {
     /**

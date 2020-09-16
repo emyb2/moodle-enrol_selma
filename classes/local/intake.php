@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Class to represent an intake.
+ *
+ * @package     enrol_selma
+ * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace enrol_selma\local;
 
 defined('MOODLE_INTERNAL') || die();
@@ -25,8 +33,7 @@ use stdClass;
 use enrol_selma\local\utilities;
 
 /**
- * Class to represent an Intake extends stdClass and has public properties but
- * use setters to enforce type.
+ * Class to represent an Intake extends stdClass and has public properties, but use setters to enforce type.
  *
  * @package     enrol_selma
  * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
@@ -112,9 +119,9 @@ class intake extends stdClass {
     /**
      * Accepts string date, epoch, or DateTime.
      *
-     * @param $startdate
-     * @return $this
-     * @throws moodle_exception
+     * @param   mixed               $startdate Start date can be received in several formats.
+     * @return  intake              $this Intake object.
+     * @throws  moodle_exception
      */
     public function set_start_date($startdate) : self {
         $type = utilities::get_debug_type($startdate);
@@ -138,9 +145,9 @@ class intake extends stdClass {
     /**
      * Accepts string date, epoch, or DateTime.
      *
-     * @param $enddate
-     * @return $this
-     * @throws moodle_exception
+     * @param   mixed               $enddate End date can be received in several formats.
+     * @return  intake              $this Intake object.
+     * @throws  moodle_exception
      */
     public function set_end_date($enddate) : self {
         $type = utilities::get_debug_type($enddate);
