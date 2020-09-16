@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Moodle DB Table Handler for Monolog.
+ *
+ * @package     enrol_selma
+ * @copyright   2020 Troy Williams <troy.williams@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace enrol_selma\local\monolog;
 
 defined('MOODLE_INTERNAL') || die();
@@ -27,7 +35,7 @@ use stdClass;
 /**
  * Moodle DB Table Monolog Handler.
  *
- * @package     Monolog
+ * @package     enrol_selma
  * @copyright   2020 Troy Williams <troy.williams@learningworks.co.nz>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

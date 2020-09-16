@@ -41,6 +41,8 @@ use dml_exception;
 class event_observer {
 
     /**
+     * Performs plugin-specific tasks when a course is deleted.
+     *
      * @param   course_deleted      $event Course deleted event.
      * @return  bool                Returns true.
      * @throws  coding_exception
@@ -58,6 +60,8 @@ class event_observer {
     }
 
     /**
+     * Performs plugin-specific tasks when a course is deleted.
+     *
      * @param   group_deleted       $event Group deleted event.
      * @return  bool                Returns true.
      * @throws  coding_exception

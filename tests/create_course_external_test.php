@@ -69,7 +69,7 @@ class create_course_external_testcase extends externallib_advanced_testcase {
         $contextid = context_system::instance()->id;
 
         // We give this user capability to 'view' but not 'create' (yet).
-        $roleid = $this->assignUserCapability('moodle/course:view', $contextid);
+        $this->assignUserCapability('moodle/course:view', $contextid);
 
         // Get test course data.
         $params = $this->plugingenerator->get_selma_course_data()['valid'];
@@ -78,7 +78,7 @@ class create_course_external_testcase extends externallib_advanced_testcase {
         $this->expectException(required_capability_exception::class);
 
         // User should not be able to create yet.
-        $result = create_course::create_course($params);
+        create_course::create_course($params);
     }
 
     /**
@@ -89,7 +89,7 @@ class create_course_external_testcase extends externallib_advanced_testcase {
         $contextid = context_system::instance()->id;
 
         // Give user ability to create courses.
-        $roleid = $this->assignUserCapability('moodle/course:create', $contextid);
+        $this->assignUserCapability('moodle/course:create', $contextid);
 
         // Get test course data.
         $params = $this->plugingenerator->get_selma_course_data()['valid'];
@@ -100,7 +100,7 @@ class create_course_external_testcase extends externallib_advanced_testcase {
             $this->expectException(moodle_exception::class);
 
             // Plugin configs not set up at this point yet.
-            $result = create_course::create_course($params);
+            create_course::create_course($params);
         }
     }
 
@@ -112,7 +112,7 @@ class create_course_external_testcase extends externallib_advanced_testcase {
         $contextid = context_system::instance()->id;
 
         // Give user ability to create courses.
-        $roleid = $this->assignUserCapability('moodle/course:create', $contextid);
+        $this->assignUserCapability('moodle/course:create', $contextid);
 
         // TODO - make this a custom/new category, so we can test if the config was respected later. Hard to know if default used.
         // Now 'fix' the previous issue(s) to continue. 1 = Miscellaneous (default category).
@@ -156,7 +156,7 @@ class create_course_external_testcase extends externallib_advanced_testcase {
         $contextid = context_system::instance()->id;
 
         // Give user ability to create courses.
-        $roleid = $this->assignUserCapability('moodle/course:create', $contextid);
+        $this->assignUserCapability('moodle/course:create', $contextid);
 
         // TODO - make this a custom/new category, so we can test if the config was respected later. Hard to know if default used.
         // Now 'fix' the previous issue(s) to continue. 1 = Miscellaneous (default category).
@@ -194,7 +194,7 @@ class create_course_external_testcase extends externallib_advanced_testcase {
         $contextid = context_system::instance()->id;
 
         // Give user ability to create courses.
-        $roleid = $this->assignUserCapability('moodle/course:create', $contextid);
+        $this->assignUserCapability('moodle/course:create', $contextid);
 
         // TODO - make this a custom/new category, so we can test if the config was respected later. Hard to know if default used.
         // Now 'fix' the previous issue(s) to continue. 1 = Miscellaneous (default category).
@@ -212,11 +212,11 @@ class create_course_external_testcase extends externallib_advanced_testcase {
         // Plugin configs not set up at this point yet.
         $result = create_course::create_course($params);
         // We need to execute the return values cleaning process to simulate the web service server
-        $returnedvalue = external_api::clean_returnvalue(create_course::create_course_returns(), $result);
+        external_api::clean_returnvalue(create_course::create_course_returns(), $result);
 
         $result = create_course::create_course($params);
         // We need to execute the return values cleaning process to simulate the web service server
-        $returnedvalue = external_api::clean_returnvalue(create_course::create_course_returns(), $result);
+        external_api::clean_returnvalue(create_course::create_course_returns(), $result);
     }
 
     /**
@@ -227,7 +227,7 @@ class create_course_external_testcase extends externallib_advanced_testcase {
         $contextid = context_system::instance()->id;
 
         // Give user ability to create courses.
-        $roleid = $this->assignUserCapability('moodle/course:create', $contextid);
+        $this->assignUserCapability('moodle/course:create', $contextid);
 
         // TODO - make this a custom/new category, so we can test if the config was respected later. Hard to know if default used.
         // Now 'fix' the previous issue(s) to continue. 1 = Miscellaneous (default category).
@@ -245,6 +245,6 @@ class create_course_external_testcase extends externallib_advanced_testcase {
         // Plugin configs not set up at this point yet.
         $result = create_course::create_course($params);
         // We need to execute the return values cleaning process to simulate the web service server
-        $returnedvalue = external_api::clean_returnvalue(create_course::create_course_returns(), $result);
+        external_api::clean_returnvalue(create_course::create_course_returns(), $result);
     }
 }

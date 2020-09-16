@@ -24,8 +24,16 @@
 
 namespace enrol_selma\local;
 
+use __PHP_Incomplete_Class;
 use database_column_info;
 use moodle_exception;
+use function get_class;
+use function is_array;
+use function is_bool;
+use function is_float;
+use function is_int;
+use function is_object;
+use function is_string;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -47,14 +55,22 @@ final class utilities {
      */
     public static function get_debug_type($value) : string {
         switch (true) {
-            case null === $value: return 'null';
-            case \is_bool($value): return 'bool';
-            case \is_string($value): return 'string';
-            case \is_array($value): return 'array';
-            case \is_int($value): return 'int';
-            case \is_float($value): return 'float';
-            case \is_object($value): break;
-            case $value instanceof \__PHP_Incomplete_Class: return '__PHP_Incomplete_Class';
+            case null === $value:
+                return 'null';
+            case is_bool($value):
+                return 'bool';
+            case is_string($value):
+                return 'string';
+            case is_array($value):
+                return 'array';
+            case is_int($value):
+                return 'int';
+            case is_float($value):
+                return 'float';
+            case is_object($value):
+                break;
+            case $value instanceof __PHP_Incomplete_Class:
+                return '__PHP_Incomplete_Class';
             default:
                 if (null === $type = @get_resource_type($value)) {
                     return 'unknown';
@@ -66,7 +82,7 @@ final class utilities {
 
                 return "resource ($type)";
         }
-        $class = \get_class($value);
+        $class = get_class($value);
         if (false === strpos($class, '@')) {
             return $class;
         }
@@ -81,7 +97,7 @@ final class utilities {
      * @return  database_column_info    Array of database_column_info objects indexed with column names.
      * @throws  moodle_exception
      */
-    public static function get_column_information(string $table, string $name) : database_column_info  {
+    public static function get_column_information(string $table, string $name) : database_column_info {
         global $DB;
         $columns = $DB->get_columns($table); // Using cache.
         if (!isset($columns[$name])) {
@@ -89,5 +105,4 @@ final class utilities {
         }
         return $columns[$name];
     }
-
 }

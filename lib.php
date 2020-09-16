@@ -99,34 +99,6 @@ class enrol_selma_plugin extends enrol_plugin {
     }
 
     /**
-     * Adds form elements to add/edit instance form.
-     *
-     * @param object          $instance Enrol instance or null if does not exist yet.
-     * @param MoodleQuickForm $mform    Instance editing mform form.
-     * @param context         $context  Context in Moodle.
-     * @since Moodle 3.1.
-     */
-    public function edit_instance_form($instance, MoodleQuickForm $mform, $context) {
-        // Do nothing by default.
-    }
-
-    /**
-     * Perform custom validation of the data used to edit the instance.
-     *
-     * @since Moodle 3.1.
-     * @param array $data Array of ("fieldname"=>value) of submitted data.
-     * @param array $files Array of uploaded files "element_name"=>tmp_file_path.
-     * @param object $instance The instance data loaded from the DB.
-     * @param context $context The context of the instance we are editing.
-     * @return array Array of "element_name"=>"error_description" if there are errors, empty otherwise.
-     */
-    public function edit_instance_validation($data, $files, $instance, $context) {
-        // No errors by default.
-        debugging('enrol_plugin::edit_instance_validation() is missing. This plugin has no validation!', DEBUG_DEVELOPER);
-        return array();
-    }
-
-    /**
      * Single instance added programmatically. One instance per course.
      *
      * @param   int     $courseid Course ID attempting to add instance to.
@@ -176,36 +148,7 @@ class enrol_selma_plugin extends enrol_plugin {
      * @return bool
      */
     public function can_delete_instance($instance) {
-        return true;
-    }
-
-    /**
-     * Attempt to automatically enrol current user in course without any interaction,
-     * calling code has to make sure the plugin and instance are active.
-     *
-     * This should return either a timestamp in the future or false.
-     *
-     * @param stdClass $instance course enrol instance.
-     * @return bool|int false means not enrolled, integer means timeend.
-     */
-    public function try_autoenrol(stdClass $instance) {
-        // We can possibly try_autoenrol if user tries accessing a course to see if they are meant to be enrolled.
-
-        return parent::try_autoenrol($instance);
-    }
-
-    /**
-     * Forces synchronisation of user enrolments.
-     *
-     * This is important especially for external enrol plugins,
-     * this function is called for all enabled enrol plugins
-     * right after every user login.
-     *
-     * @param object $user user record
-     * @return void
-     */
-    public function sync_user_enrolments($user) {
-        // Or we can use this to check if user still needs to be enrolled into anything.
+        return false;
     }
 
     // TODO - need this file to allow/do self_unenrolments - check <wwwroot>/lib/enrollib.php:2330.

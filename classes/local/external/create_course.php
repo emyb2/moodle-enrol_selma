@@ -40,7 +40,9 @@ use external_warnings;
 /**
  * Class create_course used to create course from SELMA.
  *
- * @package enrol_selma\local\external
+ * @package     enrol_selma
+ * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class create_course extends external_api {
     /**

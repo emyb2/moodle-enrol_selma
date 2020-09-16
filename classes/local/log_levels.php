@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Log levels as described by RFC 5424.
+ *
+ * @package     enrol_selma
+ * @copyright   2020 Troy Williams <troy.williams@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace enrol_selma\local;
 
 defined('MOODLE_INTERNAL') || die();
@@ -34,28 +42,56 @@ defined('MOODLE_INTERNAL') || die();
  * EMERGENCY (600): Emergency: system is unusable.
  *
  * @package     enrol_selma
- * @subpackage  logging
  * @copyright   2020 Troy Williams <troy.williams@learningworks.co.nz>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class log_levels {
 
+    /**
+     * Log level DEBUG.
+     */
     public const DEBUG     = 100;
 
+    /**
+     * Log level INFO.
+     */
     public const INFO      = 200;
 
+    /**
+     * Log level NOTICE.
+     */
     public const NOTICE    = 250;
 
+    /**
+     * Log level WARNING.
+     */
     public const WARNING   = 300;
 
+    /**
+     * Log level ERROR.
+     */
     public const ERROR     = 400;
 
+    /**
+     * Log level CRITICAL.
+     */
     public const CRITICAL  = 500;
 
+    /**
+     * Log level ALERT.
+     */
     public const ALERT     = 550;
 
+    /**
+     * Log level EMERGENCY.
+     */
     public const EMERGENCY = 600;
 
+    /**
+     * All log levels and textual representations.
+     *
+     * @return string[] Array of levels.
+     */
     public static function all() {
         return [
             100 => 'DEBUG',

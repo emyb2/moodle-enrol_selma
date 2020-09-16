@@ -40,7 +40,9 @@ use external_value;
 /**
  * Class get_all_courses used to get all active courses in Moodle.
  *
- * @package enrol_selma\local\external
+ * @package     enrol_selma
+ * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class get_all_courses extends external_api {
     /**

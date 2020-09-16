@@ -127,7 +127,9 @@ function enrol_selma_add_intake_to_course(int $intakeid, int $courseid) {
             $relate->groupid = $groupid;
             $relate->usermodified = $USER->id;
 
-            $exists = $DB->record_exists('enrol_selma_course_intake', array('courseid' => $relate->courseid, 'intakeid' => $relate->intakeid));
+            $exists = $DB->record_exists('enrol_selma_course_intake',
+                array('courseid' => $relate->courseid, 'intakeid' => $relate->intakeid)
+            );
 
             if ($exists) {
                 // Set status to 'nothing new here'.
@@ -180,7 +182,6 @@ function enrol_selma_add_intake_to_course(int $intakeid, int $courseid) {
     // Give more detailed response message to user.
     $message = get_string('status_notfound_message', 'enrol_selma') .
         get_string('status_notfound_detailed_message', 'enrol_selma', get_string('course'));
-
 
     // Returned details - failed...
     return ['status' => $status, 'added' => $added, 'message' => $message];
@@ -273,8 +274,6 @@ function enrol_selma_create_course(array $course) {
     $message = get_string('status_other_message', 'enrol_selma');
 
     // Check and validate everything that's needed (as minimum) by this function.
-    // Capabilities
-    // Configs
     $warnings = [];
 
     $context = context_system::instance();
@@ -284,7 +283,11 @@ function enrol_selma_create_course(array $course) {
 
     // Check if we have a place to put the course.
     if (get_config('enrol_selma', 'newcoursecat') === false) {
-        throw new moodle_exception('error_noconfig', 'enrol_selma', $CFG->wwwroot . '/admin/settings.php?section=usersettingsselma', 'newcoursecat');
+        throw new moodle_exception('error_noconfig',
+            'enrol_selma',
+            $CFG->wwwroot . '/admin/settings.php?section=usersettingsselma',
+            'newcoursecat'
+        );
     }
 
     // Check if config(s) we use later have been set. These are optional, so just warn.
@@ -310,12 +313,19 @@ function enrol_selma_create_course(array $course) {
 
     // Construct course object.
     $coursedata = new stdClass();
-    $coursedata->category = get_config('enrol_selma', 'newcoursecat');  // The default category to put the course in. TODO - what if the setting has not been configured yet, but we get a call to create_course or if it's been deleted?
-    $coursedata->fullname = $course['fullname'];                        // Generated? Remember - visible to users.
-    $coursedata->shortname = $course['shortname'];                      // Generated? Remember - visible to users.
-    $coursedata->idnumber = $course['idnumber'];                        // Generated?
-    $coursedata->visible = get_config('moodlecourse', 'visible');       // Optional - based on category if not set.
-    $coursedata->tags = $tags;                                          // Add the user specified in 'selmacoursetags' setting.
+    // TODO - what if the setting has not been configured yet, but we get a call to create_course or if it's been deleted?
+    // The default category to put the course in.
+    $coursedata->category = get_config('enrol_selma', 'newcoursecat');
+    // Generated? Remember - visible to users.
+    $coursedata->fullname = $course['fullname'];
+    // Generated? Remember - visible to users.
+    $coursedata->shortname = $course['shortname'];
+    // Generated?
+    $coursedata->idnumber = $course['idnumber'];
+    // Optional - based on category if not set.
+    $coursedata->visible = get_config('moodlecourse', 'visible');
+    // Add the user specified in 'selmacoursetags' setting.
+    $coursedata->tags = $tags;
 
     // Consider course_updated() in lib.php? Check out lib/enrollib.php:409.
     $coursecreated = create_course($coursedata);
@@ -374,15 +384,15 @@ function enrol_selma_create_intake(array $intake) {
 
     // Build record.
     $data = new stdClass();
-    $data->id =             $intake['intakeid'];
-    $data->programmeid =    $intake['programmeid'];
-    $data->code =           $intake['intakecode'];
-    $data->name =           $intake['intakename'];
-    $data->startdate =      $intake['intakestartdate']->getTimestamp();
-    $data->enddate =        $intake['intakeenddate']->getTimestamp();
-    $data->usermodified =   $USER->id;
-    $data->timecreated =    time();
-    $data->timemodified =   time();
+    $data->id = $intake['intakeid'];
+    $data->programmeid = $intake['programmeid'];
+    $data->code = $intake['intakecode'];
+    $data->name = $intake['intakename'];
+    $data->startdate = $intake['intakestartdate']->getTimestamp();
+    $data->enddate = $intake['intakeenddate']->getTimestamp();
+    $data->usermodified = $USER->id;
+    $data->timecreated = time();
+    $data->timemodified = time();
 
     // Check if record exists before inserting.
     if (!$DB->record_exists('enrol_selma_intake', array('id' => $data->id))) {
@@ -414,7 +424,6 @@ function enrol_selma_create_intake(array $intake) {
  * @return  array       Array containing the status of the request, userid of users created, and appropriate message.
  */
 function enrol_selma_create_users(array $users) {
-    global $DB, $CFG;
     $existinguser = [];
 
     // Set status to 'we don't know what went wrong'. We will set this to potential known causes further down.

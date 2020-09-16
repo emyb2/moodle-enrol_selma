@@ -241,7 +241,6 @@ class selma_webservice {
      * @throws \dml_exception
      */
     public static function update_required_capabilities(stdClass $role, progress_trace $trace = null) {
-        global $CFG;
         if (is_null($trace)) {
             $trace = new null_progress_trace();
         }

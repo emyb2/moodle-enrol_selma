@@ -73,7 +73,7 @@ class get_all_courses_external_testcase extends externallib_advanced_testcase {
         // User should get all course returned.
         $result = get_all_courses::get_all_courses($params['amount'], $params['page']);
         // We need to execute the return values cleaning process to simulate the web service server
-        $returnedvalue = external_api::clean_returnvalue(get_all_courses::get_all_courses_returns(), $result);
+        external_api::clean_returnvalue(get_all_courses::get_all_courses_returns(), $result);
     }
 
     /**

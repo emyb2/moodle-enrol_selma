@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Moodle Email Handler for Monolog.
+ *
+ * @package     enrol_selma
+ * @copyright   2020 Troy Williams <troy.williams@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace enrol_selma\local\monolog;
 
 defined('MOODLE_INTERNAL') || die();
@@ -29,11 +37,10 @@ use stdClass;
 /**
  * Moodle Email Monolog Handler.
  *
- * @package     Monolog
+ * @package     enrol_selma
  * @copyright   2020 Troy Williams <troy.williams@learningworks.co.nz>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class MoodleEmailHandler extends MailHandler {
     /**
      * Moodle user from which the message will be sent.
@@ -54,6 +61,8 @@ class MoodleEmailHandler extends MailHandler {
     protected $subject;
 
     /**
+     * Constructs instance of MailHandler.
+     *
      * @param array        $to             The receivers of the mail.
      * @param string       $subject        The subject of the mail.
      * @param stdClass     $from           The sender of the mail.
@@ -74,7 +83,10 @@ class MoodleEmailHandler extends MailHandler {
     }
 
     /**
-     * {@inheritdoc}
+     * Send a mail with the given content.
+     *
+     * @param   string  $content Formatted email body to be sent.
+     * @param   array   $records The array of log records that formed this content.
      */
     protected function send($content, array $records) : void {
         $messagetext = '';

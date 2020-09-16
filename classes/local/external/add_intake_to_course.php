@@ -37,7 +37,9 @@ use external_value;
 /**
  * Class add_intake_to_course used to add SELMA intake to Moodle course.
  *
- * @package enrol_selma\local\external
+ * @package     enrol_selma
+ * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class add_intake_to_course extends external_api {
     /**

@@ -38,7 +38,9 @@ use external_value;
 /**
  * Class create_intake used to create a record of a SELMA intake and metadata.
  *
- * @package enrol_selma\local\external
+ * @package     enrol_selma
+ * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class create_intake extends external_api {
     /**

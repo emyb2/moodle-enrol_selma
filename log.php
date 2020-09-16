@@ -46,7 +46,7 @@ if ($data) {
     }
     if ($data->action == 'applyfilter') {
         $filters['filterlevel'] = $data->level ?? 0;
-        $filters['filterbefore'] = ($data->enabledbefore) ? $data->before :  0;
+        $filters['filterbefore'] = ($data->enabledbefore) ? $data->before : 0;
         $filters['filterafter'] = ($data->enabledafter) ? $data->after : 0;
         $baseurl->params($filters);
     }

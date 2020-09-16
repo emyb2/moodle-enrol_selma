@@ -39,7 +39,9 @@ use external_value;
 /**
  * Class create_users used to create users from SELMA.
  *
- * @package enrol_selma\local\external
+ * @package     enrol_selma
+ * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class create_users extends external_api {
     /**

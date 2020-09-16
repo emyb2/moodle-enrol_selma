@@ -38,7 +38,9 @@ use external_value;
 /**
  * Class add_user_to_intake used to add a given user to a given intake.
  *
- * @package enrol_selma\local\external
+ * @package     enrol_selma
+ * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class add_user_to_intake extends external_api {
     /**

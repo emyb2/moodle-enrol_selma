@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Singleton class for getting Monolog logger.
+ *
+ * @package     enrol_selma
+ * @copyright   2020 Troy Williams <troy.williams@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace enrol_selma\local;
 
 defined('MOODLE_INTERNAL') || die();
@@ -27,15 +35,17 @@ use enrol_selma\local\monolog\MoodleDBTableHandler;
 use enrol_selma\local\monolog\MoodleEmailHandler;
 
 /**
- * Singleton class for get Monolog logger.
+ * Singleton class for getting Monolog logger.
  *
  * @package     enrol_selma
- * @subpackage  logging
  * @copyright   2020 Troy Williams <troy.williams@learningworks.co.nz>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class plugin_logger {
 
+    /**
+     * Component being dealt with - this one.
+     */
     public const COMPONENT = 'enrol_selma';
 
     /** @var string LOG_TABLE_NAME Name of Moodle table to store log entries. */
