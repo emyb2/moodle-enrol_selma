@@ -57,10 +57,10 @@ class log_table extends table_sql {
     /**
      * This - 'log_table' constructor.
      *
-     * @param            $uniqueid
-     * @param moodle_url $baseurl
-     * @param array      $filters
-     * @throws coding_exception
+     * @param   string              $uniqueid
+     * @param   moodle_url          $baseurl
+     * @param   array               $filters
+     * @throws  coding_exception
      */
     public function __construct($uniqueid, moodle_url $baseurl, array $filters = []) {
         parent::__construct($uniqueid);
@@ -72,15 +72,15 @@ class log_table extends table_sql {
         $this->sort_default_order  = SORT_DESC;
         $this->pageable(true);
         $this->define_baseurl($baseurl);
-        $this->build_sql($filters); // Finally build the required SQL;
+        $this->build_sql($filters); // Finally build the required SQL.
     }
 
     /**
      * Systematically build the SQL needed.
      *
-     * @param $filters
+     * @param array $filters The filters used in SQL.
      */
-    protected function build_sql($filters) {
+    protected function build_sql(array $filters) {
         $fields = "l.*";
         $from = "{enrol_selma_log} l";
         $level = $filters['filterlevel'] ?? 0;

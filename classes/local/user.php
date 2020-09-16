@@ -93,11 +93,12 @@ class user extends stdClass {
     /**
      * Class 'user' constructor. Sets up class with user profile fields as properties.
      */
-    function __construct() {
+    public function __construct() {
 
         // TODO - Better checking if user exists - check email ('allowaccountssameemail'), Moodle ID & SELMA ID?
         // TODO - Load custom profile fields?
-        // LOAD USER CUSTOMFIELDS FUNCTION - accept user class, check if id set, get data if it is, otherwise, set clean properties with defaults.
+        // LOAD USER CUSTOMFIELDS FUNCTION - accept user class.
+        // Check if id set, get data if it is, otherwise, set clean properties with defaults.
         // Just do it, as we have checks in function.
         enrol_selma_load_custom_profile_fields($this);
     }
@@ -105,14 +106,12 @@ class user extends stdClass {
     /**
      * Set a given property.
      *
-     * @param   string  $property User's property - DB field.
-     * @param   mixed   $value Value property should be set to.
-     * @return  user    $this Return the user object.
+     * @param   string              $property User's property - DB field.
+     * @param   mixed               $value    Value property should be set to.
+     * @return  user                $this Return the user object.
+     * @throws  moodle_exception
      */
     public function set_property(string $property, $value) : self {
-        // TODO - check propety type.
-        //utilities::get_debug_type();
-
         // Limit properties to only allowed fields.
         if (!in_array($property, enrol_selma_get_blacklisted_user_fields())) {
             switch ($property) {
@@ -192,8 +191,6 @@ class user extends stdClass {
 
         // Save the custom fields.
         profile_save_custom_fields($saved, $customproperties);
-
-        // throw new dml_read_exception();
 
         return $this;
     }

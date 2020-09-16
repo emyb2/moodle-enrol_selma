@@ -38,7 +38,7 @@ require_once($CFG->libdir . '/phpunit/classes/advanced_testcase.php');
 class intake_testcase extends advanced_testcase {
 
     /**
-     *  @var enrol_selma_generator $plugingenerator handle to plugin generator.
+     * @var enrol_selma_generator $plugingenerator handle to plugin generator.
      */
     protected $plugingenerator;
 

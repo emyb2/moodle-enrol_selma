@@ -31,7 +31,7 @@ require_once(dirname(__FILE__) . '/locallib.php');
 require_once(dirname(__FILE__) . '/settingslib.php');
 
 if ($hassiteconfig) {
-    // https://docs.moodle.org/dev/Admin_settings
+    // Check https://docs.moodle.org/dev/Admin_settings for more info.
     $component = 'enrol_selma';
 
     // SELMA settings category setup.
@@ -54,7 +54,7 @@ if ($hassiteconfig) {
     $enrolsettings->add($setting);
 
     // Note: let's reuse the ext sync constants and strings here, internally it is very similar.
-    //       It describes what should happen when users are not supposed to be enrolled any more.
+    // It describes what should happen when users are not supposed to be enrolled any more.
     $options = array(
         ENROL_EXT_REMOVED_SUSPEND        => get_string('extremovedsuspend', 'enrol'),
         ENROL_EXT_REMOVED_SUSPENDNOROLES => get_string('extremovedsuspendnoroles', 'enrol'),
@@ -400,8 +400,7 @@ if ($hassiteconfig) {
     );
     $coursesettings->add($setting);
 
-    // TODO - Or just use 'class_exists()'?
-    // Use new method for Moodle 3.6+
+    // Use new method for Moodle 3.6+.
     if (class_exists('core_course_category')) {
         $options = core_course_category::make_categories_list();
     } else {

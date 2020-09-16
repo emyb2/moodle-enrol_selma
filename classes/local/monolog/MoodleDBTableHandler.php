@@ -78,7 +78,7 @@ class MoodleDBTableHandler extends AbstractProcessingHandler {
      *
      * @return string|null
      */
-    public function get_tablename() : ? string  {
+    public function get_tablename() : ? string {
         return $this->tablename;
     }
 

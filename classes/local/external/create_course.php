@@ -51,21 +51,37 @@ class create_course extends external_api {
      * @return external_function_parameters Description of parameters and expected type.
      */
     public static function create_course_parameters() {
-        // 'FUNCTIONNAME_parameters()' always return an 'external_function_parameters()'.
+        // A 'FUNCTIONNAME_parameters()' always return an 'external_function_parameters()'.
         // The 'external_function_parameters' constructor expects an array of 'external_description'.
         return new external_function_parameters(
-            // An 'external_description' can be 'external_value', 'external_single_structure' or 'external_multiple' structure
+            // An 'external_description' can be 'external_value', 'external_single_structure' or 'external_multiple' structure.
             [
                 'course' => new external_single_structure(
                     [
-                        'fullname' => new external_value(PARAM_TEXT, get_string('create_course_parameters::fullname', 'enrol_selma')),
-                        'shortname' => new external_value(PARAM_TEXT, get_string('create_course_parameters::shortname', 'enrol_selma')),
-                        'idnumber' => new external_value(PARAM_TEXT, get_string('create_course_parameters::idnumber', 'enrol_selma')),
+                        'fullname' => new external_value(PARAM_TEXT,
+                            get_string('create_course_parameters::fullname', 'enrol_selma')
+                        ),
+                        'shortname' => new external_value(PARAM_TEXT,
+                            get_string('create_course_parameters::shortname', 'enrol_selma')
+                        ),
+                        'idnumber' => new external_value(PARAM_TEXT,
+                            get_string('create_course_parameters::idnumber', 'enrol_selma')
+                        ),
                     ], get_string('create_course_parameters::course', 'enrol_selma')
                 )
             ],
             get_string('create_course_parameters', 'enrol_selma')
         );
+    }
+
+    /**
+     * The constructor/function itself - let's create a course.
+     *
+     * @param   array   $course Course object and required details to create a course.
+     * @return  array   Array of success status & created course_id, if any.
+     */
+    public function __construct(array $course) {
+        return self::create_course($course);
     }
 
     /**
@@ -97,9 +113,15 @@ class create_course extends external_api {
     public static function create_course_returns() {
         return new external_function_parameters(
             [
-                'status' => new external_value(PARAM_TEXT, get_string('create_course_returns::status', 'enrol_selma')),
-                'courseid' => new external_value(PARAM_INT, get_string('create_course_returns::courseid', 'enrol_selma')),
-                'message' => new external_value(PARAM_TEXT, get_string('create_course_returns::message', 'enrol_selma')),
+                'status' => new external_value(PARAM_TEXT,
+                    get_string('create_course_returns::status', 'enrol_selma')
+                ),
+                'courseid' => new external_value(PARAM_INT,
+                    get_string('create_course_returns::courseid', 'enrol_selma')
+                ),
+                'message' => new external_value(PARAM_TEXT,
+                    get_string('create_course_returns::message', 'enrol_selma')
+                ),
                 // TODO - Maybe we should be returning 'warning' values, instead of in the message.
                 // As per - https://docs.moodle.org/dev/Errors_handling_in_web_services#Warning_messages
                 // For example, refer to mod/assign/externallib.php:614.

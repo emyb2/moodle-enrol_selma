@@ -98,8 +98,8 @@ class MoodleEmailHandler extends MailHandler {
         }
         $subject = $this->subject;
         if ($records) {
-            $subjectFormatter = new LineFormatter($this->subject);
-            $subject = $subjectFormatter->format($this->getHighestRecord($records));
+            $subjectformatter = new LineFormatter($this->subject);
+            $subject = $subjectformatter->format($this->getHighestRecord($records));
         }
         foreach ($this->to as $to) {
             if ($to instanceof stdClass) {

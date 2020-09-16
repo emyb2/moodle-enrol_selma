@@ -40,7 +40,7 @@ require_once($CFG->libdir . '/phpunit/classes/advanced_testcase.php');
 class user_testcase extends advanced_testcase {
 
     /**
-     *  @var enrol_selma_generator $plugingenerator handle to plugin generator.
+     * @var enrol_selma_generator $plugingenerator handle to plugin generator.
      */
     protected $plugingenerator;
 
@@ -64,5 +64,5 @@ class user_testcase extends advanced_testcase {
     // Var types inserted to DB.
     // Customfield - mapping & types - handling.
     // New vs existing user.
-    // Saving
+    // Saving.
 }

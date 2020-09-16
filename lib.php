@@ -42,7 +42,7 @@ class enrol_selma_plugin extends enrol_plugin {
      * All plugins allowing this must implement 'enrol/selma:enrol' capability.
      *
      * @param stdClass $instance Course enrol instance.
-     * @return bool True means user with 'enrol/selma:enrol' may enrol others freely, false means nobody may add more enrolments manually.
+     * @return bool False means nobody may add more enrolments manually.
      */
     public function allow_enrol($instance) {
         return false;
@@ -54,7 +54,7 @@ class enrol_selma_plugin extends enrol_plugin {
      * All plugins allowing this must implement 'enrol/selma:unenrol' capability.
      *
      * @param stdClass $instance Course enrol instance.
-     * @return bool True means user with 'enrol/selma:unenrol' may unenrol others freely, false means nobody may touch user_enrolments.
+     * @return bool False means nobody may touch user_enrolments.
      */
     public function allow_unenrol($instance) {
         return false;
@@ -82,7 +82,7 @@ class enrol_selma_plugin extends enrol_plugin {
      *
      * @param stdClass $instance Course enrol instance.
      * @param stdClass $ue Record from user_enrolments table, specifies user.
-     * @return bool True means user with 'enrol/selma:unenrol' may unenrol this user, false means nobody may touch this user enrolment.
+     * @return bool False means nobody may touch this user enrolment.
      */
     public function allow_unenrol_user($instance, $ue) {
         return false;
@@ -150,7 +150,4 @@ class enrol_selma_plugin extends enrol_plugin {
     public function can_delete_instance($instance) {
         return false;
     }
-
-    // TODO - need this file to allow/do self_unenrolments - check <wwwroot>/lib/enrollib.php:2330.
-    // new moodle_url("/enrol/$name/unenrolself.php", array('enrolid'=>$instance->id));
 }

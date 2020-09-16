@@ -55,24 +55,66 @@ class create_users extends external_api {
                 'users' => new external_multiple_structure(
                     new external_single_structure(
                         [
-                            'username' => new external_value(PARAM_TEXT, get_string('create_users_parameters::username', 'enrol_selma'), VALUE_OPTIONAL),
-                            'forename' => new external_value(PARAM_TEXT, get_string('create_users_parameters::forename', 'enrol_selma')),
-                            'lastname' => new external_value(PARAM_TEXT, get_string('create_users_parameters::lastname', 'enrol_selma')),
-                            'email1' => new external_value(PARAM_EMAIL, get_string('create_users_parameters::email1', 'enrol_selma')),
-                            'id' => new external_value(PARAM_INT, get_string('create_users_parameters::id', 'enrol_selma')),
-                            'mobilephone' => new external_value(PARAM_TEXT, get_string('create_users_parameters::mobilephone', 'enrol_selma'), VALUE_OPTIONAL),
-                            'secondaryphone' => new external_value(PARAM_TEXT, get_string('create_users_parameters::secondaryphone', 'enrol_selma'), VALUE_OPTIONAL),
-                            'gender' => new external_value(PARAM_TEXT, get_string('create_users_parameters::gender', 'enrol_selma'), VALUE_OPTIONAL),
-                            'dob' => new external_value(PARAM_TEXT, get_string('create_users_parameters::dob', 'enrol_selma'), VALUE_OPTIONAL),
-                            'nsn' => new external_value(PARAM_INT, get_string('create_users_parameters::nsn', 'enrol_selma'), VALUE_OPTIONAL),
-                            'status' => new external_value(PARAM_TEXT, get_string('create_users_parameters::status', 'enrol_selma'), VALUE_OPTIONAL),
-                            'preferredname' => new external_value(PARAM_TEXT, get_string('create_users_parameters::preferredname', 'enrol_selma'), VALUE_OPTIONAL),
+                            'username' => new external_value(PARAM_TEXT,
+                                get_string('create_users_parameters::username', 'enrol_selma'),
+                                VALUE_OPTIONAL
+                            ),
+                            'forename' => new external_value(PARAM_TEXT,
+                                get_string('create_users_parameters::forename', 'enrol_selma')
+                            ),
+                            'lastname' => new external_value(PARAM_TEXT,
+                                get_string('create_users_parameters::lastname', 'enrol_selma')
+                            ),
+                            'email1' => new external_value(PARAM_EMAIL,
+                                get_string('create_users_parameters::email1', 'enrol_selma')
+                            ),
+                            'id' => new external_value(PARAM_INT,
+                                get_string('create_users_parameters::id', 'enrol_selma')
+                            ),
+                            'mobilephone' => new external_value(PARAM_TEXT,
+                                get_string('create_users_parameters::mobilephone', 'enrol_selma'),
+                                VALUE_OPTIONAL
+                            ),
+                            'secondaryphone' => new external_value(PARAM_TEXT,
+                                get_string('create_users_parameters::secondaryphone', 'enrol_selma'),
+                                VALUE_OPTIONAL
+                            ),
+                            'gender' => new external_value(PARAM_TEXT,
+                                get_string('create_users_parameters::gender', 'enrol_selma'),
+                                VALUE_OPTIONAL
+                            ),
+                            'dob' => new external_value(PARAM_TEXT,
+                                get_string('create_users_parameters::dob', 'enrol_selma'),
+                                VALUE_OPTIONAL
+                            ),
+                            'nsn' => new external_value(PARAM_INT,
+                                get_string('create_users_parameters::nsn', 'enrol_selma'),
+                                VALUE_OPTIONAL
+                            ),
+                            'status' => new external_value(PARAM_TEXT,
+                                get_string('create_users_parameters::status', 'enrol_selma'),
+                                VALUE_OPTIONAL
+                            ),
+                            'preferredname' => new external_value(PARAM_TEXT,
+                                get_string('create_users_parameters::preferredname', 'enrol_selma'),
+                                VALUE_OPTIONAL
+                            ),
                         ], get_string('create_users_parameters::user', 'enrol_selma')
                     ), get_string('create_users_parameters::users', 'enrol_selma')
                 )
             ],
             get_string('create_users_parameters', 'enrol_selma')
         );
+    }
+
+    /**
+     * The constructor/function itself - let's create the users.
+     *
+     * @param   array   $users Users object and required details to create users.
+     * @return  array   Array of success status & created user IDs, if any.
+     */
+    public function __construct(array $users) {
+        return self::create_users($users);
     }
 
     /**
@@ -104,12 +146,18 @@ class create_users extends external_api {
     public static function create_users_returns() {
         return new external_function_parameters(
             [
-                'status' => new external_value(PARAM_TEXT, get_string('create_users_returns::status', 'enrol_selma')),
+                'status' => new external_value(PARAM_TEXT,
+                    get_string('create_users_returns::status', 'enrol_selma')
+                ),
                 'userids' => new external_multiple_structure(
-                    new external_value(PARAM_INT, get_string('create_users_returns::userid', 'enrol_selma')),
+                    new external_value(PARAM_INT,
+                        get_string('create_users_returns::userid', 'enrol_selma')
+                    ),
                     get_string('create_users_returns::userids', 'enrol_selma')
                 ),
-                'message' => new external_value(PARAM_TEXT, get_string('create_users_returns::message', 'enrol_selma'))
+                'message' => new external_value(PARAM_TEXT,
+                    get_string('create_users_returns::message', 'enrol_selma')
+                )
             ], get_string('create_users_returns', 'enrol_selma')
         );
     }

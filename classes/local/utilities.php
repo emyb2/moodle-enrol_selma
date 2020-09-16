@@ -27,13 +27,6 @@ namespace enrol_selma\local;
 use __PHP_Incomplete_Class;
 use database_column_info;
 use moodle_exception;
-use function get_class;
-use function is_array;
-use function is_bool;
-use function is_float;
-use function is_int;
-use function is_object;
-use function is_string;
 
 defined('MOODLE_INTERNAL') || die();
 

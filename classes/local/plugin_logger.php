@@ -87,7 +87,7 @@ class plugin_logger {
                     }
                 }
                 if (!empty($to)) {
-                    $subject = get_string('pluginname','tool_aap');
+                    $subject = get_string('pluginname', 'enrol_selma');
                     $from = core_user::get_noreply_user();
                     $logger->pushHandler(
                         new MoodleEmailHandler($to, $subject, $from, Logger::CRITICAL)
@@ -112,7 +112,7 @@ class plugin_logger {
         if ($days > 0) {
             $date = new DateTime();
             $date->sub(new DateInterval('P' . $days . 'D'));
-            $timeinterval =  $date->getTimestamp();
+            $timeinterval = $date->getTimestamp();
             $count = $DB->count_records_select(
                 self::LOG_TABLE_NAME,
                 "time < :time",
