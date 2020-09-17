@@ -22,8 +22,6 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use enrol_selma\local\user;
-
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/lib.php');
@@ -909,4 +907,63 @@ function enrol_selma_user_is_in_intake(int $userid, int $intakeid) {
     $exists = $DB->record_exists('enrol_selma_user_intake', array('userid' => $userid, 'intakeid' => $intakeid));
 
     return $exists;
+}
+
+/**
+ * Create a Moodle user record based on SELMA student data.
+ *
+ * @param array $selmadata
+ * @param stdClass $config
+ * @return \enrol_selma\local\user
+ * @throws coding_exception
+ * @throws dml_exception
+ * @throws moodle_exception
+ */
+function enrol_selma_create_student_from_selma(array $selmadata, stdClass $config) {
+    require_capability('moodle/user:create', context_system::instance());
+    $user = new enrol_selma\local\user();
+    $propertymapfactory = new enrol_selma\local\factory\property_map_factory();
+    $userpropertymap = $propertymapfactory->build_user_property_map($user, $config);
+    if (!$userpropertymap->is_valid()) {
+        throw new moodle_exception($userpropertymap->get_last_error());
+    }
+    $userpropertymap->write_data($selmadata);
+    $user->save();
+    return $user;
+}
+
+/**
+ * Update a Moodle user record based on SELMA student data.
+ *
+ * @param array $selmadata
+ * @param stdClass $config
+ * @param string $userlinkfield
+ * @return \enrol_selma\local\user
+ * @throws coding_exception
+ * @throws dml_exception
+ * @throws moodle_exception
+ */
+function enrol_selma_update_student_from_selma(array $selmadata, stdClass $config, $userlinkfield = 'idnumber') {
+    global $DB;
+    require_capability('moodle/user:update', context_system::instance());
+    if (trim($userlinkfield) === '') {
+        throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'userlinkfield');
+    }
+    $propertymapfactory = new enrol_selma\local\factory\property_map_factory();
+    // Just want the map for now.
+    $userpropertymap = $propertymapfactory->build_user_property_map(new enrol_selma\local\user(), $config);
+    if (!$userpropertymap->is_valid()) {
+        throw new moodle_exception($userpropertymap->get_last_error());
+    }
+    $selmalinkfield = $userpropertymap->get_property($userlinkfield)->get_default_mapped_property_name();
+    if (!isset($selmadata[$selmalinkfield])) {
+        throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'selmadata');
+    }
+    $record = $DB->get_record('user', [$userlinkfield => $selmadata[$selmalinkfield]], '*', MUST_EXIST);
+    $entityfactory = new enrol_selma\local\factory\entity_factory();
+    $user = $entityfactory->build_user_from_stdclass($record);
+    $userpropertymap = $propertymapfactory->build_user_property_map($user, $config);
+    $userpropertymap->write_data($selmadata);
+    $user->save();
+    return $user;
 }

@@ -14,18 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace enrol_selma\local\factory;
+
+defined('MOODLE_INTERNAL') || die();
+
+use stdClass;
+use enrol_selma\local\user;
+
 /**
- * Plugin version and other meta-data are defined here.
+ * Factory to build user, course, and intake entities.
  *
  * @package     enrol_selma
  * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class entity_factory {
 
-defined('MOODLE_INTERNAL') || die();
+    public function build_user_from_stdclass(stdClass $record) : user {
+        $user = new user();
+        foreach (get_object_vars($record) as $propertyname => $value) {
+            $user->{$propertyname} = $value;
+        }
+        profile_load_data($user);
+        return $user;
+    }
 
-$plugin->component  = 'enrol_selma';        // Recommended since 2.0.2 (MDL-26035). Required since 3.0 (MDL-48494).
-$plugin->release    = '0.2.0 (MOOMA)';      // Human-readable release version.
-$plugin->version    = 2020091116;         // YYYYMMDDHH (year, month, day, 24-hr format hour).
-$plugin->requires   = 2018051703;           // YYYYMMDDHH (Version number for Moodle 3.5.3).
-$plugin->maturity   = MATURITY_ALPHA;       // Code maturity/stability.
+}

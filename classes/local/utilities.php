@@ -30,6 +30,12 @@ use moodle_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
+use core_text;
+use database_column_info;
+
+global $CFG;
+require_once($CFG->libdir . '/weblib.php');
+
 /**
  * Utility helper methods to help in other parts of codebase.
  *
@@ -38,6 +44,52 @@ defined('MOODLE_INTERNAL') || die();
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class utilities {
+
+    /**
+     * Basic unique username generator that uses first and last names as seeds.
+     *
+     * @param string $firstname
+     * @param string $lastname
+     * @return string
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
+    public static function generate_username(string $firstname, string $lastname) : string {
+        global $CFG, $DB;
+        if (trim($firstname) === '') {
+            throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'firstname');
+        }
+        if (trim($lastname) === '') {
+            throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'lasstname');
+        }
+        $username = clean_param(core_text::strtolower("{$firstname}.{$lastname}"), PARAM_USERNAME);
+        if (trim($username) === '') {
+            throw new moodle_exception('invalidusername');
+        }
+        if ($DB->sql_regex_supported()) {
+            $REGEXP = $DB->sql_regex(true);
+            $select = "username $REGEXP :usernamepattern AND mnethostid = :mnethostid AND deleted <> :deleted";
+            $usernamepattern = "$username([0-9]+)?";
+            $params = ['usernamepattern' => $usernamepattern, 'mnethostid' => $CFG->mnet_localhost_id, 'deleted' => 1];
+        } else {
+            $select = "username = :username AND mnethostid = :mnethostid AND deleted <> :deleted";
+            $params = ['username' => $username, 'mnethostid' => $CFG->mnet_localhost_id, 'deleted' => 1];
+        }
+        $existingusers = $DB->get_records_select(
+            'user',
+            $select,
+            $params,
+            'username DESC',
+            'id, username',
+            0,
+            1
+        );
+        if ($existingusers) {
+            $existinguser = reset($existingusers);
+            $username = uu_increment_username($existinguser->username);
+        }
+        return $username;
+    }
 
     /**
      * Borrowed from Symfony's PHP 8 polyfill.

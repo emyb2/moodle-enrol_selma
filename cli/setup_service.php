@@ -170,7 +170,7 @@ if ($runsetup) {
 
     $a = new stdClass();
     $a->username = $account->username;
-    $a->password = $account->password;
+    $a->password = $account->cleartextpassword;
     $a->token = $token;
     $a->site = (new moodle_url('/login/index.php'))->out(false);
 

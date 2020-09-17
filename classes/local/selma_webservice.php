@@ -107,7 +107,8 @@ class selma_webservice {
         if (!$user) {
             $user = new stdClass();
             $user->username = $username;
-            $user->password = generate_password();
+            $user->password  = generate_password();
+            $user->cleartextpassword = $user->password;
             $user->mnethostid = $CFG->mnet_localhost_id;
             $user->firstname = get_string('serviceaccountfirstname', 'enrol_selma');
             $user->lastname = get_string('serviceaccountlastname', 'enrol_selma');
@@ -119,7 +120,7 @@ class selma_webservice {
             $user->middlename = '';
             $user->alternatename = '';
             $user->imagealt = '';
-            $user->id = user_create_user($user, false);
+            $user->id = user_create_user($user, true);
             $trace->output("Service account `{$user->username}` created");
         } else {
             $user->password = '';

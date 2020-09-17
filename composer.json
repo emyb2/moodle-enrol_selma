@@ -3,9 +3,8 @@
     "description": "SELMA for Moodle enrolment integration plugin",
     "require": {
         "php": ">=7.2.5",
-        "monolog/monolog": "^2.0",
-        "symfony/options-resolver": "^4.4",
-        "guzzlehttp/guzzle": "7.0.*"
+        "guzzlehttp/guzzle": "7.0.*",
+        "monolog/monolog": "^2.0"
     },
     "config": {
         "platform": {
