@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class to represent a User.
+ * Class to represent a Moodle Course.
  *
  * @package     enrol_selma
  * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
@@ -26,7 +26,6 @@ namespace enrol_selma\local;
 
 defined('MOODLE_INTERNAL') || die();
 
-use core_text;
 use moodle_exception;
 use profile_field_base;
 use stdClass;
@@ -36,147 +35,150 @@ require_once($CFG->dirroot . '/user/profile/lib.php');
 require_once($CFG->dirroot . '/enrol/selma/locallib.php');
 
 /**
- * Class to represent a User. Extends stdClass and has public properties, but use setters to enforce type.
+ * Class to represent a Moodle Course. Extends stdClass and has public properties, but use setters to enforce type.
  *
  * @package     enrol_selma
  * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user extends stdClass {
+class course extends stdClass {
 
-    /** @var int $id User ID. */
+    /** @var int $id Course ID. */
     public $id = 0;
 
-    /** @var string $auth Authentication method. */
-    public $auth = 'manual';
+    /** @var int $category Category ID where course is/will be. */
+    public $category;
 
-    public $confirmed = 1;
+    /** @var string $fullname Course fullname. */
+    public $fullname;
 
-    public $mnethostid = 0;
+    /** @var string $shortname Course shortname (unique). */
+    public $shortname;
 
-    /** @var string $username User username. */
-
-    public $newpassword;
-
-    public $username;
-
-    /** @var string $firstname User first name. */
-    public $firstname;
-
-    /** @var string $lastname User last name. */
-    public $lastname;
-
-    /** @var string $email User email address. */
-    public $email;
-
-    /** @var int $idnumber User SELMA ID number. */
+    /** @var string $idnumber Course idnumber (unique). */
     public $idnumber;
 
-    /** @var string $phone1 User primary phone number. */
-    public $phone1 = '';
+    /** @var string $summary Course description. */
+    public $summary;
 
-    /** @var string $phone2 User secondary phone number. */
-    public $phone2 = '';
-
-    /** @var string $institution User institution. */
-    public $institution = '';
-
-    /** @var string $department User department. */
-    public $department = '';
-
-    /** @var string $address User address. */
-    public $address = '';
-
-    /** @var string $city User city. */
-    public $city = '';
-
-    /** @var string $country User country. */
-    public $country = '';
-
-    /** @var string $lang User language. */
-    public $lang;
-
-    /** @var  */
-    public $calendartype;
-
-    /** @var string $middlename User middle name. */
-    public $middlename = '';
-
-    /** @var string $alternatename User alternate name. */
-    public $alternatename = '';
-
-    public $mailformat;
-
-    public $maildigest;
-
-    public $maildisplay;
-
-    public $autosubscribe;
-
-    public $trackforums;
-
+    /** @var int $timecreated Course creation epoch. */
     public $timecreated;
 
+    /** @var int $timemodified Course last modified epoch. */
     public $timemodified;
 
-    public function __set($name, $value) {
+    /**
+     * Set (any) course field.
+     *
+     * @param   string              $name   Name of property.
+     * @param   mixed               $value  Value of property.
+     * @throws  moodle_exception
+     */
+    public function __set(string $name, $value) {
         if (strpos($name, 'profile_field_') === 0) {
             $this->set_profile_field($name, $value);
         }
     }
 
+    /**
+     * Set id property. Auto-increments, so length should be fine.
+     *
+     * @param   int     $id ID value.
+     * @return  course
+     */
     public function set_id(int $id) : self {
-        (new utilities)->check_length('user', 'id', $id);
         $this->id = $id;
         return $this;
     }
 
-    public function set_username(string $username) : self {
-        if ($username !== clean_param($username, PARAM_USERNAME)) {
-            throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'username');
-        }
-        (new utilities)->check_length('user', 'username', $username);
-        $this->username = $username;
+    /**
+     * Set ID of course's parent category.
+     *
+     * @param   int                 $category ID course's parent category.
+     * @return  course
+     * @throws  moodle_exception
+     */
+    public function set_category(int $category): self {
+        (new utilities)->check_length('course', 'category', $category);
+        $this->category = $category;
         return $this;
     }
 
-    public function set_first_name(string $firstname) : self {
-        (new utilities)->check_length('user', 'firstname', $firstname);
-        $this->firstname = $firstname;
+    /**
+     * Set course's fullname.
+     *
+     * @param   string              $fullname Course's full textual name.
+     * @return  course
+     * @throws  moodle_exception
+     */
+    public function set_fullname(string $fullname): self {
+        (new utilities)->check_length('course', 'fullname', $fullname);
+        $this->fullname = $fullname;
         return $this;
     }
 
-    public function set_last_name(string $lastname) : self {
-        (new utilities)->check_length('user', 'lastname', $lastname);
-        $this->lastname = $lastname;
+    /**
+     * Set course's shortname (unique).
+     *
+     * @param   string              $shortname Course's shortname - must be unique.
+     * @return  course
+     * @throws  moodle_exception
+     */
+    public function set_shortname(string $shortname): self {
+        (new utilities)->check_length('course', 'shortname', $shortname);
+        $this->shortname = $shortname;
         return $this;
     }
 
-    public function set_email(string $email) : self {
-        global $CFG, $DB;
-        if (!validate_email($email)) {
-            throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'email');
-        }
-        (new utilities)->check_length('user', 'email', $email);
-        $this->email = $email;
+    /**
+     * Set course's idnumber property (unique).
+     *
+     * @param   string              $idnumber Course's ID number - must be unique.
+     * @return  course
+     * @throws  moodle_exception
+     */
+    public function set_idnumber(string $idnumber): self {
+        (new utilities)->check_length('course', 'idnumber', $idnumber);
+        $this->idnumber = $idnumber;
         return $this;
     }
 
-    public function set_idnumber(string $idnumber) : self {
-        (new utilities)->check_length('user', 'idnumber', $idnumber);
-        $this->idnumber= $idnumber;
+    /**
+     * Set course's description/summary property.
+     *
+     * @param   string              $summary Description for course.
+     * @return  course
+     * @throws  moodle_exception
+     */
+    public function set_summary(string $summary): self {
+        (new utilities)->check_length('course', 'summary', $summary);
+        $this->summary = $summary;
         return $this;
     }
 
-    public function set_phone1(string $phone1) : self {
-        (new utilities)->check_length('user', 'phone1', $phone1);
-        $this->phone1 = $phone1;
+    /**
+     * Set course's timecreated property.
+     *
+     * @param   int                 $timecreated Epoch of course's creation.
+     * @return  course
+     * @throws  moodle_exception
+     */
+    public function set_timecreated(int $timecreated): self {
+        (new utilities)->check_length('course', 'timecreated', $timecreated);
+        $this->timecreated = $timecreated;
         return $this;
     }
 
-    public function set_phone2(string $phone2) : self {
-        (new utilities)->check_length('user', 'phone2', $phone2);
-        $this->phone2 = $phone2;
+    /**
+     * Set course's timemodified property.
+     *
+     * @param   int                 $timemodified Epoch of last modification to course.
+     * @return  course
+     * @throws  moodle_exception
+     */
+    public function set_timemodified(int $timemodified): self {
+        (new utilities)->check_length('course', 'timemodified', $timemodified);
+        $this->timemodified = $timemodified;
         return $this;
     }
 
