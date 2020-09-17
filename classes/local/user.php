@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Class to represent a User.
+ *
+ * @package     enrol_selma
+ * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace enrol_selma\local;
 
 defined('MOODLE_INTERNAL') || die();
@@ -28,8 +36,7 @@ require_once($CFG->dirroot . '/user/profile/lib.php');
 require_once($CFG->dirroot . '/enrol/selma/locallib.php');
 
 /**
- * Class to represent a User. Extends stdClass and has public properties but
- * use setters to enforce type.
+ * Class to represent a User. Extends stdClass and has public properties, but use setters to enforce type.
  *
  * @package     enrol_selma
  * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
@@ -112,10 +119,6 @@ class user extends stdClass {
 
     public $timemodified;
 
-    /**
-     * User profile fields are non-existing properties as we will follow the profilelib functions
-     * profile_load_data and profile_save_data for loading and saving data from the stdClass.
-     */
     public function __set($name, $value) {
         if (strpos($name, 'profile_field_') === 0) {
             $this->set_profile_field($name, $value);
@@ -286,5 +289,4 @@ class user extends stdClass {
         profile_save_data($this);
         return true;
     }
-
 }

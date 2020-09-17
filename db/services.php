@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * SELMA enrolment plugin external functions and service definitions.
  *
@@ -24,6 +22,9 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
+
 $functions = [
     'enrol_selma_create_course' => [
         'classname'     => 'enrol_selma\local\external\create_course',

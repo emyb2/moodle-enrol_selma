@@ -14,7 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Utility-type methods to help throughout rest of code.
+ *
+ * @package     enrol_selma
+ * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace enrol_selma\local;
+
+use __PHP_Incomplete_Class;
+use database_column_info;
+use moodle_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -25,6 +37,7 @@ global $CFG;
 require_once($CFG->libdir . '/weblib.php');
 
 /**
+ * Utility helper methods to help in other parts of codebase.
  *
  * @package     enrol_selma
  * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
@@ -82,19 +95,27 @@ final class utilities {
      * Borrowed from Symfony's PHP 8 polyfill.
      *
      * @link https://github.com/symfony/polyfill/tree/master/src/Php80
-     * @param $value
-     * @return string
+     * @param   mixed   $value Some type of object to identify type of.
+     * @return  string  Type of object in string format.
      */
     public static function get_debug_type($value) : string {
         switch (true) {
-            case null === $value: return 'null';
-            case \is_bool($value): return 'bool';
-            case \is_string($value): return 'string';
-            case \is_array($value): return 'array';
-            case \is_int($value): return 'int';
-            case \is_float($value): return 'float';
-            case \is_object($value): break;
-            case $value instanceof \__PHP_Incomplete_Class: return '__PHP_Incomplete_Class';
+            case null === $value:
+                return 'null';
+            case is_bool($value):
+                return 'bool';
+            case is_string($value):
+                return 'string';
+            case is_array($value):
+                return 'array';
+            case is_int($value):
+                return 'int';
+            case is_float($value):
+                return 'float';
+            case is_object($value):
+                break;
+            case $value instanceof __PHP_Incomplete_Class:
+                return '__PHP_Incomplete_Class';
             default:
                 if (null === $type = @get_resource_type($value)) {
                     return 'unknown';
@@ -106,7 +127,7 @@ final class utilities {
 
                 return "resource ($type)";
         }
-        $class = \get_class($value);
+        $class = get_class($value);
         if (false === strpos($class, '@')) {
             return $class;
         }
@@ -116,11 +137,12 @@ final class utilities {
     /**
      * Get information about a specific column.
      *
-     * @param string $name
-     * @return mixed
-     * @throws moodle_exception
+     * @param   string                  $table Name of table.
+     * @param   string                  $name Name of column.
+     * @return  database_column_info    Array of database_column_info objects indexed with column names.
+     * @throws  moodle_exception
      */
-    public static function get_column_information(string $table, string $name) : database_column_info  {
+    public static function get_column_information(string $table, string $name) : database_column_info {
         global $DB;
         $columns = $DB->get_columns($table); // Using cache.
         if (!isset($columns[$name])) {
@@ -128,5 +150,4 @@ final class utilities {
         }
         return $columns[$name];
     }
-
 }

@@ -288,7 +288,7 @@ $string['updatefunctions'] = '    Updating the SELMA webservices functions witho
 $string['updatefunctionsdone'] = '    The new webservice functions should be visible.';
 $string['executiontime'] = '  Script execution took {$a} seconds.';
 
-$string['characterlengthexceeded'] = 'Character length exceeded expected \'{$a-expected}\' received \'{$a->recieved}\'';
+$string['characterlengthexceeded'] = 'Character length exceeded expected \'{$a->expected}\' received \'{$a->received}\'';
 $string['maximumcharacterlengthexceeded'] = 'Maximum character length exceeded';
 $string['maximumcharacterlengthforexceeded'] = 'Maximum character length for \'{$a}\' exceeded';
 $string['unexpectedvalue'] = 'Unexpected value for \'{$a}\'';

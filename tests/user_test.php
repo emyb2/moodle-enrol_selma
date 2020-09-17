@@ -14,13 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Testing for the local enrol_selma 'user' class.
+ *
+ * @package     enrol_selma
+ * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 defined('MOODLE_INTERNAL') || die();
 
-use enrol_selma\local\user;
-use enrol_selma\local\external;
-use enrol_selma\local\user_property_map;
+global $CFG;
+require_once($CFG->dirroot . '/webservice/tests/helpers.php');
+require_once($CFG->libdir . '/phpunit/classes/advanced_testcase.php');
 
-use core_privacy\tests\provider_testcase;
+use enrol_selma\local\user;
 
 /**
  * Testing for the enrol_selma 'user' class.
@@ -29,10 +37,10 @@ use core_privacy\tests\provider_testcase;
  * @copyright   2020 LearningWorks <selma@learningworks.ac.nz>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_testcase extends provider_testcase {
+class user_testcase extends advanced_testcase {
 
     /**
-     *  @var enrol_selma_generator $plugingenerator handle to plugin generator.
+     * @var enrol_selma_generator $plugingenerator handle to plugin generator.
      */
     protected $plugingenerator;
 

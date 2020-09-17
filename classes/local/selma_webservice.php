@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * SELMA webservice account setup - helper methods.
+ *
+ * @package     enrol_selma
+ * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace enrol_selma\local;
 
 defined('MOODLE_INTERNAL') || die();
@@ -234,7 +242,6 @@ class selma_webservice {
      * @throws \dml_exception
      */
     public static function update_required_capabilities(stdClass $role, progress_trace $trace = null) {
-        global $CFG;
         if (is_null($trace)) {
             $trace = new null_progress_trace();
         }

@@ -19,14 +19,17 @@
  *
  * @package     enrol_selma
  * @category    admin
- * @copyright   2020 LearningWorks <selma@learningworks.ac.nz>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * Extends the core select setting to allow specifying whether the field should be enabled or not.
+ *
+ * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class admin_setting_configselect_with_enabled extends admin_setting_configselect {
     /**
@@ -37,7 +40,7 @@ class admin_setting_configselect_with_enabled extends admin_setting_configselect
     /**
      * Constructor: uses parent::__construct, but add 'enabled' flag.
      *
-     * @param string        $name Unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
+     * @param string        $name Unique ascii name - 'myplugin/mysetting' for ones in config_plugins.
      * @param string        $visiblename Localised.
      * @param string        $description Long localised info.
      * @param string|int    $defaultsetting Default value for the setting.
@@ -58,7 +61,8 @@ class admin_setting_configselect_with_enabled extends admin_setting_configselect
             $this->enabled = true;
         }
 
-        // TODO - Maybe done above now. Should we check if the setting has been set first? Otherwise it may never be set to what we want to force it to?
+        // TODO - Maybe done above now. Should we check if the setting has been set first?
+        // TODO - Otherwise it may never be set to what we want to force it to?
         // TODO - We can assign forced config values at plugin install?
         // We should not save changes to the disabled elements.
         $this->nosave = !$this->enabled;

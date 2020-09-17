@@ -37,7 +37,9 @@ use external_value;
 /**
  * Class add_intake_to_course used to add SELMA intake to Moodle course.
  *
- * @package enrol_selma\local\external
+ * @package     enrol_selma
+ * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class add_intake_to_course extends external_api {
     /**
@@ -53,6 +55,17 @@ class add_intake_to_course extends external_api {
             ],
             get_string('add_intake_to_course_parameters', 'enrol_selma')
         );
+    }
+
+    /**
+     * The constructor/function itself - let's add this intake to that course.
+     *
+     * @param   int     $intakeid ID of intake to add to course.
+     * @param   int     $courseid ID of course the intake should be added to.
+     * @return  array   Array of success status & bool of true if success, along with message.
+     */
+    public function __construct(int $intakeid, int $courseid) {
+        return self::add_intake_to_course($intakeid, $courseid);
     }
 
     /**

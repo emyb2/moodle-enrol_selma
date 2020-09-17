@@ -38,7 +38,9 @@ use external_value;
 /**
  * Class create_intake used to create a record of a SELMA intake and metadata.
  *
- * @package enrol_selma\local\external
+ * @package     enrol_selma
+ * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class create_intake extends external_api {
     /**
@@ -51,17 +53,39 @@ class create_intake extends external_api {
             [
                 'intake' => new external_single_structure(
                     [
-                        'intakeid' => new external_value(PARAM_INT, get_string('create_intake_parameters::intakeid', 'enrol_selma')),
-                        'programmeid' => new external_value(PARAM_INT, get_string('create_intake_parameters::programmeid', 'enrol_selma')),
-                        'intakecode' => new external_value(PARAM_TEXT, get_string('create_intake_parameters::intakecode', 'enrol_selma')),
-                        'intakename' => new external_value(PARAM_TEXT, get_string('create_intake_parameters::intakename', 'enrol_selma')),
-                        'intakestartdate' => new external_value(PARAM_TEXT, get_string('create_intake_parameters::intakestartdate', 'enrol_selma')),
-                        'intakeenddate' => new external_value(PARAM_TEXT, get_string('create_intake_parameters::intakeenddate', 'enrol_selma')),
+                        'intakeid' => new external_value(PARAM_INT,
+                            get_string('create_intake_parameters::intakeid', 'enrol_selma')
+                        ),
+                        'programmeid' => new external_value(PARAM_INT,
+                            get_string('create_intake_parameters::programmeid', 'enrol_selma')
+                        ),
+                        'intakecode' => new external_value(PARAM_TEXT,
+                            get_string('create_intake_parameters::intakecode', 'enrol_selma')
+                        ),
+                        'intakename' => new external_value(PARAM_TEXT,
+                            get_string('create_intake_parameters::intakename', 'enrol_selma')
+                        ),
+                        'intakestartdate' => new external_value(PARAM_TEXT,
+                            get_string('create_intake_parameters::intakestartdate', 'enrol_selma')
+                        ),
+                        'intakeenddate' => new external_value(PARAM_TEXT,
+                            get_string('create_intake_parameters::intakeenddate', 'enrol_selma')
+                        ),
                     ], get_string('create_intake_parameters::intake', 'enrol_selma')
                 )
             ],
             get_string('create_intake_parameters', 'enrol_selma')
         );
+    }
+
+    /**
+     * The function itself - let's create the intake.
+     *
+     * @param   array   $intake Intake details to record in Moodle.
+     * @return  array   Array of success status & created intake, if any.
+     */
+    public function __construct(array $intake) {
+        return self::create_intake($intake);
     }
 
     /**

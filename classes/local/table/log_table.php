@@ -14,13 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Table SQL overridden class for plugin log table.
+ *
+ * @package     enrol_selma
+ * @copyright   2020 Troy Williams <troy.williams@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace enrol_selma\local\table;
 
 defined('MOODLE_INTERNAL') || die();
 
+use coding_exception;
 use core_text;
-use DateTime;
-use html_writer;
 use moodle_url;
 use stdClass;
 use table_sql;
@@ -31,16 +38,30 @@ use enrol_selma\local\log_levels;
  *
  * @package     enrol_selma
  * @copyright   2020 Troy Williams <troy.williams@learningworks.co.nz>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class log_table extends table_sql {
 
     use add_column_header;
 
+    /**
+     * Component being dealt with.
+     */
     public const COMPONENT = 'enrol_selma';
 
+    /**
+     * Default page size.
+     */
     const DEFAULT_PAGE_SIZE = 50;
 
+    /**
+     * This - 'log_table' constructor.
+     *
+     * @param   string              $uniqueid
+     * @param   moodle_url          $baseurl
+     * @param   array               $filters
+     * @throws  coding_exception
+     */
     public function __construct($uniqueid, moodle_url $baseurl, array $filters = []) {
         parent::__construct($uniqueid);
         $this->add_column_header('levelname', get_string('levelname', static::COMPONENT), true, 'text-nowrap');
@@ -51,11 +72,15 @@ class log_table extends table_sql {
         $this->sort_default_order  = SORT_DESC;
         $this->pageable(true);
         $this->define_baseurl($baseurl);
-        $this->build_sql($filters); // Finally build the required SQL;
+        $this->build_sql($filters); // Finally build the required SQL.
     }
 
-    protected function build_sql($filters) {
-        global $DB, $SITE;
+    /**
+     * Systematically build the SQL needed.
+     *
+     * @param array $filters The filters used in SQL.
+     */
+    protected function build_sql(array $filters) {
         $fields = "l.*";
         $from = "{enrol_selma_log} l";
         $level = $filters['filterlevel'] ?? 0;
@@ -86,6 +111,12 @@ class log_table extends table_sql {
         $this->sql = $sql;
     }
 
+    /**
+     * Build content for levelname column.
+     *
+     * @param   mixed   $values Value object passed to process.
+     * @return  string  HTML returned.
+     */
     public function col_levelname($values) {
         $awesomeiconname = '';
         $loglevelselector = core_text::strtolower("log-level-{$values->levelname}");
@@ -119,6 +150,12 @@ class log_table extends table_sql {
             '<span>' . $values->levelname . '</span></div>';
     }
 
+    /**
+     * Build content for timestamp column.
+     *
+     * @param   mixed   $values Value object passed to process.
+     * @return  string  HTML returned.
+     */
     public function col_timestamp($values) {
         return userdate($values->timestamp);
     }

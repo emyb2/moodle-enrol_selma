@@ -14,8 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-// As per https://docs.moodle.org/dev/Coding_style#Namespaces_within_.2A.2A.2Ftests_directories.
-//namespace enrol_selma;
+/**
+ * Testing for the external (web-services) enrol_selma 'get_all_courses' class.
+ *
+ * @package     enrol_selma
+ * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+// For namespaces - look at https://docs.moodle.org/dev/Coding_style#Namespaces_within_.2A.2A.2Ftests_directories.
 
 use enrol_selma\local\external\get_all_courses;
 
@@ -26,7 +33,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->libdir . '/externallib.php');
 
 /**
- * Testing for the enrol_selma 'user' class.
+ * Testing for the external enrol_selma 'get_all_courses' class.
  *
  * @package     enrol_selma
  * @copyright   2020 LearningWorks <selma@learningworks.ac.nz>
@@ -64,8 +71,8 @@ class get_all_courses_external_testcase extends externallib_advanced_testcase {
 
         // User should get all course returned.
         $result = get_all_courses::get_all_courses($params['amount'], $params['page']);
-        // We need to execute the return values cleaning process to simulate the web service server
-        $returnedvalue = external_api::clean_returnvalue(get_all_courses::get_all_courses_returns(), $result);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        external_api::clean_returnvalue(get_all_courses::get_all_courses_returns(), $result);
     }
 
     /**
@@ -77,7 +84,7 @@ class get_all_courses_external_testcase extends externallib_advanced_testcase {
 
         // User should get all course returned.
         $result = get_all_courses::get_all_courses($params['amount'], $params['page']);
-        // We need to execute the return values cleaning process to simulate the web service server
+        // We need to execute the return values cleaning process to simulate the web service server.
         $returnedvalue = external_api::clean_returnvalue(get_all_courses::get_all_courses_returns(), $result);
 
         $expectedvalue = [
@@ -90,37 +97,4 @@ class get_all_courses_external_testcase extends externallib_advanced_testcase {
         // Assert we got what we expected.
         $this->assertEquals($expectedvalue, $returnedvalue);
     }
-
-    /**
-     * Tests if exception is thrown when trying to create course without capability to do so.
-     */
-    //public function test_working_get_all_courses() {
-    //    // Get test course data.
-    //    $params = $this->plugingenerator->get_selma_get_course_data()['valid'];
-    //
-    //    // TODO - Create some courses.
-    //    //create_course();
-    //
-    //    // User should get all course returned.
-    //    $result = get_all_courses::get_all_courses($params['amount'], $params['page']);
-    //
-    //    // We need to execute the return values cleaning process to simulate the web service server
-    //    $returnedvalue = external_api::clean_returnvalue(get_all_courses::get_all_courses_returns(), $result);
-    //
-    //    // What's expected?
-    //    $expectedvalue = [
-    //        'status' => get_string('status_notfound', 'enrol_selma'),
-    //        'courses' => [],
-    //        'nextpage' => -1,
-    //        'message' => get_string('status_notfound_message', 'enrol_selma'),
-    //    ];
-    //
-    //    var_dump($returnedvalue);
-    //    var_dump($expectedvalue);
-    //
-    //    // Assert we don't have any warnings.
-    //    $this->assertArrayNotHasKey('warnings', $returnedvalue);
-    //    // Assert we got what we expected.
-    //    $this->assertEquals($expectedvalue, $returnedvalue);
-    //}
 }

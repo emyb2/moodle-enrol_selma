@@ -16,10 +16,10 @@
 
 /**
  * Refresh WS functions CLI script for enrol_selma.
- * Inspired by https://github.com/learningworks/moodle-local_ws_enrolcohort/blob/master/cli/upgrade.php
+ *
+ * (Inspired by https://github.com/learningworks/moodle-local_ws_enrolcohort/blob/master/cli/upgrade.php) - thanks.
  *
  * @package     enrol_selma
- * @subpackage  cli
  * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

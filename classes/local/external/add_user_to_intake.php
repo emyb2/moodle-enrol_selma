@@ -38,7 +38,9 @@ use external_value;
 /**
  * Class add_user_to_intake used to add a given user to a given intake.
  *
- * @package enrol_selma\local\external
+ * @package     enrol_selma
+ * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class add_user_to_intake extends external_api {
     /**
@@ -47,16 +49,27 @@ class add_user_to_intake extends external_api {
      * @return external_function_parameters Description of parameters and expected type.
      */
     public static function add_user_to_intake_parameters() {
-        // 'FUNCTIONNAME_parameters()' always return an 'external_function_parameters()'.
+        // A 'FUNCTIONNAME_parameters()' always return an 'external_function_parameters()'.
         // The 'external_function_parameters' constructor expects an array of 'external_description'.
         return new external_function_parameters(
-            // An 'external_description' can be 'external_value', 'external_single_structure' or 'external_multiple' structure
+            // An 'external_description' can be 'external_value', 'external_single_structure' or 'external_multiple' structure.
             [
                 'userid' => new external_value(PARAM_TEXT, get_string('add_user_to_intake_parameters::userid', 'enrol_selma')),
                 'intakeid' => new external_value(PARAM_TEXT, get_string('add_user_to_intake_parameters::intakeid', 'enrol_selma')),
             ],
             get_string('add_user_to_intake_parameters', 'enrol_selma')
         );
+    }
+
+    /**
+     * The constructor/function itself - let's add the user to the intake.
+     *
+     * @param   int     $userid SELMA ID of user to add to intake.
+     * @param   int     $intakeid SELMA intake ID the user should be added to.
+     * @return  array   Array of success status & bool if successful/not, message.
+     */
+    public function __construct(int $userid, int $intakeid) {
+        return self::add_user_to_intake($userid, $intakeid);
     }
 
     /**

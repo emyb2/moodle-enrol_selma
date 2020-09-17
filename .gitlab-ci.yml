@@ -41,13 +41,11 @@ before_script:
   - >
     if [ $DB == "mysqli" ] || [ $DB == "mariadb" ]; then
       mysql -e 'USE mysql; SELECT User, Host, plugin FROM mysql.user; UPDATE user SET plugin="mysql_native_password" WHERE User="root"; FLUSH PRIVILEGES; SELECT User, Host, plugin FROM mysql.user;'
-      service $DBSERVICE restart
     elif [ $DB == "pgsql" ]; then
-      ls -lahR /etc/postgresql
+      ls -lah /etc/postgresql
       echo "host    all         all         127.0.0.1/32          trust" >| /etc/postgresql/11/main/pg_hba.conf
-      service $DBSERVICE restart
-      less /etc/postgresql/11/main/pg_hba.conf
     fi
+  - service $DBSERVICE restart
   #      echo "host    all         all         127.0.0.1          trust"  | tee -a /var/lib/pgsql/data/pg_hba.conf
   #      find / pg_hba.conf -type f -exec echo "host    all         all         127.0.0.1          trust"  | tee -a {} \;
   # Change localhost to 127.0.0.1 for phpdoc.
@@ -67,31 +65,30 @@ before_script:
     #    - moodle-plugin-ci savepoints || EXIT_STATUS=$? ; echo "EXIT STATUS - $(tput bold)$EXIT_STATUS$(tput sgr0)"
     - exit $EXIT_STATUS
 
-
 # TODO - Make mysql work. Switch to different distro or install mysql.
 # Setup jobs as stages to run sequentially.
 stages:
-  - job1
+#  - job1
   - job2
-  - job3
-  - job4
-  - job5
-  - job6
-  - job7
+#  - job3
+#  - job4
+#  - job5
+#  - job6
+#  - job7
   - job8
-  - job9
+#  - job9
 
 # TODO - Only test highest and lowest.
 # Test each active version of PHP.
-job1:
-  <<: *job_definition
-  stage: job1
-  image: moodlehq/moodle-php-apache:7.2
-  variables:
-    MOODLE_BRANCH: "MOODLE_35_STABLE"
-    DB: mariadb
-    DBAPT: default-mysql-server
-    DBSERVICE: mysql
+#job1:
+#  <<: *job_definition
+#  stage: job1
+#  image: moodlehq/moodle-php-apache:7.2
+#  variables:
+#    MOODLE_BRANCH: "MOODLE_35_STABLE"
+#    DB: mariadb
+#    DBAPT: default-mysql-server
+#    DBSERVICE: mysql
 
 job2:
   <<: *job_definition
@@ -103,56 +100,56 @@ job2:
     DBAPT: mariadb-server
     DBSERVICE: mysql
 
-job3:
-  <<: *job_definition
-  stage: job3
-  image: moodlehq/moodle-php-apache:7.2
-  variables:
-    MOODLE_BRANCH: "MOODLE_35_STABLE"
-    DB: pgsql
-    DBAPT: postgresql postgresql-contrib
-    DBSERVICE: postgresql
-
-job4:
-  <<: *job_definition
-  stage: job4
-  image: moodlehq/moodle-php-apache:7.3
-  variables:
-    MOODLE_BRANCH: "MOODLE_35_STABLE"
-    DB: mariadb
-    DBAPT: mysql-server
-    DBSERVICE: mysql
-
-job5:
-  <<: *job_definition
-  stage: job5
-  image: moodlehq/moodle-php-apache:7.3
-  variables:
-    MOODLE_BRANCH: "MOODLE_35_STABLE"
-    DB: mariadb
-    DBAPT: mariadb-server
-    DBSERVICE: mysql
-
-job6:
-  <<: *job_definition
-  stage: job6
-  image: moodlehq/moodle-php-apache:7.3
-  variables:
-    MOODLE_BRANCH: "MOODLE_35_STABLE"
-    DB: pgsql
-    DBAPT: postgresql postgresql-contrib
-    DBSERVICE: postgresql
-
-## Only test the earliest and latest supported version of Moodle.
-job7:
-  <<: *job_definition
-  stage: job7
-  image: moodlehq/moodle-php-apache:7.4
-  variables:
-    MOODLE_BRANCH: "MOODLE_39_STABLE"
-    DB: mariadb
-    DBAPT: default-mysql-server
-    DBSERVICE: mysql
+#job3:
+#  <<: *job_definition
+#  stage: job3
+#  image: moodlehq/moodle-php-apache:7.2
+#  variables:
+#    MOODLE_BRANCH: "MOODLE_35_STABLE"
+#    DB: pgsql
+#    DBAPT: postgresql postgresql-contrib
+#    DBSERVICE: postgresql
+#
+#job4:
+#  <<: *job_definition
+#  stage: job4
+#  image: moodlehq/moodle-php-apache:7.3
+#  variables:
+#    MOODLE_BRANCH: "MOODLE_35_STABLE"
+#    DB: mariadb
+#    DBAPT: mysql-server
+#    DBSERVICE: mysql
+#
+#job5:
+#  <<: *job_definition
+#  stage: job5
+#  image: moodlehq/moodle-php-apache:7.3
+#  variables:
+#    MOODLE_BRANCH: "MOODLE_35_STABLE"
+#    DB: mariadb
+#    DBAPT: mariadb-server
+#    DBSERVICE: mysql
+#
+#job6:
+#  <<: *job_definition
+#  stage: job6
+#  image: moodlehq/moodle-php-apache:7.3
+#  variables:
+#    MOODLE_BRANCH: "MOODLE_35_STABLE"
+#    DB: pgsql
+#    DBAPT: postgresql postgresql-contrib
+#    DBSERVICE: postgresql
+#
+### Only test the earliest and latest supported version of Moodle.
+#job7:
+#  <<: *job_definition
+#  stage: job7
+#  image: moodlehq/moodle-php-apache:7.4
+#  variables:
+#    MOODLE_BRANCH: "MOODLE_39_STABLE"
+#    DB: mariadb
+#    DBAPT: default-mysql-server
+#    DBSERVICE: mysql
 
 job8:
   <<: *job_definition
@@ -164,12 +161,12 @@ job8:
     DBAPT: mariadb-server
     DBSERVICE: mysql
 
-job9:
-  <<: *job_definition
-  stage: job9
-  image: moodlehq/moodle-php-apache:7.4
-  variables:
-    MOODLE_BRANCH: "MOODLE_39_STABLE"
-    DB: pgsql
-    DBAPT: postgresql postgresql-contrib
-    DBSERVICE: postgresql
+#job9:
+#  <<: *job_definition
+#  stage: job9
+#  image: moodlehq/moodle-php-apache:7.4
+#  variables:
+#    MOODLE_BRANCH: "MOODLE_39_STABLE"
+#    DB: pgsql
+#    DBAPT: postgresql postgresql-contrib
+#    DBSERVICE: postgresql

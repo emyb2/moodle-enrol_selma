@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * SELMA Logs page.
+ *
+ * @package     enrol_selma
+ * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/tablelib.php');
@@ -38,7 +46,7 @@ if ($data) {
     }
     if ($data->action == 'applyfilter') {
         $filters['filterlevel'] = $data->level ?? 0;
-        $filters['filterbefore'] = ($data->enabledbefore) ? $data->before :  0;
+        $filters['filterbefore'] = ($data->enabledbefore) ? $data->before : 0;
         $filters['filterafter'] = ($data->enabledafter) ? $data->after : 0;
         $baseurl->params($filters);
     }

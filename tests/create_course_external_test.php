@@ -14,8 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-// As per https://docs.moodle.org/dev/Coding_style#Namespaces_within_.2A.2A.2Ftests_directories.
-//namespace enrol_selma;
+/**
+ * Testing for the external (web-services) enrol_selma 'create_course' class.
+ *
+ * @package     enrol_selma
+ * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+// For namespaces - look at https://docs.moodle.org/dev/Coding_style#Namespaces_within_.2A.2A.2Ftests_directories.
 
 use enrol_selma\local\external\create_course;
 
@@ -35,7 +42,7 @@ require_once($CFG->libdir . '/externallib.php');
 class create_course_external_testcase extends externallib_advanced_testcase {
 
     /**
-     *  @var enrol_selma_generator $plugingenerator handle to plugin generator.
+     * @var enrol_selma_generator $plugingenerator handle to plugin generator.
      */
     protected $plugingenerator;
 
@@ -61,7 +68,7 @@ class create_course_external_testcase extends externallib_advanced_testcase {
         $contextid = context_system::instance()->id;
 
         // We give this user capability to 'view' but not 'create' (yet).
-        $roleid = $this->assignUserCapability('moodle/course:view', $contextid);
+        $this->assignUserCapability('moodle/course:view', $contextid);
 
         // Get test course data.
         $params = $this->plugingenerator->get_selma_course_data()['valid'];
@@ -70,7 +77,7 @@ class create_course_external_testcase extends externallib_advanced_testcase {
         $this->expectException(required_capability_exception::class);
 
         // User should not be able to create yet.
-        $result = create_course::create_course($params);
+        create_course::create_course($params);
     }
 
     /**
@@ -81,7 +88,7 @@ class create_course_external_testcase extends externallib_advanced_testcase {
         $contextid = context_system::instance()->id;
 
         // Give user ability to create courses.
-        $roleid = $this->assignUserCapability('moodle/course:create', $contextid);
+        $this->assignUserCapability('moodle/course:create', $contextid);
 
         // Get test course data.
         $params = $this->plugingenerator->get_selma_course_data()['valid'];
@@ -92,7 +99,7 @@ class create_course_external_testcase extends externallib_advanced_testcase {
             $this->expectException(moodle_exception::class);
 
             // Plugin configs not set up at this point yet.
-            $result = create_course::create_course($params);
+            create_course::create_course($params);
         }
     }
 
@@ -104,20 +111,19 @@ class create_course_external_testcase extends externallib_advanced_testcase {
         $contextid = context_system::instance()->id;
 
         // Give user ability to create courses.
-        $roleid = $this->assignUserCapability('moodle/course:create', $contextid);
+        $this->assignUserCapability('moodle/course:create', $contextid);
 
         // TODO - make this a custom/new category, so we can test if the config was respected later. Hard to know if default used.
         // Now 'fix' the previous issue(s) to continue. 1 = Miscellaneous (default category).
-        set_config('newcoursecat', 1,'enrol_selma');
+        set_config('newcoursecat', 1, 'enrol_selma');
 
         // Get test course data.
         $params = $this->plugingenerator->get_selma_course_data()['valid'];
 
-
         // Plugin configs not set up at this point yet.
         $result = create_course::create_course($params);
 
-        // We need to execute the return values cleaning process to simulate the web service server
+        // We need to execute the return values cleaning process to simulate the web service server.
         $returnedvalue = external_api::clean_returnvalue(create_course::create_course_returns(), $result);
 
         $expectedvalue = [
@@ -148,14 +154,14 @@ class create_course_external_testcase extends externallib_advanced_testcase {
         $contextid = context_system::instance()->id;
 
         // Give user ability to create courses.
-        $roleid = $this->assignUserCapability('moodle/course:create', $contextid);
+        $this->assignUserCapability('moodle/course:create', $contextid);
 
         // TODO - make this a custom/new category, so we can test if the config was respected later. Hard to know if default used.
         // Now 'fix' the previous issue(s) to continue. 1 = Miscellaneous (default category).
-        set_config('newcoursecat', 1,'enrol_selma');
+        set_config('newcoursecat', 1, 'enrol_selma');
 
         // Now 'fix' the previous issue(s) to continue. Set some tags.
-        set_config('selmacoursetags', '{{name}},selma','enrol_selma');
+        set_config('selmacoursetags', '{{name}},selma', 'enrol_selma');
 
         // Get test course data.
         $params = $this->plugingenerator->get_selma_course_data()['valid'];
@@ -163,7 +169,7 @@ class create_course_external_testcase extends externallib_advanced_testcase {
         // Plugin configs set up at this point yet.
         $result = create_course::create_course($params);
 
-        // We need to execute the return values cleaning process to simulate the web service server
+        // We need to execute the return values cleaning process to simulate the web service server.
         $returnedvalue = external_api::clean_returnvalue(create_course::create_course_returns(), $result);
 
         $expectedvalue = [
@@ -186,14 +192,14 @@ class create_course_external_testcase extends externallib_advanced_testcase {
         $contextid = context_system::instance()->id;
 
         // Give user ability to create courses.
-        $roleid = $this->assignUserCapability('moodle/course:create', $contextid);
+        $this->assignUserCapability('moodle/course:create', $contextid);
 
         // TODO - make this a custom/new category, so we can test if the config was respected later. Hard to know if default used.
         // Now 'fix' the previous issue(s) to continue. 1 = Miscellaneous (default category).
-        set_config('newcoursecat', 1,'enrol_selma');
+        set_config('newcoursecat', 1, 'enrol_selma');
 
         // Now 'fix' the previous issue(s) to continue. Set some tags.
-        set_config('selmacoursetags', '{{name}},selma','enrol_selma');
+        set_config('selmacoursetags', '{{name}},selma', 'enrol_selma');
 
         // Get test course data.
         $params = $this->plugingenerator->get_selma_course_data()['valid'];
@@ -203,12 +209,12 @@ class create_course_external_testcase extends externallib_advanced_testcase {
 
         // Plugin configs not set up at this point yet.
         $result = create_course::create_course($params);
-        // We need to execute the return values cleaning process to simulate the web service server
-        $returnedvalue = external_api::clean_returnvalue(create_course::create_course_returns(), $result);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        external_api::clean_returnvalue(create_course::create_course_returns(), $result);
 
         $result = create_course::create_course($params);
-        // We need to execute the return values cleaning process to simulate the web service server
-        $returnedvalue = external_api::clean_returnvalue(create_course::create_course_returns(), $result);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        external_api::clean_returnvalue(create_course::create_course_returns(), $result);
     }
 
     /**
@@ -219,14 +225,14 @@ class create_course_external_testcase extends externallib_advanced_testcase {
         $contextid = context_system::instance()->id;
 
         // Give user ability to create courses.
-        $roleid = $this->assignUserCapability('moodle/course:create', $contextid);
+        $this->assignUserCapability('moodle/course:create', $contextid);
 
         // TODO - make this a custom/new category, so we can test if the config was respected later. Hard to know if default used.
         // Now 'fix' the previous issue(s) to continue. 1 = Miscellaneous (default category).
-        set_config('newcoursecat', 1,'enrol_selma');
+        set_config('newcoursecat', 1, 'enrol_selma');
 
         // Now 'fix' the previous issue(s) to continue. Set some tags.
-        set_config('selmacoursetags', '{{name}},selma','enrol_selma');
+        set_config('selmacoursetags', '{{name}},selma', 'enrol_selma');
 
         // Get test course data.
         $params = $this->plugingenerator->get_selma_course_data()['invalid'];
@@ -236,7 +242,7 @@ class create_course_external_testcase extends externallib_advanced_testcase {
 
         // Plugin configs not set up at this point yet.
         $result = create_course::create_course($params);
-        // We need to execute the return values cleaning process to simulate the web service server
-        $returnedvalue = external_api::clean_returnvalue(create_course::create_course_returns(), $result);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        external_api::clean_returnvalue(create_course::create_course_returns(), $result);
     }
 }

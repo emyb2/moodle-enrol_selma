@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Setup SELMA web service role and account.
+ *
+ * @package     enrol_selma
+ * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 define('CLI_SCRIPT', true);
 
 require(__DIR__ . '/../../../config.php');
@@ -70,7 +78,7 @@ if ($options['verbose']) {
     $trace = new text_progress_trace();
 }
 $roleshortname = clean_param($options['roleshortname'], PARAM_ALPHAEXT);
-$accountusername= clean_param($options['accountusername'], PARAM_USERNAME);
+$accountusername = clean_param($options['accountusername'], PARAM_USERNAME);
 $accountemail = clean_param($options['accountemail'], PARAM_EMAIL);
 $runsetup = false;
 $interactive = empty($options['non-interactive']);
@@ -136,13 +144,13 @@ if ($interactive) {
     }
 } else {
     if (empty($roleshortname)) {
-        cli_error("Incorrect value for `roleshortname`");
+        cli_error("Incorrect value for 'roleshortname'");
     }
     if (empty($accountusername)) {
-        cli_error("Incorrect value for `accountusername`");
+        cli_error("Incorrect value for 'accountusername'");
     }
     if (empty($accountemail)) {
-        cli_error("Incorrect value for `accountemail`");
+        cli_error("Incorrect value for 'accountemail'");
     }
     $runsetup = true;
 }
@@ -153,7 +161,7 @@ if ($runsetup) {
     enrol_selma\local\selma_webservice::enable_protocols($trace);
     // Create service role.
     $role = enrol_selma\local\selma_webservice::setup_service_role($roleshortname, $trace);
-    // Create service account
+    // Create service account.
     $account = enrol_selma\local\selma_webservice::setup_service_account($accountusername, $accountemail, $trace);
     // Add service account to role.
     enrol_selma\local\selma_webservice::assign_account_to_role($account, $role, $trace);

@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Trait for adding add_column_header functionality.
+ *
+ * @package     enrol_selma
+ * @copyright   2020 Troy Williams <troy.williams@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace enrol_selma\local\table;
 
 defined('MOODLE_INTERNAL') || die();
@@ -23,19 +31,19 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @package     enrol_selma
  * @copyright   2020 Troy Williams <troy.williams@learningworks.co.nz>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 trait add_column_header {
 
     /**
      * Allows to add only one column name and header to the table (parent class methods only allow to set all).
      *
-     * @param string $key
-     * @param string $label
-     * @param bool $sortable
-     * @param string $columnclass
+     * @param   string  $key Key (identifier) for column.
+     * @param   string  $label Human-readable value for labelling column.
+     * @param   bool    $sortable Whether sortable or not.
+     * @param   string  $columnclass Additional class(es) for column.
      */
-    protected function add_column_header($key, $label, $sortable = true, $columnclass = '') {
+    protected function add_column_header(string $key, string $label, $sortable = true, $columnclass = '') {
         if (empty($this->columns)) {
             $this->define_columns([$key]);
             $this->define_headers([$label]);

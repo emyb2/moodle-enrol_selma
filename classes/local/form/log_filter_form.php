@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Form for fields used for filtering the log.
+ *
+ * @package     enrol_selma
+ * @copyright   2020 Troy Williams <troy.williams@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace enrol_selma\local\form;
 
 defined('MOODLE_INTERNAL') || die();
@@ -26,12 +34,16 @@ use enrol_selma\local\log_levels;
  * Form for fields used for filtering the log.
  *
  * @package     enrol_selma
- * @subpackage  form
  * @copyright   2020 Troy Williams <troy.williams@learningworks.co.nz>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class log_filter_form extends moodleform {
 
+    /**
+     * Form definition. Setting up form.
+     *
+     * @throws coding_exception
+     */
     public function definition() {
         $form = $this->_form;
         $form->addElement(
@@ -65,6 +77,11 @@ class log_filter_form extends moodleform {
         );
     }
 
+    /**
+     * Get data for form to repopulate with existing/saved data.
+     *
+     * @return object|null
+     */
     public function get_data() {
         $data = parent::get_data();
         if ($data) {
@@ -78,6 +95,11 @@ class log_filter_form extends moodleform {
         return $data;
     }
 
+    /**
+     * Apply filters as received through form.
+     *
+     * @param array $filters
+     */
     public function apply_filters(array $filters) {
         $data = [];
         $data['before'] = $filters['filterbefore'] ?? 0;

@@ -14,15 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
+/**
+ * Library of functions to help with testing.
+ *
+ * @package     enrol_selma
+ * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Plugin data generator class.
  *
- * @package
+ * @package     enrol_selma
  * @copyright   2020 Troy Williams <troy.williams@learningworks.co.nz>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class enrol_selma_generator extends testing_module_generator {
 
@@ -47,6 +54,8 @@ class enrol_selma_generator extends testing_module_generator {
     }
 
     /**
+     * Prepared intake data to test with.
+     *
      * @return  array[] Array with test intake data.
      */
     public function get_intake_data() : array {
@@ -82,6 +91,8 @@ class enrol_selma_generator extends testing_module_generator {
     }
 
     /**
+     * Prepared course data to test with.
+     *
      * @return  array[] Array with most basic course data we need.
      */
     public function get_selma_course_data() : array {
@@ -105,6 +116,8 @@ class enrol_selma_generator extends testing_module_generator {
     }
 
     /**
+     * Prepared 'get_all_courses' webservice call data to help with testing.
+     *
      * @return  array[] Array with most basic course data we need.
      */
     public function get_selma_get_course_data() : array {
@@ -121,6 +134,8 @@ class enrol_selma_generator extends testing_module_generator {
     }
 
     /**
+     * Generates a random string of a given length.
+     *
      * @param   int     $length The number of characters the random string should have.
      * @return  string  Generated random string.
      */
