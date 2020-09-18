@@ -26,6 +26,11 @@ namespace enrol_selma\local;
 
 defined('MOODLE_INTERNAL') || die();
 
+use coding_exception;
+use core_course\customfield\course_handler;
+use core_customfield\api;
+use core_customfield\data_controller;
+use dml_exception;
 use moodle_exception;
 use profile_field_base;
 use stdClass;
@@ -68,15 +73,15 @@ class course extends stdClass {
     public $timemodified;
 
     /**
-     * Set (any) course field.
+     * Set custom course fields - no others without setters accepted.
      *
      * @param   string              $name   Name of property.
      * @param   mixed               $value  Value of property.
      * @throws  moodle_exception
      */
     public function __set(string $name, $value) {
-        if (strpos($name, 'profile_field_') === 0) {
-            $this->set_profile_field($name, $value);
+        if (strpos($name, 'customfield_') === 0) {
+            $this->set_custom_course_field($name, $value);
         }
     }
 
@@ -183,102 +188,93 @@ class course extends stdClass {
     }
 
     /**
-     * Set a user profile field. Use the fields preprocess method if available.
+     * Set a custom course field.
      *
-     * @param string $name
-     * @param $value
-     * @return $this
-     * @throws moodle_exception
+     * @param   string              $name Name of property.
+     * @param   mixed               $value Property's value.
+     * @return  $this               This course object.
+     * @throws  moodle_exception
      */
-    public function set_profile_field(string $name, $value) {
-        global $CFG;
-        static $customprofilefields = null;
-        if (is_null($customprofilefields)) {
-            $customprofilefields = [];
-            foreach (profile_get_custom_fields() as $profilefield) {
-                $customprofilefields[$profilefield->shortname] = $profilefield;
+    public function set_custom_course_field(string $name, $value) {
+        static $customcoursefields = null;
+        // Get all possible fields.
+        if (is_null($customcoursefields)) {
+            $customcoursefields = [];
+            foreach (enrol_selma_get_custom_course_fields() as $field) {
+                $customcoursefields[$field->get('shortname')] = $field->get_formatted_name();
             }
         }
-        $shortname = str_replace('profile_field_', '', $name);
-        if (!in_array($shortname, array_keys($customprofilefields))) {
-            throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'name');
+        // Remove custom course field identifier (course_field_).
+        $shortname = str_replace('customfield_', '', $name);
+
+        // Check if it's a real field.
+        if (!in_array($shortname, array_keys($customcoursefields))) {
+            throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'shortname');
         }
-        $field = $customprofilefields[$shortname];
-        $classfilepath = $CFG->dirroot . '/user/profile/field/' . $field->datatype . '/field.class.php';
-        if (file_exists($classfilepath)) {
-            require_once($classfilepath);
-            $profilefieldname = 'profile_field_' . $field->shortname;
-            $classname = 'profile_field_' . $field->datatype;
-            /** @var profile_field_base $profilefield */
-            $profilefield = new $classname($field->id, $this->id, $field);
-            if (method_exists($profilefield, 'edit_save_data_preprocess')) {
-                $this->{$profilefieldname} = $profilefield->edit_save_data_preprocess($value, null);
-            } else {
-                $this->{$profilefieldname} = $value;
-            }
-        }
+
+        // TODO - Validate value?
+        // Set property on class.
+        $this->{$name} = $value;
+
         return $this;
     }
 
     /**
-     * Method for saving user to database. Provides extra property checks and then hands off to core user_create_user
-     * and user_update_user functions. Also saves user profile field data.
+     * Method for saving course to database.
+     *
+     * Provides extra property checks and then hands off to core create_course() and update_course() functions.
+     * Also saves custom course field data.
      *
      * @return bool
-     * @throws \coding_exception
-     * @throws \dml_exception
+     * @throws coding_exception
+     * @throws dml_exception
      * @throws moodle_exception
      */
     public function save() {
-        global $CFG, $DB;
+        $this->set_custom_course_field('customfield_field', 'customdata in "field" field');
+
+        // We should have an ID at this point.
+        $handler = course_handler::create(24);
+        $datacontrollers = $handler->get_instance_data(24);
+
+        foreach ($datacontrollers as $datacontroller) {
+            $property = $datacontroller->get_field()->get('shortname');
+            var_dump($property);
+            $datacontroller->get_field()->set($property, $this->{'customfield_' . $property});
+            $datacontroller->save();
+
+        }
+
+
+        die();
         // Check minimum required properties have a value.
-        if (trim($this->firstname) === '') {
-            throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'firstname');
+        if (trim($this->fullname) === '') {
+            throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'fullname');
         }
-        if (trim($this->lastname) === '') {
-            throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'lastname');
-        }
-        if (trim($this->email) === '') {
-            throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'email');
+        if (trim($this->shortname) === '') {
+            throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'shortname');
         }
         if (trim($this->idnumber) === '') {
             throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'idnumber');
         }
         $this->password = $this->newpassword;
         if ($this->id <= 0) {
-            // Email duplicates check.
-            $allowaccountssameemail = $CFG->allowaccountssameemail ?? 0;
-            if (!$allowaccountssameemail) {
-                // Make a case-insensitive query for the given email address.
-                $select = $DB->sql_equal('email', ':email', false) .
-                    ' AND mnethostid = :mnethostid AND deleted <> :deleted';
-                $params = array(
-                    'email' => $this->email,
-                    'mnethostid' => $CFG->mnet_localhost_id,
-                    'deleted' => 1
-                );
-                if ($DB->record_exists_select('user', $select, $params)) {
-                    throw new moodle_exception('duplicateemailaddressesnotallowed', 'enrol_selma');
-                }
-            }
-            // Unique ID number check.
-            $exists = $DB->record_exists('user', ['idnumber' => $this->idnumber, 'mnethostid' => $CFG->mnet_localhost_id, 'deleted' => 0]);
-            if ($exists) {
-                throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'idnumber'); // @todo Provide a better explaination in exception.
-            }
-            if (empty($this->username)) {
-                $username = utilities::generate_username($this->firstname, $this->lastname);
-                $this->set_username($username);
-            }
-            $this->mnethostid = $CFG->mnet_localhost_id; // Always set to local for a new user.
-            $this->id = user_create_user($this, false, true);
-            set_user_preference('enrol_selma_new_student_create_password', 1, $this);
+            // TODO - Any other checks?
+
+            $this->id = create_course($this);
         } else {
-            user_update_user($this);
-            if ($this->newpassword) {
-                set_user_preference('auth_forcepasswordchange', 1, $this);
-            }
+            update_course($this);
         }
+
+        // We should have an ID at this point.
+        $handler = course_handler::create($this->id);
+        $data = $handler->get_instance_data($this->id);
+
+        print_object($data);
+        die();
+        // Remove custom course field identifier (course_field_).
+        $shortname = str_replace('customfield_', '', $name);
+        // TODO - Save custom course fields.
         profile_save_data($this);
         return true;
     }

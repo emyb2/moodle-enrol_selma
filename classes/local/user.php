@@ -183,10 +183,10 @@ class user extends stdClass {
     /**
      * Set a user profile field. Use the fields preprocess method if available.
      *
-     * @param string $name
-     * @param $value
-     * @return $this
-     * @throws moodle_exception
+     * @param   string              $name Name of property.
+     * @param   mixed               $value Property's value.
+     * @return  $this               This user object.
+     * @throws  moodle_exception
      */
     public function set_profile_field(string $name, $value) {
         global $CFG;

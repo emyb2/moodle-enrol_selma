@@ -22,6 +22,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use enrol_selma\local\course;
 use enrol_selma\local\user;
 
 require_once(dirname(__FILE__, 3) . '/config.php');
@@ -38,6 +39,14 @@ require_once(dirname(__FILE__, 3) . '/user/lib.php');
 require_once(dirname(__FILE__, 3) . '/group/lib.php');
 
 global $DB;
+
+$course = new course();
+$course->course_field_test = 5;
+
+$course->save();
+
+print_object($course);
+die();
 
 // Configs.
 var_dump(get_config('enrol_selma', 'faake'));

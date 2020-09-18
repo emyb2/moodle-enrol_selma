@@ -22,6 +22,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_customfield\api;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/lib.php');
@@ -1025,4 +1027,25 @@ function enrol_selma_update_course_from_selma(array $selmadata, stdClass $config
     $coursepropertymap->write_data($selmadata);
     $course->save();
     return $course;
+}
+
+/**
+ * Retrieve all available custom course fields.
+ *
+ * @return  array   $fields Return all the custom course fields with shortname as key & fullname as value.
+ */
+function enrol_selma_get_custom_course_fields() {
+    // Course's itemid is always 0 - https://docs.moodle.org/dev/Custom_fields_API#Custom_fields_API_overview.
+    $categories = api::get_categories_with_fields('core_course', 'course', 0);
+
+    // Get all fields from all custom course field categories.
+    $fields = array();
+    foreach ($categories as $category) {
+        foreach ($category->get_fields() as $field) {
+            // Return array of fields, so we can leverage helper functions.
+            $fields[] = $field;
+        }
+    }
+
+    return $fields;
 }
