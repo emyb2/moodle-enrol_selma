@@ -26,17 +26,13 @@ namespace enrol_selma\local;
 
 defined('MOODLE_INTERNAL') || die();
 
-use coding_exception;
-use core_course\customfield\course_handler;
-use core_customfield\api;
-use core_customfield\data_controller;
+use core_course_category;
 use dml_exception;
 use moodle_exception;
-use profile_field_base;
 use stdClass;
-use enrol_selma\local\utilities;
 
 require_once($CFG->dirroot . '/user/profile/lib.php');
+require_once($CFG->dirroot . '/course/lib.php');
 require_once($CFG->dirroot . '/enrol/selma/locallib.php');
 
 /**
@@ -66,6 +62,9 @@ class course extends stdClass {
     /** @var string $summary Course description. */
     public $summary;
 
+    /** @var int $visible Course visibility. */
+    public $visible;
+
     /** @var int $timecreated Course creation epoch. */
     public $timecreated;
 
@@ -92,6 +91,7 @@ class course extends stdClass {
      * @return  course
      */
     public function set_id(int $id) : self {
+        utilities::check_length('course', 'id', $id);
         $this->id = $id;
         return $this;
     }
@@ -104,7 +104,7 @@ class course extends stdClass {
      * @throws  moodle_exception
      */
     public function set_category(int $category): self {
-        (new utilities)->check_length('course', 'category', $category);
+        utilities::check_length('course', 'category', $category);
         $this->category = $category;
         return $this;
     }
@@ -117,7 +117,7 @@ class course extends stdClass {
      * @throws  moodle_exception
      */
     public function set_fullname(string $fullname): self {
-        (new utilities)->check_length('course', 'fullname', $fullname);
+        utilities::check_length('course', 'fullname', $fullname);
         $this->fullname = $fullname;
         return $this;
     }
@@ -130,7 +130,7 @@ class course extends stdClass {
      * @throws  moodle_exception
      */
     public function set_shortname(string $shortname): self {
-        (new utilities)->check_length('course', 'shortname', $shortname);
+        utilities::check_length('course', 'shortname', $shortname);
         $this->shortname = $shortname;
         return $this;
     }
@@ -143,7 +143,7 @@ class course extends stdClass {
      * @throws  moodle_exception
      */
     public function set_idnumber(string $idnumber): self {
-        (new utilities)->check_length('course', 'idnumber', $idnumber);
+        utilities::check_length('course', 'idnumber', $idnumber);
         $this->idnumber = $idnumber;
         return $this;
     }
@@ -156,7 +156,7 @@ class course extends stdClass {
      * @throws  moodle_exception
      */
     public function set_summary(string $summary): self {
-        (new utilities)->check_length('course', 'summary', $summary);
+        utilities::check_length('course', 'summary', $summary);
         $this->summary = $summary;
         return $this;
     }
@@ -169,7 +169,7 @@ class course extends stdClass {
      * @throws  moodle_exception
      */
     public function set_timecreated(int $timecreated): self {
-        (new utilities)->check_length('course', 'timecreated', $timecreated);
+        utilities::check_length('course', 'timecreated', $timecreated);
         $this->timecreated = $timecreated;
         return $this;
     }
@@ -182,7 +182,7 @@ class course extends stdClass {
      * @throws  moodle_exception
      */
     public function set_timemodified(int $timemodified): self {
-        (new utilities)->check_length('course', 'timemodified', $timemodified);
+        utilities::check_length('course', 'timemodified', $timemodified);
         $this->timemodified = $timemodified;
         return $this;
     }
@@ -204,7 +204,7 @@ class course extends stdClass {
                 $customcoursefields[$field->get('shortname')] = $field->get_formatted_name();
             }
         }
-        // Remove custom course field identifier (course_field_).
+        // Remove custom course field identifier (customfield_).
         $shortname = str_replace('customfield_', '', $name);
 
         // Check if it's a real field.
@@ -226,27 +226,12 @@ class course extends stdClass {
      * Also saves custom course field data.
      *
      * @return bool
-     * @throws coding_exception
      * @throws dml_exception
      * @throws moodle_exception
      */
     public function save() {
-        $this->set_custom_course_field('customfield_field', 'customdata in "field" field');
+        global $DB;
 
-        // We should have an ID at this point.
-        $handler = course_handler::create(24);
-        $datacontrollers = $handler->get_instance_data(24);
-
-        foreach ($datacontrollers as $datacontroller) {
-            $property = $datacontroller->get_field()->get('shortname');
-            var_dump($property);
-            $datacontroller->get_field()->set($property, $this->{'customfield_' . $property});
-            $datacontroller->save();
-
-        }
-
-
-        die();
         // Check minimum required properties have a value.
         if (trim($this->fullname) === '') {
             throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'fullname');
@@ -257,25 +242,32 @@ class course extends stdClass {
         if (trim($this->idnumber) === '') {
             throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'idnumber');
         }
-        $this->password = $this->newpassword;
+        if (!isset($this->category)) {
+            // Set to config-specified category or set to default.
+            $this->category = get_config('enrol_selma', 'newcoursecat') ?: core_course_category::get_default();
+        }
+
+        // Create or update.
         if ($this->id <= 0) {
             // TODO - Any other checks?
-
-            $this->id = create_course($this);
+            // Set time properties
+            if (!isset($this->timecreated) || !isset($this->timemodified)) {
+                $this->timecreated = time();
+                $this->timemodified = $this->timecreated;
+            }
+            $this->id = create_course($this)->id;
         } else {
+            // Get the time_created if updating - column 'time_created' can not be null, apparently...
+            if (!isset($this->timecreated) || !isset($this->timemodified)) {
+                $this->timecreated = $DB->get_field('course', 'timecreated', array('id' => $this->id));
+                $this->timemodified = time();
+            }
             update_course($this);
         }
 
-        // We should have an ID at this point.
-        $handler = course_handler::create($this->id);
-        $data = $handler->get_instance_data($this->id);
+        // Save custom course fields.
+        enrol_selma_save_custom_course_fields($this);
 
-        print_object($data);
-        die();
-        // Remove custom course field identifier (course_field_).
-        $shortname = str_replace('customfield_', '', $name);
-        // TODO - Save custom course fields.
-        profile_save_data($this);
         return true;
     }
 }

@@ -41,7 +41,11 @@ require_once(dirname(__FILE__, 3) . '/group/lib.php');
 global $DB;
 
 $course = new course();
-$course->course_field_test = 5;
+$course->id = 41;
+$course->fullname = "TestingUpdate";
+$course->shortname = "FinalTestingUpdate";
+$course->idnumber = "Hopefullyyy";
+$course->customfield_test = 8;
 
 $course->save();
 

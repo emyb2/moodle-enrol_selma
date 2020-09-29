@@ -163,7 +163,13 @@ final class utilities {
     public static function check_length(string $table, string $name, string $value) {
         $column = self::get_column_information($table, $name);
         if (core_text::strlen($value) > $column->max_length) {
-            throw new moodle_exception('maximumcharacterlengthforexceeded', 'enrol_selma', null, $name);
+            throw new moodle_exception('maximumcharacterlengthforexceeded',
+                'enrol_selma',
+                null,
+                array(
+                    'name' => $name,
+                    'expected' => $column->max_length
+                ));
         }
     }
 }

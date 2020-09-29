@@ -290,7 +290,7 @@ $string['executiontime'] = '  Script execution took {$a} seconds.';
 
 $string['characterlengthexceeded'] = 'Character length exceeded expected \'{$a->expected}\' received \'{$a->received}\'';
 $string['maximumcharacterlengthexceeded'] = 'Maximum character length exceeded';
-$string['maximumcharacterlengthforexceeded'] = 'Maximum character length for \'{$a}\' exceeded';
+$string['maximumcharacterlengthforexceeded'] = 'Maximum character length for \'{$a->name}\' exceeded. Expected < \'{$a->expected}\'';
 $string['unexpectedvalue'] = 'Unexpected value for \'{$a}\'';
 $string['invalidargument'] = 'Invalid argument for \'{$a}\'';
 $string['invalidargumentexpects'] = 'Invalid argument for \'{$a->name}\' expects type \'{$a->type}\'';

@@ -22,7 +22,9 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_course\customfield\course_handler;
 use core_customfield\api;
+use enrol_selma\local\course;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -975,7 +977,7 @@ function enrol_selma_update_student_from_selma(array $selmadata, stdClass $confi
  *
  * @param array $selmadata
  * @param stdClass $config
- * @return \enrol_selma\local\course
+ * @return course
  * @throws coding_exception
  * @throws dml_exception
  * @throws moodle_exception
@@ -999,7 +1001,7 @@ function enrol_selma_create_course_from_selma(array $selmadata, stdClass $config
  * @param array $selmadata
  * @param stdClass $config
  * @param string $courselinkfield
- * @return \enrol_selma\local\course
+ * @return course
  * @throws coding_exception
  * @throws dml_exception
  * @throws moodle_exception
@@ -1048,4 +1050,36 @@ function enrol_selma_get_custom_course_fields() {
     }
 
     return $fields;
+}
+
+/**
+ * Updates and/or saves a course's custom fields.
+ *
+ * @param   course  $course The course to update (including 'customfield_fields').
+ * @return  course  Return updated course.
+ */
+function enrol_selma_save_custom_course_fields(course $course) {
+    // Course object should have an ID at this point.
+    $handler = course_handler::create($course->id);
+    // Get datacontroller so we can manipulate the data.
+    $datacontrollers = $handler->get_instance_data($course->id);
+
+    // For each field, update the value (if any).
+    foreach ($datacontrollers as $datacontroller) {
+        $field = $datacontroller->get_field();
+        $property = $field->get('shortname');
+        $customfield = null;
+
+        // Only set and save if we have those fields.
+        if (isset($property) && isset($course->{'customfield_' . $property})) {
+            $customfield = $course->{'customfield_' . $property};
+            // Set value for type of field.
+            $datacontroller->set($datacontroller->datafield(), $customfield);
+            // Set value field.
+            $datacontroller->set('value', $customfield);
+            $datacontroller->save();
+        }
+    }
+
+    return $course;
 }
