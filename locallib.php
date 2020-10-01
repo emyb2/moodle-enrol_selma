@@ -25,6 +25,8 @@
 use core_course\customfield\course_handler;
 use core_customfield\api;
 use enrol_selma\local\course;
+use enrol_selma\local\factory\property_map_factory;
+use enrol_selma\local\user;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -914,19 +916,42 @@ function enrol_selma_user_is_in_intake(int $userid, int $intakeid) {
 }
 
 /**
+ * Create a Moodle course based on SELMA component data.
+ *
+ * @param   array                           $selmadata Data received from SELMA (most likely).
+ * @return  course                          Return course object.
+ * @throws  dml_exception
+ * @throws  moodle_exception
+ * @throws  required_capability_exception
+ */
+function enrol_selma_create_course_from_selma(array $selmadata) {
+
+    require_capability('moodle/course:create', context_system::instance());
+    $course = new course();
+    $propertymapfactory = new property_map_factory();
+    $coursepropertymap = $propertymapfactory->build_course_property_map($course, get_config('enrol_selma'));
+    if (!$coursepropertymap->is_valid()) {
+        throw new moodle_exception($coursepropertymap->get_last_error());
+    }
+    $coursepropertymap->write_data($selmadata);
+    $course->save();
+    return $course;
+}
+
+/**
  * Create a Moodle user record based on SELMA student data.
  *
- * @param array $selmadata
- * @param stdClass $config
- * @return \enrol_selma\local\user
- * @throws coding_exception
- * @throws dml_exception
- * @throws moodle_exception
+ * @param   array               $selmadata
+ * @param   stdClass            $config
+ * @return  user
+ * @throws  coding_exception
+ * @throws  dml_exception
+ * @throws  moodle_exception
  */
 function enrol_selma_create_student_from_selma(array $selmadata, stdClass $config) {
     require_capability('moodle/user:create', context_system::instance());
-    $user = new enrol_selma\local\user();
-    $propertymapfactory = new enrol_selma\local\factory\property_map_factory();
+    $user = new user();
+    $propertymapfactory = new property_map_factory();
     $userpropertymap = $propertymapfactory->build_user_property_map($user, $config);
     if (!$userpropertymap->is_valid()) {
         throw new moodle_exception($userpropertymap->get_last_error());
@@ -942,7 +967,7 @@ function enrol_selma_create_student_from_selma(array $selmadata, stdClass $confi
  * @param array $selmadata
  * @param stdClass $config
  * @param string $userlinkfield
- * @return \enrol_selma\local\user
+ * @return user
  * @throws coding_exception
  * @throws dml_exception
  * @throws moodle_exception
@@ -973,38 +998,15 @@ function enrol_selma_update_student_from_selma(array $selmadata, stdClass $confi
 }
 
 /**
- * Creates a Moodle course based on SELMA data.
- *
- * @param array $selmadata
- * @param stdClass $config
- * @return course
- * @throws coding_exception
- * @throws dml_exception
- * @throws moodle_exception
- */
-function enrol_selma_create_course_from_selma(array $selmadata, stdClass $config) {
-    require_capability('moodle/course:create', context_system::instance());
-    $course = new enrol_selma\local\course();
-    $propertymapfactory = new enrol_selma\local\factory\property_map_factory();
-    $coursepropertymap = $propertymapfactory->build_course_property_map($course, $config);
-    if (!$coursepropertymap->is_valid()) {
-        throw new moodle_exception($coursepropertymap->get_last_error());
-    }
-    $coursepropertymap->write_data($selmadata);
-    $coursepropertymap->save();
-    return $coursepropertymap;
-}
-
-/**
  * Updates a Moodle course based on new SELMA component data.
  *
- * @param array $selmadata
- * @param stdClass $config
- * @param string $courselinkfield
- * @return course
- * @throws coding_exception
- * @throws dml_exception
- * @throws moodle_exception
+ * @param   array               $selmadata
+ * @param   stdClass            $config
+ * @param   string              $courselinkfield
+ * @return  course
+ * @throws  coding_exception
+ * @throws  dml_exception
+ * @throws  moodle_exception
  */
 function enrol_selma_update_course_from_selma(array $selmadata, stdClass $config, $courselinkfield = 'idnumber') {
     global $DB;

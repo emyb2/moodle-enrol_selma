@@ -140,13 +140,13 @@ class user extends stdClass {
         return $this;
     }
 
-    public function set_first_name(string $firstname) : self {
+    public function set_firstname(string $firstname) : self {
         (new utilities)->check_length('user', 'firstname', $firstname);
         $this->firstname = $firstname;
         return $this;
     }
 
-    public function set_last_name(string $lastname) : self {
+    public function set_lastname(string $lastname) : self {
         (new utilities)->check_length('user', 'lastname', $lastname);
         $this->lastname = $lastname;
         return $this;

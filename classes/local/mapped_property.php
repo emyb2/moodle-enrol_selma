@@ -35,7 +35,6 @@ class mapped_property {
     private $mappedpropertyname;
     private $defaultmappedpropertyname;
     private $required;
-    private $mutatorproperty;
     private $mutatormethod;
     private $allownonexistent;
 
@@ -46,7 +45,6 @@ class mapped_property {
         ? string $mappedpropertyname = null,
         ? string $defaultmappedpropertyname = null,
         bool $required = false,
-        ? string $mutatormethod = null,
         bool $allownonexistent = true
     ) {
         $this->object = $object;
@@ -55,8 +53,8 @@ class mapped_property {
         $this->mappedpropertyname = $mappedpropertyname;
         $this->defaultmappedpropertyname = $defaultmappedpropertyname;
         $this->required = $required;
-        $this->mutatormethod = $mutatormethod;
         $this->allownonexistent = $allownonexistent;
+        $this->mutatormethod = 'set_' . $name;
     }
 
     public function get_name() : string {
