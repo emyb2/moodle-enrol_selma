@@ -56,7 +56,7 @@ class user_testcase extends advanced_testcase {
     public function test_create_student_setter_exception() {
         $this->expectException(moodle_exception::class);
         $user = new user();
-        $user->set_first_name($this->plugingenerator->generate_random_string(500));
+        $user->set_firstname($this->plugingenerator->generate_random_string(500));
     }
 
     public function test_create_student_ok() {

@@ -27,10 +27,10 @@ namespace enrol_selma\local;
 defined('MOODLE_INTERNAL') || die();
 
 use core_text;
+use enrol_selma\local\utilities;
 use moodle_exception;
 use profile_field_base;
 use stdClass;
-use enrol_selma\local\utilities;
 
 require_once($CFG->dirroot . '/user/profile/lib.php');
 require_once($CFG->dirroot . '/enrol/selma/locallib.php');
@@ -126,7 +126,7 @@ class user extends stdClass {
     }
 
     public function set_id(int $id) : self {
-        (new utilities)->check_length('user', 'id', $id);
+        utilities::check_length('user', 'id', $id);
         $this->id = $id;
         return $this;
     }
@@ -135,19 +135,19 @@ class user extends stdClass {
         if ($username !== clean_param($username, PARAM_USERNAME)) {
             throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'username');
         }
-        (new utilities)->check_length('user', 'username', $username);
+        utilities::check_length('user', 'username', $username);
         $this->username = $username;
         return $this;
     }
 
     public function set_firstname(string $firstname) : self {
-        (new utilities)->check_length('user', 'firstname', $firstname);
+        utilities::check_length('user', 'firstname', $firstname);
         $this->firstname = $firstname;
         return $this;
     }
 
     public function set_lastname(string $lastname) : self {
-        (new utilities)->check_length('user', 'lastname', $lastname);
+        utilities::check_length('user', 'lastname', $lastname);
         $this->lastname = $lastname;
         return $this;
     }
@@ -157,25 +157,25 @@ class user extends stdClass {
         if (!validate_email($email)) {
             throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'email');
         }
-        (new utilities)->check_length('user', 'email', $email);
+        utilities::check_length('user', 'email', $email);
         $this->email = $email;
         return $this;
     }
 
     public function set_idnumber(string $idnumber) : self {
-        (new utilities)->check_length('user', 'idnumber', $idnumber);
+        utilities::check_length('user', 'idnumber', $idnumber);
         $this->idnumber= $idnumber;
         return $this;
     }
 
     public function set_phone1(string $phone1) : self {
-        (new utilities)->check_length('user', 'phone1', $phone1);
+        utilities::check_length('user', 'phone1', $phone1);
         $this->phone1 = $phone1;
         return $this;
     }
 
     public function set_phone2(string $phone2) : self {
-        (new utilities)->check_length('user', 'phone2', $phone2);
+        utilities::check_length('user', 'phone2', $phone2);
         $this->phone2 = $phone2;
         return $this;
     }

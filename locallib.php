@@ -26,6 +26,7 @@ use core_course\customfield\course_handler;
 use core_customfield\api;
 use enrol_selma\local\course;
 use enrol_selma\local\factory\property_map_factory;
+use enrol_selma\local\factory\entity_factory;
 use enrol_selma\local\user;
 
 defined('MOODLE_INTERNAL') || die();
@@ -989,7 +990,7 @@ function enrol_selma_update_student_from_selma(array $selmadata, stdClass $confi
         throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'selmadata');
     }
     $record = $DB->get_record('user', [$userlinkfield => $selmadata[$selmalinkfield]], '*', MUST_EXIST);
-    $entityfactory = new enrol_selma\local\factory\entity_factory();
+    $entityfactory = new entity_factory();
     $user = $entityfactory->build_user_from_stdclass($record);
     $userpropertymap = $propertymapfactory->build_user_property_map($user, $config);
     $userpropertymap->write_data($selmadata);
@@ -1025,9 +1026,9 @@ function enrol_selma_update_course_from_selma(array $selmadata, stdClass $config
         throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, $selmadata);
     }
     $record = $DB->get_record('course', [$courselinkfield => $selmadata[$selmalinkfield]], '*', MUST_EXIST);
-    $entityfactory = new enrol_selma\local\factory\entity_factory();
+    $entityfactory = new entity_factory();
     $course = $entityfactory->build_course_from_stdclass($record);
-    $coursepropertymap = $propertymapfactory->build_user_property_map($course, $config);
+    $coursepropertymap = $propertymapfactory->build_course_property_map($course, $config);
     $coursepropertymap->write_data($selmadata);
     $course->save();
     return $course;
