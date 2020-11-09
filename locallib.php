@@ -985,16 +985,19 @@ function enrol_selma_get_intake(int $intakeid) {
     // Return 'not found' if a record could not be found.
     if ($intake === false) {
         $intake['warnings'][] = [
-            'item' => 'test',
+            'item' => get_string('pluginname', 'enrol_selma'),
             'itemid' => 1,
             'warningcode' => get_string('warning_code_notfound', 'enrol_selma'),
             'message' => get_string('warning_message_notfound', 'enrol_selma', $intakeid)
         ];
+
+        // Return warning.
+        return $intakecourses;
     }
 
     // Cast object to array.
     $intake = (array) $intake;
 
-    // Return array of intake details or warning.
+    // Return array of intake details.
     return $intake;
 }
