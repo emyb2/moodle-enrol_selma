@@ -112,7 +112,7 @@ $string['newcoursecat'] = 'New course category';
 $string['newcoursecat::description'] = 'Which category a new course is placed in when created via SELMA.';
 $string['excludecoursecat'] = 'Exclude Categories';
 $string['excludecoursecat::description'] = 'Which categories should be ignored by SELMA. Child categories do <strong>not</strong> inherit parent\'s exclusion status.<br>
-                                            For example, this is used for the list of courses shown in SELMA that\'s retieved from this site.<br>
+                                            For example, this is used for the list of courses shown in SELMA that\'s retrieved from this site.<br>
                                             Use Ctrl (Windows) or ⌘ (Mac) to select multiple categories.';
 $string['creategroups'] = 'Create \'groups\' from \'intakes\'';
 $string['creategroups::description'] = 'If enabled, the plugin will put users into the respective course group based on which intake they belong to in SELMA.
@@ -270,6 +270,12 @@ $string['nomessage'] = 'No response message.';
 $string['forbidden_instance_add'] = ' Can not add more than one enrol_selma instance to course \'{$a}\'.';
 $string['forbidden_group_add'] = ' Failed to create group for intake \'{$a->intake}\' in course \'{$a->course}\'.';
 
+// Property mapping.
+$string['course_fullname'] = 'Fullname';
+$string['course_shortname'] = 'Shortname';
+$string['course_idnumber'] = 'ID Number';
+$string['course_summary'] = 'Summary';
+
 // CLI.
 $string['clihelp'] = 'Enrol SELMA plugin CLI script to update webservice functions without full Moodle upgrade.
 Please note you must execute this script with the same uid as apache!
@@ -290,7 +296,7 @@ $string['executiontime'] = '  Script execution took {$a} seconds.';
 
 $string['characterlengthexceeded'] = 'Character length exceeded expected \'{$a->expected}\' received \'{$a->received}\'';
 $string['maximumcharacterlengthexceeded'] = 'Maximum character length exceeded';
-$string['maximumcharacterlengthforexceeded'] = 'Maximum character length for \'{$a}\' exceeded';
+$string['maximumcharacterlengthforexceeded'] = 'Maximum character length for \'{$a->name}\' exceeded. Expected < \'{$a->expected}\'';
 $string['unexpectedvalue'] = 'Unexpected value for \'{$a}\'';
 $string['invalidargument'] = 'Invalid argument for \'{$a}\'';
 $string['invalidargumentexpects'] = 'Invalid argument for \'{$a->name}\' expects type \'{$a->type}\'';
@@ -312,6 +318,8 @@ Please login {$a->site} and accept any privacy policies and reset password.
 
 // Exceptions.
 $string['exception_bepositive'] = "Parameters must be positive values";
+$string['exception_valuerequired'] = 'Value required for \'{$a}\'';
+
 // @todo Sort.
 $string['duplicateemailaddressesnotallowed'] = 'Duplicate email addresses not allowed by configuration';
 $string['studentsinglestructure'] = 'External data structure for a student.';

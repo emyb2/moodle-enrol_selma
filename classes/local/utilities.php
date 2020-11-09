@@ -25,13 +25,14 @@
 namespace enrol_selma\local;
 
 use __PHP_Incomplete_Class;
+use coding_exception;
 use database_column_info;
+use dml_exception;
 use moodle_exception;
+use core_text;
 
 defined('MOODLE_INTERNAL') || die();
 
-use core_text;
-use database_column_info;
 
 global $CFG;
 require_once($CFG->libdir . '/weblib.php');
@@ -51,8 +52,8 @@ final class utilities {
      * @param string $firstname
      * @param string $lastname
      * @return string
-     * @throws \coding_exception
-     * @throws \dml_exception
+     * @throws coding_exception
+     * @throws dml_exception|moodle_exception
      */
     public static function generate_username(string $firstname, string $lastname) : string {
         global $CFG, $DB;
@@ -94,7 +95,7 @@ final class utilities {
     /**
      * Borrowed from Symfony's PHP 8 polyfill.
      *
-     * @link https://github.com/symfony/polyfill/tree/master/src/Php80
+     * @link            https://github.com/symfony/polyfill/tree/master/src/Php80
      * @param   mixed   $value Some type of object to identify type of.
      * @return  string  Type of object in string format.
      */
@@ -149,5 +150,26 @@ final class utilities {
             throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'name');
         }
         return $columns[$name];
+    }
+
+    /**
+     * Utility method to check a property length against associated varchar database column.
+     *
+     * @param string $table Which table to lookup.
+     * @param string $name  Name of column to check.
+     * @param string $value Value being checked.
+     * @throws moodle_exception
+     */
+    public static function check_length(string $table, string $name, string $value) {
+        $column = self::get_column_information($table, $name);
+        if (core_text::strlen($value) > $column->max_length) {
+            throw new moodle_exception('maximumcharacterlengthforexceeded',
+                'enrol_selma',
+                null,
+                array(
+                    'name' => $name,
+                    'expected' => $column->max_length
+                ));
+        }
     }
 }

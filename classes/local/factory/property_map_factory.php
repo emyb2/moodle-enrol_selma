@@ -18,6 +18,8 @@ namespace enrol_selma\local\factory;
 
 defined('MOODLE_INTERNAL') || die();
 
+use coding_exception;
+use enrol_selma\local\course;
 use stdClass;
 use enrol_selma\local\user;
 use enrol_selma\local\property_map;
@@ -32,6 +34,81 @@ use enrol_selma\local\mapped_property;
  */
 class property_map_factory {
 
+    /**
+     * Map course property based on plugin settings.
+     *
+     * @param   course              $course Plugin's course object.
+     * @param   stdClass|null       $config Plugin's settings.
+     * @return  property_map        Properties mapped to SELMA fields.
+     * @throws  coding_exception
+     */
+    public function build_course_property_map(course $course, stdClass $config = null) : property_map {
+        $propertymap = new property_map($course);
+        $propertymap->set_config_name_grouping_prefix('cfm_');
+        $propertymap->add_mapped_property(
+            new mapped_property(
+                $course,
+                'fullname',
+                get_string('course_fullname', 'enrol_selma'),
+                null,
+                'fullname',
+                true
+            )
+        );
+        $propertymap->add_mapped_property(
+            new mapped_property(
+                $course,
+                'shortname',
+                get_string('course_shortname', 'enrol_selma'),
+                null,
+                'shortname',
+                true
+            )
+        );
+        $propertymap->add_mapped_property(
+            new mapped_property(
+                $course,
+                'idnumber',
+                get_string('course_idnumber', 'enrol_selma'),
+                null,
+                'idnumber',
+                true
+            )
+        );
+
+        $propertymap->add_mapped_property(
+            new mapped_property(
+                $course,
+                'summary',
+                get_string('course_summary', 'enrol_selma'),
+                null,
+                'summary',
+                false
+            )
+        );
+
+        // Map custom course fields.
+        foreach (enrol_selma_get_custom_course_fields() as $field) {
+            $name = 'customfield_' . $field->get('shortname');
+            $propertymap->add_mapped_property(
+                new mapped_property(
+                    $course,
+                    $name,
+                    $field->get('name'),
+                    null,
+                    null,
+                    false
+                )
+            );
+        }
+
+        // Map if plugin configured.
+        if (!is_null($config)) {
+            $propertymap->set_mapped_properties_from_config($config);
+        }
+        return $propertymap;
+    }
+
     public function build_user_property_map(user $user, stdClass $config = null) : property_map {
         $propertymap = new property_map($user);
         $propertymap->set_config_name_grouping_prefix('upm_');
@@ -42,8 +119,7 @@ class property_map_factory {
                 get_string('firstname'),
                 null,
                 'firstname',
-                true,
-                'set_first_name'
+                true
             )
         );
         $propertymap->add_mapped_property(
@@ -53,8 +129,7 @@ class property_map_factory {
                 get_string('lastname'),
                 null,
                 'lastname',
-                true,
-                'set_last_name'
+                true
             )
         );
         $propertymap->add_mapped_property(
@@ -64,8 +139,7 @@ class property_map_factory {
                 get_string('email'),
                 null,
                 'email',
-                true,
-                'set_email'
+                true
             )
         );
         $propertymap->add_mapped_property(
@@ -75,8 +149,7 @@ class property_map_factory {
                 get_string('idnumber'),
                 null,
                 'studentid',
-                true,
-                'set_idnumber'
+                true
             )
         );
         $propertymap->add_mapped_property(
@@ -86,8 +159,7 @@ class property_map_factory {
                 get_string('institution'),
                 null,
                 null,
-                false,
-                null
+                false
             )
         );
         $propertymap->add_mapped_property(
@@ -97,8 +169,7 @@ class property_map_factory {
                 get_string('department'),
                 null,
                 null,
-                false,
-                null
+                false
             )
         );
         $propertymap->add_mapped_property(
@@ -108,8 +179,7 @@ class property_map_factory {
                 get_string('phone1'),
                 null,
                 null,
-                false,
-                'set_phone1'
+                false
             )
         );
         $propertymap->add_mapped_property(
@@ -119,8 +189,7 @@ class property_map_factory {
                 get_string('phone2'),
                 null,
                 null,
-                false,
-                'set_phone2'
+                false
             )
         );
         $propertymap->add_mapped_property(
@@ -130,8 +199,7 @@ class property_map_factory {
                 get_string('middlename'),
                 null,
                 null,
-                false,
-                null
+                false
             )
         );
         $propertymap->add_mapped_property(
@@ -141,8 +209,7 @@ class property_map_factory {
                 get_string('alternatename'),
                 null,
                 null,
-                false,
-                null
+                false
             )
         );
         foreach (profile_get_custom_fields() as $customfield) {
@@ -154,8 +221,7 @@ class property_map_factory {
                     $customfield->name,
                     null,
                     null,
-                    false,
-                    null
+                    false
                 )
             );
         }

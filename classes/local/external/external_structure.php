@@ -103,4 +103,23 @@ class external_structure {
         ];
     }
 
+    /**
+     * Single course structure that can be reused in multiple service functions.
+     *
+     * @return array|external_value[]
+     * @throws \coding_exception
+     */
+    public static function get_course_structure() : array {
+        return [
+            'fullname' => new external_value(PARAM_TEXT,
+                get_string('create_course_parameters::fullname', 'enrol_selma')
+            ),
+            'shortname' => new external_value(PARAM_TEXT,
+                get_string('create_course_parameters::shortname', 'enrol_selma')
+            ),
+            'idnumber' => new external_value(PARAM_TEXT,
+                get_string('create_course_parameters::idnumber', 'enrol_selma')
+            )
+        ];
+    }
 }

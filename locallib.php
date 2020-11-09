@@ -22,6 +22,13 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_course\customfield\course_handler;
+use core_customfield\api;
+use enrol_selma\local\course;
+use enrol_selma\local\factory\property_map_factory;
+use enrol_selma\local\factory\entity_factory;
+use enrol_selma\local\user;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/lib.php');
@@ -910,19 +917,42 @@ function enrol_selma_user_is_in_intake(int $userid, int $intakeid) {
 }
 
 /**
+ * Create a Moodle course based on SELMA component data.
+ *
+ * @param   array                           $selmadata Data received from SELMA (most likely).
+ * @return  course                          Return course object.
+ * @throws  dml_exception
+ * @throws  moodle_exception
+ * @throws  required_capability_exception
+ */
+function enrol_selma_create_course_from_selma(array $selmadata) {
+
+    require_capability('moodle/course:create', context_system::instance());
+    $course = new course();
+    $propertymapfactory = new property_map_factory();
+    $coursepropertymap = $propertymapfactory->build_course_property_map($course, get_config('enrol_selma'));
+    if (!$coursepropertymap->is_valid()) {
+        throw new moodle_exception($coursepropertymap->get_last_error());
+    }
+    $coursepropertymap->write_data($selmadata);
+    $course->save();
+    return $course;
+}
+
+/**
  * Create a Moodle user record based on SELMA student data.
  *
- * @param array $selmadata
- * @param stdClass $config
- * @return \enrol_selma\local\user
- * @throws coding_exception
- * @throws dml_exception
- * @throws moodle_exception
+ * @param   array               $selmadata
+ * @param   stdClass            $config
+ * @return  user
+ * @throws  coding_exception
+ * @throws  dml_exception
+ * @throws  moodle_exception
  */
 function enrol_selma_create_student_from_selma(array $selmadata, stdClass $config) {
     require_capability('moodle/user:create', context_system::instance());
-    $user = new enrol_selma\local\user();
-    $propertymapfactory = new enrol_selma\local\factory\property_map_factory();
+    $user = new user();
+    $propertymapfactory = new property_map_factory();
     $userpropertymap = $propertymapfactory->build_user_property_map($user, $config);
     if (!$userpropertymap->is_valid()) {
         throw new moodle_exception($userpropertymap->get_last_error());
@@ -938,7 +968,7 @@ function enrol_selma_create_student_from_selma(array $selmadata, stdClass $confi
  * @param array $selmadata
  * @param stdClass $config
  * @param string $userlinkfield
- * @return \enrol_selma\local\user
+ * @return user
  * @throws coding_exception
  * @throws dml_exception
  * @throws moodle_exception
@@ -960,10 +990,99 @@ function enrol_selma_update_student_from_selma(array $selmadata, stdClass $confi
         throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'selmadata');
     }
     $record = $DB->get_record('user', [$userlinkfield => $selmadata[$selmalinkfield]], '*', MUST_EXIST);
-    $entityfactory = new enrol_selma\local\factory\entity_factory();
+    $entityfactory = new entity_factory();
     $user = $entityfactory->build_user_from_stdclass($record);
     $userpropertymap = $propertymapfactory->build_user_property_map($user, $config);
     $userpropertymap->write_data($selmadata);
     $user->save();
     return $user;
+}
+
+/**
+ * Updates a Moodle course based on new SELMA component data.
+ *
+ * @param   array               $selmadata
+ * @param   stdClass            $config
+ * @param   string              $courselinkfield
+ * @return  course
+ * @throws  coding_exception
+ * @throws  dml_exception
+ * @throws  moodle_exception
+ */
+function enrol_selma_update_course_from_selma(array $selmadata, stdClass $config, $courselinkfield = 'idnumber') {
+    global $DB;
+    require_capability('moodle/course:update', context_system::instance());
+    if (trim($courselinkfield) === '') {
+        throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, $courselinkfield);
+    }
+    $propertymapfactory = new enrol_selma\local\factory\property_map_factory();
+    // Just want the map for now.
+    $coursepropertymap = $propertymapfactory->build_course_property_map(new enrol_selma\local\course(), $config);
+    if (!$coursepropertymap->is_valid()) {
+        throw new moodle_exception($coursepropertymap->get_last_error());
+    }
+    $selmalinkfield = $coursepropertymap->get_property($courselinkfield)->get_default_mapped_property_name();
+    if (!isset($selmadata[$selmalinkfield])) {
+        throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, $selmadata);
+    }
+    $record = $DB->get_record('course', [$courselinkfield => $selmadata[$selmalinkfield]], '*', MUST_EXIST);
+    $entityfactory = new entity_factory();
+    $course = $entityfactory->build_course_from_stdclass($record);
+    $coursepropertymap = $propertymapfactory->build_course_property_map($course, $config);
+    $coursepropertymap->write_data($selmadata);
+    $course->save();
+    return $course;
+}
+
+/**
+ * Retrieve all available custom course fields.
+ *
+ * @return  array   $fields Return all the custom course fields with shortname as key & fullname as value.
+ */
+function enrol_selma_get_custom_course_fields() {
+    // Course's itemid is always 0 - https://docs.moodle.org/dev/Custom_fields_API#Custom_fields_API_overview.
+    $categories = api::get_categories_with_fields('core_course', 'course', 0);
+
+    // Get all fields from all custom course field categories.
+    $fields = array();
+    foreach ($categories as $category) {
+        foreach ($category->get_fields() as $field) {
+            // Return array of fields, so we can leverage helper functions.
+            $fields[] = $field;
+        }
+    }
+
+    return $fields;
+}
+
+/**
+ * Updates and/or saves a course's custom fields.
+ *
+ * @param   course  $course The course to update (including 'customfield_fields').
+ * @return  course  Return updated course.
+ */
+function enrol_selma_save_custom_course_fields(course $course) {
+    // Course object should have an ID at this point.
+    $handler = course_handler::create($course->id);
+    // Get datacontroller so we can manipulate the data.
+    $datacontrollers = $handler->get_instance_data($course->id);
+
+    // For each field, update the value (if any).
+    foreach ($datacontrollers as $datacontroller) {
+        $field = $datacontroller->get_field();
+        $property = $field->get('shortname');
+        $customfield = null;
+
+        // Only set and save if we have those fields.
+        if (isset($property) && isset($course->{'customfield_' . $property})) {
+            $customfield = $course->{'customfield_' . $property};
+            // Set value for type of field.
+            $datacontroller->set($datacontroller->datafield(), $customfield);
+            // Set value field.
+            $datacontroller->set('value', $customfield);
+            $datacontroller->save();
+        }
+    }
+
+    return $course;
 }
