@@ -26,11 +26,9 @@ namespace enrol_selma\local;
 
 defined('MOODLE_INTERNAL') || die();
 
-use core_text;
 use DateTime;
 use moodle_exception;
 use stdClass;
-use enrol_selma\local\utilities;
 
 /**
  * Class to represent an Intake extends stdClass and has public properties, but use setters to enforce type.
@@ -71,6 +69,7 @@ class intake extends stdClass {
         if ($id <= 0) {
             throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'id');
         }
+        utilities::check_length('enrol_selma_intake', 'id', $id);
         $this->id = $id;
         return $this;
     }
@@ -82,6 +81,7 @@ class intake extends stdClass {
      * @return $this
      */
     public function set_programme_id(int $programmeid) : self {
+        utilities::check_length('enrol_selma_intake', 'programmeid', $programmeid);
         $this->programmeid = $programmeid;
         return $this;
     }
@@ -93,10 +93,7 @@ class intake extends stdClass {
      * @return $this
      */
     public function set_code(string $code) : self {
-        $length = core_text::strlen($code);
-        if ($length > 255) {
-            throw new moodle_exception('maximumcharacterlengthexceeded', 'enrol_selma', null, 255);
-        }
+        utilities::check_length('enrol_selma_intake', 'code', $code);
         $this->code = $code;
         return $this;
     }
@@ -108,10 +105,7 @@ class intake extends stdClass {
      * @return $this
      */
     public function set_name(string $name) : self {
-        $length = core_text::strlen($name);
-        if ($length > 255) {
-            throw new moodle_exception('maximumcharacterlengthexceeded', 'enrol_selma', null, 255);
-        }
+        utilities::check_length('enrol_selma_intake', 'name', $name);
         $this->name = $name;
         return $this;
     }
@@ -137,7 +131,6 @@ class intake extends stdClass {
             default:
                 throw new moodle_exception('invalidargument', 'enrol_selma', null, 'startdate');
         }
-
         $this->startdate = $startdate->getTimestamp();
         return $this;
     }

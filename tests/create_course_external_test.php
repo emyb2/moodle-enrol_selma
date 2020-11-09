@@ -64,16 +64,10 @@ class create_course_external_testcase extends externallib_advanced_testcase {
      * Tests if exception is thrown when trying to create course without capability to do so.
      */
     public function test_missing_required_capability() {
-        // Get context to assign capability.
-        $contextid = context_system::instance()->id;
-
-        // We give this user capability to 'view' but not 'create' (yet).
-        $this->assignUserCapability('moodle/course:view', $contextid);
-
         // Get test course data.
         $params = $this->plugingenerator->get_selma_course_data()['valid'];
 
-        // We expect to be thrown a 'required capability' exception.
+        // We expect an exception to be thrown.
         $this->expectException(required_capability_exception::class);
 
         // User should not be able to create yet.
@@ -93,7 +87,7 @@ class create_course_external_testcase extends externallib_advanced_testcase {
         // Get test course data.
         $params = $this->plugingenerator->get_selma_course_data()['valid'];
 
-        // TODO - intentionally unset config? This test may be invalid since the setting's given a default value .
+        // TODO - intentionally unset config? This test may be moot since the setting's given a default value .
         // We expect to be thrown a generic 'moodle' exception if setting not set.
         if (get_config('enrol_selma', 'newcoursecat') === false) {
             $this->expectException(moodle_exception::class);
@@ -127,21 +121,13 @@ class create_course_external_testcase extends externallib_advanced_testcase {
         $returnedvalue = external_api::clean_returnvalue(create_course::create_course_returns(), $result);
 
         $expectedvalue = [
-            'status' => get_string('status_ok', 'enrol_selma'),
             'courseid' => $returnedvalue['courseid'], // Slight cheat here, but the course ID will be generated.
-            'message' => get_string('status_ok_message', 'enrol_selma'),
-            'warnings' => array(
-                0 => [
-                    'item' => get_string('pluginname', 'enrol_selma'),
-                    'itemid' => 1,
-                    'warningcode' => get_string('warning_code_noconfig', 'enrol_selma'),
-                    'message' => get_string('warning_message_noconfig', 'enrol_selma', 'selmacoursetags')
-                ]
-            )
+            'warnings' => []
         ];
 
-        // Assert we got warnings, as expected.
+        // Assert we got empty warnings, as expected.
         $this->assertArrayHasKey('warnings', $returnedvalue);
+        $this->assertEmpty($returnedvalue['warnings']);
         // Assert we got what we expected.
         $this->assertEquals($expectedvalue, $returnedvalue);
     }
@@ -173,13 +159,13 @@ class create_course_external_testcase extends externallib_advanced_testcase {
         $returnedvalue = external_api::clean_returnvalue(create_course::create_course_returns(), $result);
 
         $expectedvalue = [
-            'status' => get_string('status_ok', 'enrol_selma'),
             'courseid' => $returnedvalue['courseid'], // Slight cheat here, but the course ID will be generated.
-            'message' => get_string('status_ok_message', 'enrol_selma'),
+            'warnings' => [],
         ];
 
-        // Assert we don't have any warnings.
-        $this->assertArrayNotHasKey('warnings', $returnedvalue);
+        // Assert we got empty warnings, as expected.
+        $this->assertArrayHasKey('warnings', $returnedvalue);
+        $this->assertEmpty($returnedvalue['warnings']);
         // Assert we got what we expected.
         $this->assertEquals($expectedvalue, $returnedvalue);
     }
@@ -204,17 +190,23 @@ class create_course_external_testcase extends externallib_advanced_testcase {
         // Get test course data.
         $params = $this->plugingenerator->get_selma_course_data()['valid'];
 
-        // We expect to be thrown a generic 'moodle' exception.
-        $this->expectException(moodle_exception::class);
-
         // Plugin configs not set up at this point yet.
-        $result = create_course::create_course($params);
+        $result1 = create_course::create_course($params);
         // We need to execute the return values cleaning process to simulate the web service server.
-        external_api::clean_returnvalue(create_course::create_course_returns(), $result);
+        $returnedvalue1 = external_api::clean_returnvalue(create_course::create_course_returns(), $result1);
 
-        $result = create_course::create_course($params);
+        $result2 = create_course::create_course($params);
         // We need to execute the return values cleaning process to simulate the web service server.
-        external_api::clean_returnvalue(create_course::create_course_returns(), $result);
+        $returnedvalue2 = external_api::clean_returnvalue(create_course::create_course_returns(), $result2);
+
+        // Assert we got empty warnings, as expected.
+        $this->assertArrayHasKey('warnings', $returnedvalue1);
+        $this->assertEmpty($returnedvalue1['warnings']);
+
+        // TODO - improve assertion to be more specific? How, as we catch it?
+        // Assert we got warnings, as expected.
+        $this->assertArrayHasKey('warnings', $returnedvalue2);
+        $this->assertNotEmpty($returnedvalue2['warnings']);
     }
 
     /**

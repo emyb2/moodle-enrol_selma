@@ -27,10 +27,10 @@ namespace enrol_selma\local;
 defined('MOODLE_INTERNAL') || die();
 
 use core_text;
+use enrol_selma\local\utilities;
 use moodle_exception;
 use profile_field_base;
 use stdClass;
-use enrol_selma\local\utilities;
 
 require_once($CFG->dirroot . '/user/profile/lib.php');
 require_once($CFG->dirroot . '/enrol/selma/locallib.php');
@@ -125,17 +125,8 @@ class user extends stdClass {
         }
     }
 
-    /**
-     * Utility method to check a property length against associated varchar database column.
-     */
-    protected function check_length($name, $value) {
-        $column = utilities::get_column_information('user', $name);
-        if (core_text::strlen($value) > $column->max_length) {
-            throw new moodle_exception('maximumcharacterlengthforexceeded', 'enrol_selma', null, $name);
-        }
-    }
-
     public function set_id(int $id) : self {
+        utilities::check_length('user', 'id', $id);
         $this->id = $id;
         return $this;
     }
@@ -144,19 +135,19 @@ class user extends stdClass {
         if ($username !== clean_param($username, PARAM_USERNAME)) {
             throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'username');
         }
-        $this->check_length('username', $username);
+        utilities::check_length('user', 'username', $username);
         $this->username = $username;
         return $this;
     }
 
-    public function set_first_name(string $firstname) : self {
-        $this->check_length('firstname', $firstname);
+    public function set_firstname(string $firstname) : self {
+        utilities::check_length('user', 'firstname', $firstname);
         $this->firstname = $firstname;
         return $this;
     }
 
-    public function set_last_name(string $lastname) : self {
-        $this->check_length('lastname', $lastname);
+    public function set_lastname(string $lastname) : self {
+        utilities::check_length('user', 'lastname', $lastname);
         $this->lastname = $lastname;
         return $this;
     }
@@ -166,25 +157,25 @@ class user extends stdClass {
         if (!validate_email($email)) {
             throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'email');
         }
-        $this->check_length('email', $email);
+        utilities::check_length('user', 'email', $email);
         $this->email = $email;
         return $this;
     }
 
     public function set_idnumber(string $idnumber) : self {
-        $this->check_length('idnumber', $idnumber);
+        utilities::check_length('user', 'idnumber', $idnumber);
         $this->idnumber= $idnumber;
         return $this;
     }
 
     public function set_phone1(string $phone1) : self {
-        $this->check_length('phone1', $phone1);
+        utilities::check_length('user', 'phone1', $phone1);
         $this->phone1 = $phone1;
         return $this;
     }
 
     public function set_phone2(string $phone2) : self {
-        $this->check_length('phone2', $phone2);
+        utilities::check_length('user', 'phone2', $phone2);
         $this->phone2 = $phone2;
         return $this;
     }
@@ -192,10 +183,10 @@ class user extends stdClass {
     /**
      * Set a user profile field. Use the fields preprocess method if available.
      *
-     * @param string $name
-     * @param $value
-     * @return $this
-     * @throws moodle_exception
+     * @param   string              $name Name of property.
+     * @param   mixed               $value Property's value.
+     * @return  $this               This user object.
+     * @throws  moodle_exception
      */
     public function set_profile_field(string $name, $value) {
         global $CFG;

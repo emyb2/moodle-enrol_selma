@@ -49,14 +49,13 @@ class student_external_testcase extends externallib_advanced_testcase {
 
     public function test_create_student_no_cap_failure() {
         $this->expectException(required_capability_exception::class);
-        $context = context_system::instance();
         $params = [
             'firstname' => 'Jack',
             'lastname' => 'Tors',
             'email' => 'jack.tors@jerkyboys.net',
             'studentid' => '1000000',
         ];
-        $returnvalue = create_student::create_student($params);
+        create_student::create_student($params);
     }
 
     public function test_create_student_success() {

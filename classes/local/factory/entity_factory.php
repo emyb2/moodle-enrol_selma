@@ -18,6 +18,7 @@ namespace enrol_selma\local\factory;
 
 defined('MOODLE_INTERNAL') || die();
 
+use enrol_selma\local\course;
 use stdClass;
 use enrol_selma\local\user;
 
@@ -39,4 +40,18 @@ class entity_factory {
         return $user;
     }
 
+    /**
+     * Maps stdClass onto the custom course object.
+     *
+     * @param   stdClass    $record Record to be converted to course object.
+     * @return  course      $course SELMA course object.
+     */
+    public function build_course_from_stdclass(stdClass $record) : course {
+        $course = new course();
+        foreach (get_object_vars($record) as $propertyname => $value) {
+            $course->{$propertyname} = $value;
+        }
+
+        return $course;
+    }
 }
