@@ -63,20 +63,20 @@ class get_intake extends external_api {
     /**
      * The function itself - let's get that intake.
      *
-     * @param   array   $intakeid Intake ID used to retrieve details from Moodle.
+     * @param   int     $intakeid Intake ID used to retrieve details from Moodle.
      * @return  array   Array of intake details, if any.
      */
-    public function __construct(array $intakeid) {
+    public function __construct(int $intakeid) {
         return self::get_intake($intakeid);
     }
 
     /**
      * The function itself - let's get that intake.
      *
-     * @param   array   $intakeid Intake ID used to retrieve details from Moodle.
+     * @param   int     $intakeid Intake ID used to retrieve details from Moodle.
      * @return  array   Array of intake details, if any.
      */
-    public static function get_intake(array $intakeid) {
+    public static function get_intake(int $intakeid) {
         // Validate parameters.
         $params = self::validate_parameters(self::get_intake_parameters(),
             [
@@ -100,36 +100,45 @@ class get_intake extends external_api {
         return new external_single_structure(
             [
                 'id' => new external_value(PARAM_INT,
-                    get_string('get_intake_returns::id', 'enrol_selma')
+                    get_string('get_intake_returns::id', 'enrol_selma'),
+                    VALUE_OPTIONAL
                 ),
                 'programmeid' => new external_value(PARAM_INT,
-                    get_string('get_intake_returns::programmeid', 'enrol_selma')
+                    get_string('get_intake_returns::programmeid', 'enrol_selma'),
+                    VALUE_OPTIONAL
                 ),
                 'code' => new external_value(PARAM_TEXT,
-                    get_string('get_intake_returns::code', 'enrol_selma')
+                    get_string('get_intake_returns::code', 'enrol_selma'),
+                    VALUE_OPTIONAL
                 ),
                 'name' => new external_value(PARAM_TEXT,
-                    get_string('get_intake_returns::name', 'enrol_selma')
+                    get_string('get_intake_returns::name', 'enrol_selma'),
+                    VALUE_OPTIONAL
                 ),
                 'startdate' => new external_value(PARAM_INT,
-                    get_string('get_intake_returns::startdate', 'enrol_selma')
+                    get_string('get_intake_returns::startdate', 'enrol_selma'),
+                    VALUE_OPTIONAL
                 ),
                 'enddate' => new external_value(PARAM_INT,
-                    get_string('get_intake_returns::enddate', 'enrol_selma')
+                    get_string('get_intake_returns::enddate', 'enrol_selma'),
+                    VALUE_OPTIONAL
                 ),
                 'usermodified' => new external_value(PARAM_INT,
-                    get_string('get_intake_returns::usermodified', 'enrol_selma')
+                    get_string('get_intake_returns::usermodified', 'enrol_selma'),
+                    VALUE_OPTIONAL
                 ),
                 'timecreated' => new external_value(PARAM_INT,
-                    get_string('get_intake_returns::timecreated', 'enrol_selma')
+                    get_string('get_intake_returns::timecreated', 'enrol_selma'),
+                    VALUE_OPTIONAL
                 ),
                 'timemodified' => new external_value(PARAM_INT,
-                    get_string('get_intake_returns::timemodified', 'enrol_selma')
+                    get_string('get_intake_returns::timemodified', 'enrol_selma'),
+                    VALUE_OPTIONAL
                 ),
                 // TODO - Maybe we should be returning 'warning' values, instead of in the message.
                 // As per - https://docs.moodle.org/dev/Errors_handling_in_web_services#Warning_messages
                 // For example, refer to mod/assign/externallib.php:614.
-                'warnings' => new external_warnings()
+                'warnings' => new external_warnings(),
             ],
             get_string('get_intake_returns', 'enrol_selma')
         );

@@ -70,6 +70,17 @@ $functions = [
         'ajax'          => false,
         'capabilities'  => ''
     ],
+    'enrol_selma_get_intake' => [
+        'classname'     => 'enrol_selma\local\external\get_intake',
+        'methodname'    => 'get_intake',
+        'description'   => new lang_string(
+            'get_intake::description',
+            'enrol_selma'
+        ),
+        'type'          => 'read',
+        'ajax'          => false,
+        'capabilities'  => ''
+    ],
     'enrol_selma_add_intake_to_course' => [
         'classname'     => 'enrol_selma\local\external\add_intake_to_course',
         'methodname'    => 'add_intake_to_course',
@@ -124,6 +135,7 @@ $services = [
             'enrol_selma_get_all_courses',
             'enrol_selma_create_users',
             'enrol_selma_create_intake',
+            'enrol_selma_get_intake',
             'enrol_selma_add_intake_to_course',
             'enrol_selma_add_user_to_intake'
         ],

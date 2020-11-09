@@ -31,7 +31,6 @@ use moodle_exception;
 defined('MOODLE_INTERNAL') || die();
 
 use core_text;
-use database_column_info;
 
 global $CFG;
 require_once($CFG->libdir . '/weblib.php');

@@ -209,7 +209,7 @@ $string['create_users_returns::userids'] = 'Returns the user Moodle IDs of the u
 $string['create_users_returns::userid'] = 'Moodle ID of a user that was created.';
 $string['create_users_returns::message'] = 'Message to return along with the response. Lists duplicate SELMA IDs or emails found.';
 $string['create_intake::description'] = '***WIP - Expected parameters to create an intake record.***';
-$string['create_intake_parameters'] = 'Expected parameters to create an intake record.';
+$string['create_intake_parameters'] = 'Expected parameters to create an intake record. Either warning(s) is returned OR intake details.';
 $string['create_intake_parameters::intake'] = 'Intake details.';
 $string['create_intake_parameters::intakeid'] = 'Intake SELMA ID.';
 $string['create_intake_parameters::programmeid'] = 'Programme ID that intake is associated to.';
@@ -221,7 +221,8 @@ $string['create_intake_returns'] = 'Returned values when calling this function.'
 $string['create_intake_returns::status'] = 'Returns success status code.';
 $string['create_intake_returns::intakeid'] = 'Returns created intake\'s ID.';
 $string['create_intake_returns::message'] = 'Message to return along with the response.';
-$string['get_intake_parameters'] = '***WIP - Expected parameters to retrieve an intake\'s details from Moodle (if any).***';
+$string['get_intake::description'] = '***WIP - Expected parameters to retrieve an intake\'s details from Moodle (if any).***';
+$string['get_intake_parameters'] = 'Expected parameters to retrieve an intake\'s details from Moodle (if any).';
 $string['get_intake_parameters::intakeid'] = 'Intake SELMA ID.';
 $string['get_intake_returns'] = 'Returned values when calling this function.';
 $string['add_intake_to_course::description'] = '***WIP - Expected parameters to add a SELMA intake to a Moodle course.***';
@@ -247,6 +248,8 @@ $string['warning_message_notcapable'] = 'This user does not have the following c
 $string['warning_code_noconfig'] = 'noconfig';
 $string['warning_message_noconfig'] = 'This config has not been set yet: \'{$a}\'.';
 $string['error_noconfig'] = 'This config has not been set yet: \'{$a}\'.';
+$string['warning_code_notfound'] = 'notfound';
+$string['warning_message_notfound'] = 'Could not find any matches for: \'{$a}\'.';
 
 // Web services statuses.
 $string['status_ok'] = '200';

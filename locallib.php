@@ -967,3 +967,34 @@ function enrol_selma_update_student_from_selma(array $selmadata, stdClass $confi
     $user->save();
     return $user;
 }
+
+/**
+ * Get a SELMA intake's details from Moodle's DB (if any).
+ *
+ * @param   int                 $intakeid The SELMA intake ID to retrieve.
+ * @return  array               $intake The intake details, or warning if none found.
+ * @throws  coding_exception
+ * @throws  dml_exception
+ */
+function enrol_selma_get_intake(int $intakeid) {
+    global $DB;
+
+    // Check the DB for intake.
+    $intake = $DB->get_record('enrol_selma_intake', array('id' => $intakeid));
+
+    // Return 'not found' if a record could not be found.
+    if ($intake === false) {
+        $intake['warnings'][] = [
+            'item' => 'test',
+            'itemid' => 1,
+            'warningcode' => get_string('warning_code_notfound', 'enrol_selma'),
+            'message' => get_string('warning_message_notfound', 'enrol_selma', $intakeid)
+        ];
+    }
+
+    // Cast object to array.
+    $intake = (array) $intake;
+
+    // Return array of intake details or warning.
+    return $intake;
+}
