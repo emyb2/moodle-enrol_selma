@@ -1061,8 +1061,7 @@ function enrol_selma_get_custom_course_fields() {
  * @param   course  $course The course to update (including 'customfield_fields').
  * @return  course  Return updated course.
  */
-function enrol_selma_save_custom_course_fields(course $course)
-{
+function enrol_selma_save_custom_course_fields(course $course) {
     // Course object should have an ID at this point.
     $handler = course_handler::create($course->id);
     // Get datacontroller so we can manipulate the data.
