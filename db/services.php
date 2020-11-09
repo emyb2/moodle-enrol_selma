@@ -147,6 +147,7 @@ $services = [
             'enrol_selma_create_users',
             'enrol_selma_create_intake',
             'enrol_selma_get_intake',
+            'enrol_selma_get_intake_courses',
             'enrol_selma_add_intake_to_course',
             'enrol_selma_add_user_to_intake'
         ],

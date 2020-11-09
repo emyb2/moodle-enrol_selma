@@ -104,14 +104,14 @@ class get_intake_courses extends external_api {
             [
                 'courseids' => new external_multiple_structure(
                     new external_value(PARAM_INT,
-                        get_string('get_intake_courses_returns::courseid', 'enrol_selma'),
-                        VALUE_OPTIONAL),
-                    get_string('get_intake_courses_returns::courseids', 'enrol_selma')
+                        get_string('get_intake_courses_returns::courseid', 'enrol_selma')),
+                    get_string('get_intake_courses_returns::courseids', 'enrol_selma'),
+                    VALUE_OPTIONAL
                 ),
-                    // TODO - Maybe we should be returning 'warning' values, instead of in the message.
-                    // As per - https://docs.moodle.org/dev/Errors_handling_in_web_services#Warning_messages
-                    // For example, refer to mod/assign/externallib.php:614.
-                    'warnings' => new external_warnings(),
+                // TODO - Maybe we should be returning 'warning' values, instead of in the message.
+                // As per - https://docs.moodle.org/dev/Errors_handling_in_web_services#Warning_messages
+                // For example, refer to mod/assign/externallib.php:614.
+                'warnings' => new external_warnings(),
             ], get_string('get_intake_courses_returns', 'enrol_selma')
         );
     }
