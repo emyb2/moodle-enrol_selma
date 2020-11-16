@@ -1121,3 +1121,34 @@ function enrol_selma_get_intake(int $intakeid)
     // Return array of intake details.
     return $intake;
 }
+
+/**
+ * Get a SELMA intake's associated courses from Moodle's DB (if any).
+ *
+ * @param   int                 $intakeid The SELMA intake ID to retrieve course for.
+ * @return  array               $intake The intake's courses, or warning if none found.
+ * @throws  coding_exception
+ * @throws  dml_exception
+ */
+function enrol_selma_get_intake_courses(int $intakeid) {
+    global $DB;
+
+    // Check the DB for intake.
+    $intakecourses = $DB->get_records('enrol_selma_course_intake', array('intakeid' => $intakeid), null, 'courseid');
+
+    // Return 'not found' if a record could not be found.
+    if (empty($intakecourses)) {
+        $intakecourses['warnings'][] = [
+            'item' => get_string('pluginname', 'enrol_selma'),
+            'itemid' => 1,
+            'warningcode' => get_string('warning_code_notfound', 'enrol_selma'),
+            'message' => get_string('warning_message_notfound', 'enrol_selma', $intakeid)
+        ];
+
+        // Return warning.
+        return $intakecourses;
+    }
+
+    // Return array of intake's course IDs.
+    return ['courseids' => array_keys($intakecourses)];
+}
