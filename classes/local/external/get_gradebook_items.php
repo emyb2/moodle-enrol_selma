@@ -108,7 +108,9 @@ class get_gradebook_items extends external_api {
                             'id' => new external_value(PARAM_INT,
                                 get_string('get_gradebook_items_returns::itemid', 'enrol_selma')),
                             'itemname' => new external_value(PARAM_TEXT,
-                                get_string('get_gradebook_items_returns::name', 'enrol_selma'))
+                                get_string('get_gradebook_items_returns::itemname', 'enrol_selma')),
+                            'itemtype' => new external_value(PARAM_TEXT,
+                                get_string('get_gradebook_items_returns::itemtype', 'enrol_selma'))
                         ]
                     ),
                     get_string('get_gradebook_items_returns::items', 'enrol_selma'),

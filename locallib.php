@@ -1098,7 +1098,7 @@ function enrol_selma_get_gradebook_items(int $courseid) {
     global $DB;
 
     // Check the DB for gradebook items.
-    $items = $DB->get_records('grade_items', array('courseid' => $courseid), null, 'id, itemname');
+    $items = $DB->get_records('grade_items', array('courseid' => $courseid), null, 'id, itemname, itemtype');
 
     // Return 'not found' if a record could not be found.
     if (empty($items)) {
@@ -1113,6 +1113,19 @@ function enrol_selma_get_gradebook_items(int $courseid) {
         return $items;
     }
 
+    // Courses' gradebook items has no 'itemname'. We have to add it...
+    foreach ($items as $item) {
+        // If item is a course, look for course name.
+        if ($item->itemname === null && $item->itemtype === 'course') {
+            $itemname = $DB->get_record('course', array('id' => $courseid), 'fullname');
+
+            // If found, update item's name to course name.
+            if ($itemname !== false) {
+                $item->itemname = $itemname->fullname;
+            }
+        }
+    }
+
     // Return array of course's gradebook item details.
-    return ['items' => (array) $items];
+    return ['items' => $items];
 }
