@@ -33,7 +33,6 @@ use core_text;
 
 defined('MOODLE_INTERNAL') || die();
 
-
 global $CFG;
 require_once($CFG->libdir . '/weblib.php');
 
