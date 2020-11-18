@@ -69,16 +69,6 @@ class get_gradebook_items extends external_api {
      * @param   int     $courseid Course ID of course to get gradebook items of.
      * @return  array   Course's gradebook item(s), if any.
      */
-    public function __construct(int $courseid) {
-        return self::get_gradebook_items($courseid);
-    }
-
-    /**
-     * The function itself - let's get that course's gradebook items.
-     *
-     * @param   int     $courseid Course ID of course to get gradebook items of.
-     * @return  array   Course's gradebook item(s), if any.
-     */
     public static function get_gradebook_items(int $courseid) {
         // Validate parameters.
         $params = self::validate_parameters(self::get_gradebook_items_parameters(),
