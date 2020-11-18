@@ -1152,3 +1152,46 @@ function enrol_selma_get_intake_courses(int $intakeid) {
     // Return array of intake's course IDs.
     return ['courseids' => array_keys($intakecourses)];
 }
+
+/**
+ * Retrieves gradebook items for a given course.
+ *
+ * @param int $courseid Course ID for which to retrieve gradebook items.
+ * @return  array   $items The gradebook items found.
+ * @throws dml_exception|coding_exception
+ */
+function enrol_selma_get_gradebook_items(int $courseid) {
+    global $DB;
+
+    // Check the DB for gradebook items.
+    $items = $DB->get_records('grade_items', array('courseid' => $courseid), null, 'id, itemname, itemtype');
+
+    // Return 'not found' if a record could not be found.
+    if (empty($items)) {
+        $items['warnings'][] = [
+            'item' => get_string('pluginname', 'enrol_selma'),
+            'itemid' => 1,
+            'warningcode' => get_string('warning_code_notfound', 'enrol_selma'),
+            'message' => get_string('warning_message_notfound', 'enrol_selma', $courseid)
+        ];
+
+        // Return warning.
+        return $items;
+    }
+
+    // Courses' gradebook items has no 'itemname'. We have to add it...
+    foreach ($items as $item) {
+        // If item is a course, look for course name.
+        if ($item->itemname === null && $item->itemtype === 'course') {
+            $itemname = $DB->get_record('course', array('id' => $courseid), 'fullname');
+
+            // If found, update item's name to course name.
+            if ($itemname !== false) {
+                $item->itemname = $itemname->fullname;
+            }
+        }
+    }
+
+    // Return array of course's gradebook item details.
+    return ['items' => $items];
+}

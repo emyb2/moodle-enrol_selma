@@ -30,12 +30,23 @@ $functions = [
         'classname'     => 'enrol_selma\local\external\create_course',
         'methodname'    => 'create_course',
         'description'   => new lang_string(
-                'create_course::description',
-                'enrol_selma'
+            'create_course::description',
+            'enrol_selma'
         ),
         'type'          => 'write',
         'ajax'          => false,
         'capabilities'  => 'moodle/course:create'
+    ],
+    'enrol_selma_get_gradebook_items' => [
+        'classname'     => 'enrol_selma\local\external\get_gradebook_items',
+        'methodname'    => 'get_gradebook_items',
+        'description'   => new lang_string(
+            'get_gradebook_items::description',
+            'enrol_selma'
+        ),
+        'type'          => 'read',
+        'ajax'          => false,
+        'capabilities'  => ''
     ],
     'enrol_selma_get_all_courses' => [
         'classname'     => 'enrol_selma\local\external\get_all_courses',
@@ -143,6 +154,7 @@ $services = [
         'enabled' => 1,
         'functions' => [
             'enrol_selma_create_course',
+            'enrol_selma_get_gradebook_items',
             'enrol_selma_get_all_courses',
             'enrol_selma_create_users',
             'enrol_selma_create_intake',
