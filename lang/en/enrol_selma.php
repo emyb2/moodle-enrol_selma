@@ -247,6 +247,17 @@ $string['add_user_to_intake_returns'] = 'The returned values after attempting to
 $string['add_user_to_intake_returns::status'] = 'Returns success status code.';
 $string['add_user_to_intake_returns::added'] = 'Bool of whether the user could be added or not.';
 $string['add_user_to_intake_returns::message'] = 'Message returned along with the response.';
+$string['get_student::description'] = '***WIP - Retrieves a given student\'s information.***';
+$string['get_student_parameters'] = 'Expected parameters to retrieve a student\'s details from Moodle (if any).';
+$string['get_student_parameters::studentid'] = 'Student SELMA ID.';
+$string['get_student_parameters::email'] = 'Student SELMA email.';
+$string['get_student_returns'] = 'Returned values when calling this function.';
+$string['get_student_returns::id'] = 'Student\'s Moodle ID';
+$string['get_student_returns::firstname'] = 'Student\'s Moodle firstname';
+$string['get_student_returns::lastname'] = 'Student\'s Moodle lastname';
+$string['get_student_returns::email'] = 'Student\'s Moodle email address';
+$string['get_student_returns::idnumber'] = 'Student\'s SELMA ID';
+
 
 // Web services warnings.
 $string['warning_code_notcapable'] = 'notcapable';
@@ -256,6 +267,8 @@ $string['warning_message_noconfig'] = 'This config has not been set yet: \'{$a}\
 $string['error_noconfig'] = 'This config has not been set yet: \'{$a}\'.';
 $string['warning_code_notfound'] = 'notfound';
 $string['warning_message_notfound'] = 'Could not find any matches for: \'{$a}\'.';
+$string['warning_code_duplicatesallowed'] = 'duplicatesallowed';
+$string['warning_message_duplicatesallowed'] = 'A setting (allowaccountssameemail) is enabled, allowing different users to use the same email address. Retrieving a student by email is therefore not reliable.';
 
 // Web services statuses.
 $string['status_ok'] = '200';

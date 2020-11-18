@@ -135,6 +135,17 @@ $functions = [
         'type'          => 'write',
         'ajax'          => false,
         'capabilities'  => 'moodle/user:update'
+    ],
+    'enrol_selma_get_student' => [
+        'classname'     => 'enrol_selma\local\external\get_student',
+        'methodname'    => 'get_student',
+        'description'   => new lang_string(
+            'get_student::description',
+            'enrol_selma'
+        ),
+        'type'          => 'read',
+        'ajax'          => false,
+        'capabilities'  => ''
     ]
 ];
 $services = [
@@ -149,7 +160,10 @@ $services = [
             'enrol_selma_get_intake',
             'enrol_selma_get_intake_courses',
             'enrol_selma_add_intake_to_course',
-            'enrol_selma_add_user_to_intake'
+            'enrol_selma_add_user_to_intake',
+            'enrol_selma_create_student',
+            'enrol_selma_update_student',
+            'enrol_selma_get_student'
         ],
         'restrictedusers' => 0
     ]
