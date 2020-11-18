@@ -66,16 +66,6 @@ class get_intake extends external_api {
      * @param   int     $intakeid Intake ID used to retrieve details from Moodle.
      * @return  array   Array of intake details, if any.
      */
-    public function __construct(int $intakeid) {
-        return self::get_intake($intakeid);
-    }
-
-    /**
-     * The function itself - let's get that intake.
-     *
-     * @param   int     $intakeid Intake ID used to retrieve details from Moodle.
-     * @return  array   Array of intake details, if any.
-     */
     public static function get_intake(int $intakeid) {
         // Validate parameters.
         $params = self::validate_parameters(self::get_intake_parameters(),

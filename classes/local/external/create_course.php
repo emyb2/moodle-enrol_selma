@@ -70,16 +70,6 @@ class create_course extends external_api {
     }
 
     /**
-     * The constructor/function itself - let's create a course.
-     *
-     * @param   array   $course Course object and required details to create a course.
-     * @return  array   Array of success status & created course_id, if any.
-     */
-    public function __construct(array $course) {
-        return self::create_course($course);
-    }
-
-    /**
      * The function itself - let's create a course.
      *
      * @param   array   $course Course object and required details to create a course.

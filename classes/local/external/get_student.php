@@ -52,6 +52,7 @@ class get_student extends external_api {
      * Returns required parameters to retrieve a user.
      *
      * @return external_function_parameters Description of parameters and expected type.
+     * @throws coding_exception
      */
     public static function get_student_parameters() {
         return new external_function_parameters(
@@ -97,6 +98,7 @@ class get_student extends external_api {
      * Returns description of method result value.
      *
      * @return external_single_structure Array of description of values returned by 'get_student' function.
+     * @throws coding_exception
      */
     public static function get_student_returns() {
         return new external_single_structure(

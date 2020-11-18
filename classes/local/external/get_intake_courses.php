@@ -69,16 +69,6 @@ class get_intake_courses extends external_api {
      * @param   int     $intakeid Intake ID used to retrieve associated course(s) from Moodle.
      * @return  array   Intake's course(s), if any.
      */
-    public function __construct(int $intakeid) {
-        return self::get_intake_courses($intakeid);
-    }
-
-    /**
-     * The function itself - let's get that intake's courses.
-     *
-     * @param   int     $intakeid Intake ID used to retrieve associated course(s) from Moodle.
-     * @return  array   Intake's course(s), if any.
-     */
     public static function get_intake_courses(int $intakeid) {
         // Validate parameters.
         $params = self::validate_parameters(self::get_intake_courses_parameters(),

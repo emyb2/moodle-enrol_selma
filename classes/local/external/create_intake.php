@@ -84,16 +84,6 @@ class create_intake extends external_api {
      * @param   array   $intake Intake details to record in Moodle.
      * @return  array   Array of success status & created intake, if any.
      */
-    public function __construct(array $intake) {
-        return self::create_intake($intake);
-    }
-
-    /**
-     * The function itself - let's create the intake.
-     *
-     * @param   array   $intake Intake details to record in Moodle.
-     * @return  array   Array of success status & created intake, if any.
-     */
     public static function create_intake(array $intake) {
         // Validate parameters.
         $params = self::validate_parameters(self::create_intake_parameters(),
