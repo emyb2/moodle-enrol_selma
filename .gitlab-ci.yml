@@ -31,7 +31,7 @@ before_script:
   # Cleaning up.
   - echo "Cleaning up old ./ci" && rm -rf $CI_PROJECT_DIR/ci
   - echo "Cleaning up old ./moodle" && rm -rf $CI_PROJECT_DIR/moodle
-  - composer create-project --no-interaction --no-dev --prefer-dist --quiet blackboard-open-source/moodle-plugin-ci ci ^2
+  - composer create-project --no-interaction --no-dev --prefer-dist --quiet moodlehq/moodle-plugin-ci ci ^3
   - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
   # MySQL/MariaDB special..... Allow for user w/o password.
   #     Setting auth type to mysqlnative - essential for phpdoc to work, but probs good/easier (for testing) anyway...
