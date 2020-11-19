@@ -345,7 +345,7 @@ Please login {$a->site} and accept any privacy policies and reset password.
 $string['exception_bepositive'] = "Parameters must be positive values";
 $string['exception_valuerequired'] = 'Value required for \'{$a}\'';
 
-// @todo Sort.
+// TODO Sort.
 $string['duplicateemailaddressesnotallowed'] = 'Duplicate email addresses not allowed by configuration';
 $string['studentsinglestructure'] = 'External data structure for a student.';
 $string['middlename'] = 'Middle name';

@@ -67,8 +67,8 @@ final class utilities {
             throw new moodle_exception('invalidusername');
         }
         if ($DB->sql_regex_supported()) {
-            $REGEXP = $DB->sql_regex(true);
-            $select = "username $REGEXP :usernamepattern AND mnethostid = :mnethostid AND deleted <> :deleted";
+            $regexp = $DB->sql_regex(true);
+            $select = "username $regexp :usernamepattern AND mnethostid = :mnethostid AND deleted <> :deleted";
             $usernamepattern = "$username([0-9]+)?";
             $params = ['usernamepattern' => $usernamepattern, 'mnethostid' => $CFG->mnet_localhost_id, 'deleted' => 1];
         } else {

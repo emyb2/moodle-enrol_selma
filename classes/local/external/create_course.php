@@ -105,7 +105,9 @@ class create_course extends external_api {
                 'item' => get_string('pluginname', 'enrol_selma'),
                 'itemid' => 1,
                 'warningcode' => $exception->getCode(),
-                'message' => ($CFG->debugdisplay == 1 ? $warnmessage . ' ' . $exception->getTraceAsString() : shorten_text($warnmessage, 150))
+                'message' => (
+                    $CFG->debugdisplay == 1 ? $warnmessage . ' ' . $exception->getTraceAsString() : shorten_text($warnmessage, 150)
+                )
             ];
         } catch (moodle_exception $exception) {
             $warnmessage = $exception->getMessage();
@@ -113,7 +115,9 @@ class create_course extends external_api {
                 'item' => get_string('pluginname', 'enrol_selma'),
                 'itemid' => 1,
                 'warningcode' => $exception->getCode(),
-                'message' => ($CFG->debugdisplay == 1 ? $warnmessage . ' ' . $exception->getTraceAsString() : shorten_text($warnmessage, 150))
+                'message' => (
+                    $CFG->debugdisplay == 1 ? $warnmessage . ' ' . $exception->getTraceAsString() : shorten_text($warnmessage, 150)
+                )
             ];
         } catch (Exception $exception) {
             $warnmessage = $exception->getMessage();
@@ -121,7 +125,9 @@ class create_course extends external_api {
                 'item' => get_string('pluginname', 'enrol_selma'),
                 'itemid' => 1,
                 'warningcode' => $exception->getCode(),
-                'message' => ($CFG->debugdisplay == 1 ? $warnmessage . ' ' . $exception->getTraceAsString() : shorten_text($warnmessage, 150))
+                'message' => (
+                    $CFG->debugdisplay == 1 ? $warnmessage . ' ' . $exception->getTraceAsString() : shorten_text($warnmessage, 150)
+                )
             ];
         }
 

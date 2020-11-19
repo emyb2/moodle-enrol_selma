@@ -35,7 +35,7 @@ use enrol_selma\local\external\update_student;
 class student_external_testcase extends externallib_advanced_testcase {
 
     /**
-     *  @var enrol_selma_generator $plugingenerator handle to plugin generator.
+     * @var enrol_selma_generator $plugingenerator handle to plugin generator.
      */
     protected $plugingenerator;
 
@@ -60,7 +60,7 @@ class student_external_testcase extends externallib_advanced_testcase {
 
     public function test_create_student_success() {
         global $DB, $USER;
-        // Set the required capabilities by the external function
+        // Set the required capabilities by the external function.
         $context = context_system::instance();
         $roleid = $this->assignUserCapability('moodle/user:create', $context->id);
         $params = [
@@ -70,7 +70,7 @@ class student_external_testcase extends externallib_advanced_testcase {
             'studentid' => '1000000',
         ];
         $returnvalue = create_student::create_student($params);
-        // We need to execute the return values cleaning process to simulate the web service server
+        // We need to execute the return values cleaning process to simulate the web service server.
         $returnvalue = external_api::clean_returnvalue(create_student::create_student_returns(), $returnvalue);
         $this->assertEquals(
             $returnvalue['moodleuserid'],
@@ -81,7 +81,7 @@ class student_external_testcase extends externallib_advanced_testcase {
     }
     public function test_create_student_failure() {
         global $DB, $USER;
-        // Set the required capabilities by the external function
+        // Set the required capabilities by the external function.
         $context = context_system::instance();
         $roleid = $this->assignUserCapability('moodle/user:create', $context->id);
         $params = [
@@ -91,14 +91,14 @@ class student_external_testcase extends externallib_advanced_testcase {
             'studentid' => '55555555'
         ];
         $returnvalue = create_student::create_student($params);
-        // We need to execute the return values cleaning process to simulate the web service server
+        // We need to execute the return values cleaning process to simulate the web service server.
         $returnvalue = external_api::clean_returnvalue(create_student::create_student_returns(), $returnvalue);
         $this->assertEquals($returnvalue['moodleuserid'], 0);
     }
 
     public function test_update_student_success() {
         global $DB, $USER;
-        // Set the required capabilities by the external function
+        // Set the required capabilities by the external function.
         $context = context_system::instance();
         $roleid = $this->assignUserCapability('moodle/user:update', $context->id);
         $params = [

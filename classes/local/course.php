@@ -250,7 +250,7 @@ class course extends stdClass {
         // Create or update.
         if ($this->id <= 0) {
             // TODO - Any other checks?
-            // Set time properties
+            // Set time properties.
             if (!isset($this->timecreated) || !isset($this->timemodified)) {
                 $this->timecreated = time();
                 $this->timemodified = $this->timecreated;

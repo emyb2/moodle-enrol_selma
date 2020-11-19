@@ -1095,8 +1095,7 @@ function enrol_selma_save_custom_course_fields(course $course) {
  * @throws  coding_exception
  * @throws  dml_exception
  */
-function enrol_selma_get_intake(int $intakeid)
-{
+function enrol_selma_get_intake(int $intakeid) {
     global $DB;
 
     // Check the DB for intake.
@@ -1166,7 +1165,6 @@ function enrol_selma_get_student(int $studentid, string $email) {
     global $DB;
     $warnings = [];
     $student = false;
-
 
     // Lookup using SELMA student ID first.
     if (isset($studentid)) {
