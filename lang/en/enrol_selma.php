@@ -260,12 +260,15 @@ $string['get_student_parameters'] = 'Expected parameters to retrieve a student\'
 $string['get_student_parameters::studentid'] = 'Student SELMA ID.';
 $string['get_student_parameters::email'] = 'Student SELMA email.';
 $string['get_student_returns'] = 'Returned values when calling this function.';
-$string['get_student_returns::id'] = 'Student\'s Moodle ID';
-$string['get_student_returns::firstname'] = 'Student\'s Moodle firstname';
-$string['get_student_returns::lastname'] = 'Student\'s Moodle lastname';
-$string['get_student_returns::email'] = 'Student\'s Moodle email address';
-$string['get_student_returns::idnumber'] = 'Student\'s SELMA ID';
-
+$string['get_student_returns::id'] = 'Student\'s Moodle ID.';
+$string['get_student_returns::firstname'] = 'Student\'s Moodle firstname.';
+$string['get_student_returns::lastname'] = 'Student\'s Moodle lastname.';
+$string['get_student_returns::email'] = 'Student\'s Moodle email address.';
+$string['get_student_returns::idnumber'] = 'Student\'s SELMA ID.';
+$string['create_teacher:description'] = '***WIP - Creates a teacher account from given information.***';
+$string['create_teacher_parameters'] = 'Expected parameters to create a teacher.';
+$string['create_teacher_returns'] = 'Returned values when calling this function.';
+$string['create_teacher_returns::userid'] = 'Student\'s Moodle ID';
 
 // Web services warnings.
 $string['warning_code_notcapable'] = 'notcapable';
