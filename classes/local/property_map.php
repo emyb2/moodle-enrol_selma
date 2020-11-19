@@ -97,15 +97,15 @@ class property_map implements IteratorAggregate {
     }
 
     public function write_data(array $data) {
-       foreach ($this->mappedproperties as $property) {
-           if ($property->is_required() && !isset($data[$property->get_mapped_property_name()])) {
-               throw new moodle_exception('exception_valuerequired', 'enrol_selma', null, $property->get_name());
-           }
-           if (!is_null($property->get_mapped_property_name()) && isset($data[$property->get_mapped_property_name()])) {
-               $value = $data[$property->get_mapped_property_name()];
-               $property->set_value($value);
-           }
-       }
+        foreach ($this->mappedproperties as $property) {
+            if ($property->is_required() && !isset($data[$property->get_mapped_property_name()])) {
+                throw new moodle_exception('exception_valuerequired', 'enrol_selma', null, $property->get_name());
+            }
+            if (!is_null($property->get_mapped_property_name()) && isset($data[$property->get_mapped_property_name()])) {
+                $value = $data[$property->get_mapped_property_name()];
+                $property->set_value($value);
+            }
+        }
     }
 
     public function is_valid() : bool {

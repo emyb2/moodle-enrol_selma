@@ -62,17 +62,6 @@ class add_user_to_intake extends external_api {
     }
 
     /**
-     * The constructor/function itself - let's add the user to the intake.
-     *
-     * @param   int     $userid SELMA ID of user to add to intake.
-     * @param   int     $intakeid SELMA intake ID the user should be added to.
-     * @return  array   Array of success status & bool if successful/not, message.
-     */
-    public function __construct(int $userid, int $intakeid) {
-        return self::add_user_to_intake($userid, $intakeid);
-    }
-
-    /**
      * The function itself - let's add the user to the intake.
      *
      * @param   int     $userid SELMA ID of user to add to intake.

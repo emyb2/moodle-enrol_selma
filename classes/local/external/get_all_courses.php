@@ -64,17 +64,6 @@ class get_all_courses extends external_api {
     }
 
     /**
-     * The constructor/function itself - let's get those courses.
-     *
-     * @param   int     $amount How many records to return - by default we get them all.
-     * @param   int     $page Which page to start on - default, we start on 1.
-     * @return  array   Array of success status & all available courses.
-     */
-    public function __construct(int $amount, int $page) {
-        return self::get_all_courses($amount, $page);
-    }
-
-    /**
      * The function itself - let's get those courses.
      *
      * @param   int     $amount How many records to return - by default we get them all.

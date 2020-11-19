@@ -164,7 +164,7 @@ class user extends stdClass {
 
     public function set_idnumber(string $idnumber) : self {
         utilities::check_length('user', 'idnumber', $idnumber);
-        $this->idnumber= $idnumber;
+        $this->idnumber = $idnumber;
         return $this;
     }
 
@@ -260,9 +260,12 @@ class user extends stdClass {
                 }
             }
             // Unique ID number check.
-            $exists = $DB->record_exists('user', ['idnumber' => $this->idnumber, 'mnethostid' => $CFG->mnet_localhost_id, 'deleted' => 0]);
+            $exists = $DB->record_exists('user',
+                ['idnumber' => $this->idnumber, 'mnethostid' => $CFG->mnet_localhost_id, 'deleted' => 0]
+            );
             if ($exists) {
-                throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'idnumber'); // @todo Provide a better explaination in exception.
+                // TODO Provide a better explaination in exception.
+                throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'idnumber');
             }
             if (empty($this->username)) {
                 $username = utilities::generate_username($this->firstname, $this->lastname);

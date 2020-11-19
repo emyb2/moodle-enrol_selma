@@ -62,7 +62,7 @@ GitLab is also used and makes testing the plugin locally easier.
   * Choose `docker` as executor (or whichever you prefer)
   * You may need to set a default image (used if `.gitlab-ci.yml` doesn't specify one). Use any lampstack image from DockerHub. I used `marekhadas9/lampstack`
 * (Optional) Enable the runner to also pick up jobs without tags (to run jobs for feature branches, etc)<br>
-  Edit the runner from the same location as above. Tick "Run untagged jobs" checkbox, save
+  Edit the runner from the same location as above. Tick "Run untagged jobs" checkbox, save.
 
 #### Running Jobs Locally (Do above, then these)
 * Install Docker - for Mac run `brew cask install docker`<br>- credit: [https://stackoverflow.com/a/44719239](https://stackoverflow.com/a/44719239)
@@ -72,3 +72,8 @@ GitLab is also used and makes testing the plugin locally easier.
   
 ##### Debugging:
 See: [https://www.lullabot.com/articles/debugging-jobs-gitlab-ci](https://www.lullabot.com/articles/debugging-jobs-gitlab-ci)
+
+##### FAQ:
+* "GitLab is not connecting to runner" - [https://gitlab.com/gitlab-org/gitlab-runner/-/issues/3750](https://gitlab.com/gitlab-org/gitlab-runner/-/issues/3750)
+* "GitLab is not assigning jobs to runner" - Is it a feature branch/untagged? Check the optional step above (Quick Setup).
+* "What's the runner even doing?" - `gitlab-runner --debug run`

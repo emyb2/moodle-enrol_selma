@@ -58,17 +58,6 @@ class add_intake_to_course extends external_api {
     }
 
     /**
-     * The constructor/function itself - let's add this intake to that course.
-     *
-     * @param   int     $intakeid ID of intake to add to course.
-     * @param   int     $courseid ID of course the intake should be added to.
-     * @return  array   Array of success status & bool of true if success, along with message.
-     */
-    public function __construct(int $intakeid, int $courseid) {
-        return self::add_intake_to_course($intakeid, $courseid);
-    }
-
-    /**
      * The function itself - let's add this intake to that course.
      *
      * @param   int     $intakeid ID of intake to add to course.

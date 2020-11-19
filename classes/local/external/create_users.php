@@ -108,16 +108,6 @@ class create_users extends external_api {
     }
 
     /**
-     * The constructor/function itself - let's create the users.
-     *
-     * @param   array   $users Users object and required details to create users.
-     * @return  array   Array of success status & created user IDs, if any.
-     */
-    public function __construct(array $users) {
-        return self::create_users($users);
-    }
-
-    /**
      * The function itself - let's create the users.
      *
      * @param   array   $users Users object and required details to create users.

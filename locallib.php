@@ -1095,8 +1095,7 @@ function enrol_selma_save_custom_course_fields(course $course) {
  * @throws  coding_exception
  * @throws  dml_exception
  */
-function enrol_selma_get_intake(int $intakeid)
-{
+function enrol_selma_get_intake(int $intakeid) {
     global $DB;
 
     // Check the DB for intake.
@@ -1194,4 +1193,80 @@ function enrol_selma_get_gradebook_items(int $courseid) {
 
     // Return array of course's gradebook item details.
     return ['items' => $items];
+}
+
+/**
+ * Get a SELMA student's details (if any).
+ *
+ * @param   int                 $studentid The SELMA student ID to retrieve details of.
+ * @param   string              $email The SELMA student email address to retrieve details of.
+ * @return  array               $student The student's details, or warning if none found.
+ * @throws  coding_exception
+ * @throws  dml_exception
+ */
+function enrol_selma_get_student(int $studentid, string $email) {
+    global $DB;
+    $warnings = [];
+    $student = false;
+
+    // Lookup using SELMA student ID first.
+    if (isset($studentid)) {
+        $student = $DB->get_record('user', array('idnumber' => $studentid), 'id, firstname, lastname, email, idnumber');
+    }
+
+    // If not found, try looking up by email.
+    if ($student === false) {
+        $warnings[] = [
+            'item' => get_string('pluginname', 'enrol_selma'),
+            'itemid' => 1,
+            'warningcode' => get_string('warning_code_notfound', 'enrol_selma'),
+            'message' => get_string('warning_message_notfound', 'enrol_selma', $studentid)
+        ];
+
+        if (!empty($email)) {
+            $student =
+                $DB->get_record('user', array('email' => $email), 'id, firstname, lastname, email, idnumber');
+
+            // Return 'not found' if email record could not be found.
+            if ($student === false) {
+                $warnings[] = [
+                    'item' => get_string('pluginname', 'enrol_selma'),
+                    'itemid' => 1,
+                    'warningcode' => get_string('warning_code_notfound', 'enrol_selma'),
+                    'message' => get_string('warning_message_notfound', 'enrol_selma', $email)
+                ];
+
+                $student['warnings'] = $warnings;
+
+                // Return warning - and ONLY warning if both student ID & email lookup failed.
+                return $student;
+            }
+        }
+    }
+
+    // Handle the scenario when a user has no idnumber yet (it's an optional field in Moodle).
+    if (empty($student->idnumber)) {
+        unset($student->idnumber);
+    }
+
+    // Cast object to array.
+    $student = (array)$student;
+
+    $dupeemails = get_config('core', 'allowaccountssameemail');
+
+    // Warn if duplicate emails are allowed.
+    if ($dupeemails !== false && $dupeemails === '1') {
+        $warnings[] = [
+            'item' => get_string('pluginname', 'enrol_selma'),
+            'itemid' => 1,
+            'warningcode' => get_string('warning_code_duplicatesallowed', 'enrol_selma'),
+            'message' => get_string('warning_message_duplicatesallowed', 'enrol_selma')
+        ];
+    }
+
+    if (!empty($warnings)) {
+        $student['warnings'] = $warnings;
+    }
+
+    return $student;
 }

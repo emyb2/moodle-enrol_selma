@@ -49,7 +49,7 @@ $course->customfield_test = 8;
 
 $course->save();
 
-print_object($course);
+var_dump($course);
 die();
 
 // Configs.
