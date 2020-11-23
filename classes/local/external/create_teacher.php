@@ -67,7 +67,7 @@ class create_teacher extends external_api {
     /**
      * The function itself - let's create a teacher.
      *
-     * @param array $teacher Teacher user's details (SELMA fields).
+     * @param   array   $teacher Teacher user's details (SELMA fields).
      * @return  array   Array of created user ID and warning messages, if any.
      */
     public static function create_teacher(array $teacher) {

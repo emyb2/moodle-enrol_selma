@@ -214,13 +214,25 @@ class property_map_factory {
         );
         foreach (profile_get_custom_fields() as $customfield) {
             $name = 'profile_field_' . $customfield->shortname;
+            $default = null;
+
+            // Handle default values (or anything) for expected custom profile fields.
+            if ($customfield->shortname === 'teacherid') {
+                $default = 'teacherid';
+
+                // If we're dealing with a teacher, a student ID should not be required.
+                $studentid = $propertymap->get_property('idnumber');
+
+                $studentid->set_required(false);
+            }
+
             $propertymap->add_mapped_property(
                 new mapped_property(
                     $user,
                     $name,
                     $customfield->name,
                     null,
-                    null,
+                    $default,
                     false
                 )
             );

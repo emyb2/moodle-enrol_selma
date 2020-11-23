@@ -24,3 +24,6 @@
 
 .settingwarning {
   color: #900; }
+
+#page-admin-setting-usersettingsselma .form-item .alert {
+  margin-bottom: 1.5em; }

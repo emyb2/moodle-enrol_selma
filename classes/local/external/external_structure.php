@@ -16,6 +16,7 @@
 
 namespace enrol_selma\local\external;
 
+use coding_exception;
 use context_system;
 use external_api;
 use external_function_parameters;
@@ -26,12 +27,31 @@ use external_value;
 defined('MOODLE_INTERNAL') || die();
 
 class external_structure {
+    /**
+     * Single course structure that can be reused in multiple service functions.
+     *
+     * @return array|external_value[]
+     * @throws coding_exception
+     */
+    public static function get_course_structure() : array {
+        return [
+            'fullname' => new external_value(PARAM_TEXT,
+                get_string('create_course_parameters::fullname', 'enrol_selma')
+            ),
+            'shortname' => new external_value(PARAM_TEXT,
+                get_string('create_course_parameters::shortname', 'enrol_selma')
+            ),
+            'idnumber' => new external_value(PARAM_TEXT,
+                get_string('create_course_parameters::idnumber', 'enrol_selma')
+            )
+        ];
+    }
 
     /**
      * Single student structure that can be reused in multiple service functions.
      *
      * @return array|external_value[]
-     * @throws \coding_exception
+     * @throws coding_exception
      */
     public static function get_student_structure() : array {
         return [
@@ -99,27 +119,26 @@ class external_structure {
                 PARAM_INT,
                 get_string('moodleuserid', 'enrol_selma'),
                 VALUE_OPTIONAL
-            ),
+            )
         ];
     }
 
     /**
-     * Single course structure that can be reused in multiple service functions.
+     * Single teacher structure that can be reused in multiple service functions.
      *
      * @return array|external_value[]
-     * @throws \coding_exception
+     * @throws coding_exception
      */
-    public static function get_course_structure() : array {
-        return [
-            'fullname' => new external_value(PARAM_TEXT,
-                get_string('create_course_parameters::fullname', 'enrol_selma')
-            ),
-            'shortname' => new external_value(PARAM_TEXT,
-                get_string('create_course_parameters::shortname', 'enrol_selma')
-            ),
-            'idnumber' => new external_value(PARAM_TEXT,
-                get_string('create_course_parameters::idnumber', 'enrol_selma')
-            )
-        ];
+    public static function get_teacher_structure() : array {
+        // Same as student structure, but add teacher ID.
+        $ts = self::get_student_structure();
+
+        $ts['teacherid'] = new external_value(
+            PARAM_ALPHANUMEXT,
+            get_string('create_teacher_parameters::teacherid', 'enrol_selma'),
+            VALUE_OPTIONAL
+        );
+
+        return $ts;
     }
 }

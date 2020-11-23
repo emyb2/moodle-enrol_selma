@@ -586,7 +586,7 @@ function enrol_selma_validate_profile_mapping() {
     // Check each setting if profilemap.
     foreach ($selmasettings as $key => $value) {
         // We only check if profilemaps have duplicates.
-        if (stripos($key, 'profilemap_') === false) {
+        if (stripos($key, 'upm_') === false || empty($value)) {
             // Not profilemap - remove.
             unset($selmasettings[$key]);
         }
@@ -608,7 +608,7 @@ function enrol_selma_validate_profile_mapping() {
  * @return  array   Returns array of which Moodle fields the SELMA fields are mapped to.
  */
 function enrol_selma_get_profile_mapping() {
-    $searchstring = 'profilemap_';
+    $searchstring = 'upm_profile_field_';
 
     // TODO - Get all and filter dupes or be specific?
     // Get all the plugin's configs.
@@ -996,6 +996,37 @@ function enrol_selma_update_student_from_selma(array $selmadata, stdClass $confi
     $userpropertymap->write_data($selmadata);
     $user->save();
     return $user;
+}
+
+/**
+ * Create a Moodle user record based on SELMA teacher data.
+ *
+ * @param   array               $selmadata Data from SELMA - teacher user info.
+ * @param   stdClass            $config SELMA enrol plugin's configs.
+ * @return  array               Created user ID and/or waarning(s).
+ * @throws  coding_exception
+ * @throws  dml_exception
+ * @throws  moodle_exception
+ */
+function enrol_selma_create_teacher_from_selma(array $selmadata, stdClass $config) {
+    // We can do teacher-specific things here.
+    $moodleuserid = -1;
+    // TODO - check if 'teacherid' custom profile field exists, otherwise create it.
+
+    // And then map fields the same as students.
+    $user = enrol_selma_create_student_from_selma($selmadata, $config);
+
+    if (isset($user) && !empty($user->id)) {
+        $moodleuserid = $user->id;
+    }
+
+    // TODO - Handle/create appropriate warning messages.
+
+    return [
+        'userid' => $moodleuserid
+    ];
+
+
 }
 
 /**

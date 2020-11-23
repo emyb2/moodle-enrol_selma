@@ -99,4 +99,15 @@ class mapped_property {
         }
     }
 
+    /**
+     * Sets whether property is required or not based on given bool.
+     *
+     * @param   bool    $required Whether property is required or not - true or false.
+     * @return  $this
+     */
+    public function set_required(bool $required) : self {
+        $this->required = $required;
+
+        return $this;
+    }
 }
