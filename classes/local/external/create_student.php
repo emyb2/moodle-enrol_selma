@@ -60,7 +60,7 @@ class create_student extends external_api {
         $warnings = [];
         $selmadata = $params['student'];
         try {
-            $user = enrol_selma_create_student_from_selma($selmadata, get_config('enrol_selma'));
+            $user = enrol_selma_create_student_from_selma($selmadata);
             if ($user->id >= 1) {
                 $status = 200;
                 $moodleuserid = $user->id;

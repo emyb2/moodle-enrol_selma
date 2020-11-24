@@ -143,7 +143,7 @@ $string['profilemap_email1::description'] = '<sup class="settingwarning">Enforce
 $string['profilemap_id'] = 'SELMA ID';
 $string['profilemap_id::description'] = '<sup class="settingwarning">Enforced to preserve data integrity.</sup>';
 $string['profilemap_mobilephone'] = 'SELMA mobilephone';
-$string['profilemap_mobilephone::description'] = 'Which Moodle field the SELMA mobilephone field can be mapped to.';
+$string['profilemap_mobilephone::description'] = 'Which SELMA field the Moodle mobilephone field should be populated with.';
 $string['profilemap_secondaryphone'] = 'SELMA secondaryphone';
 $string['profilemap_secondaryphone::description'] = 'Which Moodle field the SELMA secondaryphone field can be mapped to.';
 $string['profilemap_gender'] = 'SELMA gender';
@@ -356,6 +356,9 @@ Please login {$a->site} and accept any privacy policies and reset password.
 // Exceptions.
 $string['exception_bepositive'] = "Parameters must be positive values";
 $string['exception_valuerequired'] = 'Value required for \'{$a}\'';
+$string['exception_fieldnotexist'] = 'Field \'{$a}\' does not exist.';
+$string['exception_existsalready'] = 'Found existing record(s) for: {$a}';
+
 
 // TODO Sort.
 $string['duplicateemailaddressesnotallowed'] = 'Duplicate email addresses not allowed by configuration';

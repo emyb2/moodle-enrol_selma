@@ -240,6 +240,7 @@ class property_map_factory {
         if (!is_null($config)) {
             $propertymap->set_mapped_properties_from_config($config);
         }
+
         return $propertymap;
     }
 }

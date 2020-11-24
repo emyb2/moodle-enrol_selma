@@ -83,7 +83,7 @@ class create_teacher extends external_api {
         require_capability('moodle/user:create', $context);
 
         // Create teacher and return.
-        return enrol_selma_create_teacher_from_selma($params['teacher'], get_config('enrol_selma'));
+        return enrol_selma_create_teacher_from_selma($params['teacher']);
     }
 
     /**

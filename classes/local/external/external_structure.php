@@ -133,10 +133,17 @@ class external_structure {
         // Same as student structure, but add teacher ID.
         $ts = self::get_student_structure();
 
+        // Set student ID to optional.
+        $ts['studentid'] = new external_value(
+            PARAM_ALPHANUMEXT,
+            get_string('studentid', 'enrol_selma'),
+            VALUE_OPTIONAL
+        );
+
+        // Add teacher ID requirement.
         $ts['teacherid'] = new external_value(
             PARAM_ALPHANUMEXT,
-            get_string('create_teacher_parameters::teacherid', 'enrol_selma'),
-            VALUE_OPTIONAL
+            get_string('create_teacher_parameters::teacherid', 'enrol_selma')
         );
 
         return $ts;
