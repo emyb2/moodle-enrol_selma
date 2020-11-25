@@ -23,6 +23,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use enrol_selma\local\mapped_property;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $ADMIN;
@@ -142,7 +144,7 @@ if ($hassiteconfig) {
     $propertymapfactory = new enrol_selma\local\factory\property_map_factory();
     $userpropertymap = $propertymapfactory->build_user_property_map($user);
     foreach ($userpropertymap as $propertyname => $mappedproperty) {
-        /** @var \enrol_selma\local\mapped_property $mappedproperty */
+        /** @var mapped_property $mappedproperty */
         $setting = new admin_setting_configtext(
             "{$component}/{$userpropertymap->get_config_name_grouping_prefix()}{$mappedproperty->get_name()}",
             $mappedproperty->get_human_friendly_name(),
@@ -157,214 +159,6 @@ if ($hassiteconfig) {
 
         $usersettings->add($setting);
     }
-
-    //// Get all the allowed fields for the options.
-    //$options = enrol_selma_get_allowed_user_fields();
-    //
-    //// Username.
-    //$setting = new admin_setting_configselect_with_enabled(
-    //    "{$component}/profilemap_username",
-    //    new lang_string('profilemap_username', $component),
-    //    new lang_string('profilemap_username::description', $component),
-    //    'username',
-    //    ['username' => 'username'],
-    //    false
-    //);
-    //
-    //// Add some text to description if setting value is a duplicate.
-    //if (in_array($setting->get_setting(), $duplicates)) {
-    //    $setting->description = new lang_string('profilemapduplicate', 'enrol_selma') . $setting->description;
-    //}
-    //
-    //$usersettings->add($setting);
-    //
-    //// First name.
-    //$setting = new admin_setting_configselect_with_enabled(
-    //    "{$component}/profilemap_forename",
-    //    new lang_string('profilemap_forename', $component),
-    //    new lang_string('profilemap_forename::description', $component),
-    //    'firstname',
-    //    ['firstname' => 'firstname'],
-    //    false
-    //);
-    //
-    //// Add some text to description if setting value is a duplicate.
-    //if (in_array($setting->get_setting(), $duplicates)) {
-    //    $setting->description = new lang_string('profilemapduplicate', 'enrol_selma') . $setting->description;
-    //}
-    //
-    //$usersettings->add($setting);
-    //
-    //// Last name.
-    //$setting = new admin_setting_configselect_with_enabled(
-    //    "{$component}/profilemap_lastname",
-    //    new lang_string('profilemap_lastname', $component),
-    //    new lang_string('profilemap_lastname::description', $component),
-    //    'lastname',
-    //    ['lastname' => 'lastname'],
-    //    false
-    //);
-    //
-    //// Add some text to description if setting value is a duplicate.
-    //if (in_array($setting->get_setting(), $duplicates)) {
-    //    $setting->description = new lang_string('profilemapduplicate', 'enrol_selma') . $setting->description;
-    //}
-    //
-    //$usersettings->add($setting);
-    //
-    //// Email.
-    //$setting = new admin_setting_configselect_with_enabled(
-    //    "{$component}/profilemap_email1",
-    //    new lang_string('profilemap_email1', $component),
-    //    new lang_string('profilemap_email1::description', $component),
-    //    'email',
-    //    ['email' => 'email'],
-    //    false
-    //);
-    //
-    //// Add some text to description if setting value is a duplicate.
-    //if (in_array($setting->get_setting(), $duplicates)) {
-    //    $setting->description = new lang_string('profilemapduplicate', 'enrol_selma') . $setting->description;
-    //}
-    //
-    //$usersettings->add($setting);
-    //
-    //// SELMA ID Number.
-    //$setting = new admin_setting_configselect_with_enabled(
-    //    "{$component}/profilemap_id",
-    //    new lang_string('profilemap_id', $component),
-    //    new lang_string('profilemap_id::description', $component),
-    //    'idnumber',
-    //    ['idnumber' => 'idnumber'],
-    //    false
-    //);
-    //
-    //// Add some text to description if setting value is a duplicate.
-    //if (in_array($setting->get_setting(), $duplicates)) {
-    //    $setting->description = new lang_string('profilemapduplicate', 'enrol_selma') . $setting->description;
-    //}
-    //
-    //$usersettings->add($setting);
-    //
-    //// Mobile phone number.
-    //$setting = new admin_setting_configselect_with_enabled(
-    //    "{$component}/profilemap_mobilephone",
-    //    new lang_string('profilemap_mobilephone', $component),
-    //    new lang_string('profilemap_mobilephone::description', $component),
-    //    'phone1',
-    //    $options,
-    //    true
-    //);
-    //
-    //// Add some text to description if setting value is a duplicate.
-    //if (in_array($setting->get_setting(), $duplicates)) {
-    //    $setting->description = new lang_string('profilemapduplicate', 'enrol_selma') . $setting->description;
-    //}
-    //
-    //$usersettings->add($setting);
-    //
-    //// Phone/Landline number.
-    //$setting = new admin_setting_configselect_with_enabled(
-    //    "{$component}/profilemap_secondaryphone",
-    //    new lang_string('profilemap_secondaryphone', $component),
-    //    new lang_string('profilemap_secondaryphone::description', $component),
-    //    'phone2',
-    //    $options,
-    //    true
-    //);
-    //
-    //// Add some text to description if setting value is a duplicate.
-    //if (in_array($setting->get_setting(), $duplicates)) {
-    //    $setting->description = new lang_string('profilemapduplicate', 'enrol_selma') . $setting->description;
-    //}
-    //
-    //$usersettings->add($setting);
-    //
-    //// Gender.
-    //$setting = new admin_setting_configselect_with_enabled(
-    //    "{$component}/profilemap_gender",
-    //    new lang_string('profilemap_gender', $component),
-    //    new lang_string('profilemap_gender::description', $component),
-    //    null,
-    //    $options,
-    //    true
-    //);
-    //
-    //// Add some text to description if setting value is a duplicate.
-    //if (in_array($setting->get_setting(), $duplicates)) {
-    //    $setting->description = new lang_string('profilemapduplicate', 'enrol_selma') . $setting->description;
-    //}
-    //
-    //$usersettings->add($setting);
-    //
-    //// Date of Birth.
-    //$setting = new admin_setting_configselect_with_enabled(
-    //    "{$component}/profilemap_dob",
-    //    new lang_string('profilemap_dob', $component),
-    //    new lang_string('profilemap_dob::description', $component),
-    //    null,
-    //    $options,
-    //    true
-    //);
-    //
-    //// Add some text to description if setting value is a duplicate.
-    //if (in_array($setting->get_setting(), $duplicates)) {
-    //    $setting->description = new lang_string('profilemapduplicate', 'enrol_selma') . $setting->description;
-    //}
-    //
-    //$usersettings->add($setting);
-    //
-    //// NSN.
-    //$setting = new admin_setting_configselect_with_enabled(
-    //    "{$component}/profilemap_nsn",
-    //    new lang_string('profilemap_nsn', $component),
-    //    new lang_string('profilemap_nsn::description', $component),
-    //    null,
-    //    $options,
-    //    true
-    //);
-    //
-    //// Add some text to description if setting value is a duplicate.
-    //if (in_array($setting->get_setting(), $duplicates)) {
-    //    $setting->description = new lang_string('profilemapduplicate', 'enrol_selma') . $setting->description;
-    //}
-    //
-    //$usersettings->add($setting);
-    //
-    //// TODO - Status can possibly manage Suspended/Withdrawn status?
-    //// Status.
-    //$setting = new admin_setting_configselect_with_enabled(
-    //    "{$component}/profilemap_status",
-    //    new lang_string('profilemap_status', $component),
-    //    new lang_string('profilemap_status::description', $component),
-    //    null,
-    //    $options,
-    //    true
-    //);
-    //
-    //// Add some text to description if setting value is a duplicate.
-    //if (in_array($setting->get_setting(), $duplicates)) {
-    //    $setting->description = new lang_string('profilemapduplicate', 'enrol_selma') . $setting->description;
-    //}
-    //
-    //$usersettings->add($setting);
-    //
-    //// Preferred name.
-    //$setting = new admin_setting_configselect_with_enabled(
-    //    "{$component}/profilemap_preferredname",
-    //    new lang_string('profilemap_preferredname', $component),
-    //    new lang_string('profilemap_preferredname::description', $component),
-    //    'alternatename',
-    //    $options,
-    //    true
-    //);
-    //
-    //// Add some text to description if setting value is a duplicate.
-    //if (in_array($setting->get_setting(), $duplicates)) {
-    //    $setting->description = new lang_string('profilemapduplicate', 'enrol_selma') . $setting->description;
-    //}
-    //
-    //$usersettings->add($setting);
 
     // Welcome Email.
     $setting = new admin_setting_heading(

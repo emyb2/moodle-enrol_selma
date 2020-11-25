@@ -610,7 +610,7 @@ function enrol_selma_validate_profile_mapping() {
  * @return  array   Returns array of which Moodle fields the SELMA fields are mapped to.
  */
 function enrol_selma_get_profile_mapping() {
-    $searchstring = 'upm_profile_field_';
+    $searchstring = 'upm_';
 
     // TODO - Get all and filter dupes or be specific?
     // Get all the plugin's configs.

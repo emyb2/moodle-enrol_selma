@@ -152,7 +152,6 @@ class user extends stdClass {
     }
 
     public function set_email(string $email) : self {
-        global $CFG, $DB;
         if (!validate_email($email)) {
             throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'email');
         }
