@@ -28,12 +28,9 @@ namespace enrol_selma\local\external;
 use context_system;
 use external_api;
 use external_function_parameters;
-use external_multiple_structure;
 use external_single_structure;
 use external_value;
 use external_warnings;
-use moodle_exception;
-use dml_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
