@@ -26,7 +26,6 @@ namespace enrol_selma\local;
 
 defined('MOODLE_INTERNAL') || die();
 
-use core_text;
 use enrol_selma\local\utilities;
 use moodle_exception;
 use profile_field_base;
@@ -70,7 +69,7 @@ class user extends stdClass {
     public $email;
 
     /** @var int $idnumber User SELMA ID number. */
-    public $idnumber;
+    public $idnumber = '';
 
     /** @var string $phone1 User primary phone number. */
     public $phone1 = '';
@@ -153,7 +152,6 @@ class user extends stdClass {
     }
 
     public function set_email(string $email) : self {
-        global $CFG, $DB;
         if (!validate_email($email)) {
             throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'email');
         }
@@ -239,9 +237,6 @@ class user extends stdClass {
         if (trim($this->email) === '') {
             throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'email');
         }
-        if (trim($this->idnumber) === '') {
-            throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'idnumber');
-        }
         $this->password = $this->newpassword;
         if ($this->id <= 0) {
             // Email duplicates check.
@@ -258,14 +253,6 @@ class user extends stdClass {
                 if ($DB->record_exists_select('user', $select, $params)) {
                     throw new moodle_exception('duplicateemailaddressesnotallowed', 'enrol_selma');
                 }
-            }
-            // Unique ID number check.
-            $exists = $DB->record_exists('user',
-                ['idnumber' => $this->idnumber, 'mnethostid' => $CFG->mnet_localhost_id, 'deleted' => 0]
-            );
-            if ($exists) {
-                // TODO Provide a better explaination in exception.
-                throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'idnumber');
             }
             if (empty($this->username)) {
                 $username = utilities::generate_username($this->firstname, $this->lastname);

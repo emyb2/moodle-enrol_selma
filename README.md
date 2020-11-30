@@ -1,8 +1,13 @@
-# SELMA for Moodle Plugin #
+# SELMA for Moodle Plugin
 
 This plugin allows you to enrol your students from SELMA into Moodle courses.
 
-The plugin support:
+## Required
+To function properly, the plugin requires the following:
+* User with web service capabilities
+* A custom profile field with the shortname 'teacherid'
+_____
+**The plugin support:**
 * User creation
 * Course creation
 * User enrolment
@@ -10,7 +15,7 @@ The plugin support:
 
 TODO Provide more detailed description here.
 
-## License ##
+#### License
 
 2020 LearningWorks <selma@learningworks.ac.nz>
 

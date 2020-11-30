@@ -27,6 +27,8 @@ use core_customfield\api;
 use enrol_selma\local\course;
 use enrol_selma\local\factory\property_map_factory;
 use enrol_selma\local\factory\entity_factory;
+use enrol_selma\local\student;
+use enrol_selma\local\teacher;
 use enrol_selma\local\user;
 
 defined('MOODLE_INTERNAL') || die();
@@ -586,7 +588,7 @@ function enrol_selma_validate_profile_mapping() {
     // Check each setting if profilemap.
     foreach ($selmasettings as $key => $value) {
         // We only check if profilemaps have duplicates.
-        if (stripos($key, 'profilemap_') === false) {
+        if (stripos($key, 'upm_') === false || empty($value)) {
             // Not profilemap - remove.
             unset($selmasettings[$key]);
         }
@@ -608,7 +610,7 @@ function enrol_selma_validate_profile_mapping() {
  * @return  array   Returns array of which Moodle fields the SELMA fields are mapped to.
  */
 function enrol_selma_get_profile_mapping() {
-    $searchstring = 'profilemap_';
+    $searchstring = 'upm_';
 
     // TODO - Get all and filter dupes or be specific?
     // Get all the plugin's configs.
@@ -939,27 +941,57 @@ function enrol_selma_create_course_from_selma(array $selmadata) {
     return $course;
 }
 
+
+/**
+ * Updates a Moodle course based on new SELMA component data.
+ *
+ * @param   array               $selmadata
+ * @param   stdClass            $config
+ * @param   string              $courselinkfield
+ * @return  course
+ * @throws  coding_exception
+ * @throws  dml_exception
+ * @throws  moodle_exception
+ */
+function enrol_selma_update_course_from_selma(array $selmadata, stdClass $config, $courselinkfield = 'idnumber') {
+    global $DB;
+    require_capability('moodle/course:update', context_system::instance());
+    if (trim($courselinkfield) === '') {
+        throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, $courselinkfield);
+    }
+    $propertymapfactory = new enrol_selma\local\factory\property_map_factory();
+    // Just want the map for now.
+    $coursepropertymap = $propertymapfactory->build_course_property_map(new enrol_selma\local\course(), $config);
+    if (!$coursepropertymap->is_valid()) {
+        throw new moodle_exception($coursepropertymap->get_last_error());
+    }
+    $selmalinkfield = $coursepropertymap->get_property($courselinkfield)->get_default_mapped_property_name();
+    if (!isset($selmadata[$selmalinkfield])) {
+        throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, $selmadata);
+    }
+    $record = $DB->get_record('course', [$courselinkfield => $selmadata[$selmalinkfield]], '*', MUST_EXIST);
+    $entityfactory = new entity_factory();
+    $course = $entityfactory->build_course_from_stdclass($record);
+    $coursepropertymap = $propertymapfactory->build_course_property_map($course, $config);
+    $coursepropertymap->write_data($selmadata);
+    $course->save();
+    return $course;
+}
+
 /**
  * Create a Moodle user record based on SELMA student data.
  *
  * @param   array               $selmadata
- * @param   stdClass            $config
+ * @param   bool                $save
  * @return  user
  * @throws  coding_exception
  * @throws  dml_exception
  * @throws  moodle_exception
  */
-function enrol_selma_create_student_from_selma(array $selmadata, stdClass $config) {
-    require_capability('moodle/user:create', context_system::instance());
-    $user = new user();
-    $propertymapfactory = new property_map_factory();
-    $userpropertymap = $propertymapfactory->build_user_property_map($user, $config);
-    if (!$userpropertymap->is_valid()) {
-        throw new moodle_exception($userpropertymap->get_last_error());
-    }
-    $userpropertymap->write_data($selmadata);
-    $user->save();
-    return $user;
+function enrol_selma_create_student_from_selma(array $selmadata) {
+    $student = new student();
+    $student = enrol_selma_map_and_create_user($student, $selmadata);
+    return $student;
 }
 
 /**
@@ -999,39 +1031,59 @@ function enrol_selma_update_student_from_selma(array $selmadata, stdClass $confi
 }
 
 /**
- * Updates a Moodle course based on new SELMA component data.
+ * Create a Moodle user record based on SELMA teacher data.
  *
- * @param   array               $selmadata
- * @param   stdClass            $config
- * @param   string              $courselinkfield
- * @return  course
+ * @param   array               $selmadata Data from SELMA - teacher user info.
+ * @return  array               Created user ID and/or waarning(s).
  * @throws  coding_exception
  * @throws  dml_exception
  * @throws  moodle_exception
  */
-function enrol_selma_update_course_from_selma(array $selmadata, stdClass $config, $courselinkfield = 'idnumber') {
-    global $DB;
-    require_capability('moodle/course:update', context_system::instance());
-    if (trim($courselinkfield) === '') {
-        throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, $courselinkfield);
+function enrol_selma_create_teacher_from_selma(array $selmadata) {
+    // We can do teacher-specific things here.
+    $moodleuserid = -1;
+    // TODO - check if 'teacherid' custom profile field exists, otherwise create it.
+
+    $teacher = new teacher();
+    $teacher = enrol_selma_map_and_create_user($teacher, $selmadata);
+
+    // Only return the created user's ID.
+    if (isset($teacher) && !empty($teacher->id)) {
+        $moodleuserid = $teacher->id;
     }
-    $propertymapfactory = new enrol_selma\local\factory\property_map_factory();
-    // Just want the map for now.
-    $coursepropertymap = $propertymapfactory->build_course_property_map(new enrol_selma\local\course(), $config);
-    if (!$coursepropertymap->is_valid()) {
-        throw new moodle_exception($coursepropertymap->get_last_error());
+
+    // TODO - Handle/create appropriate warning messages.
+    return [
+        'userid' => $moodleuserid
+    ];
+}
+
+/**
+ * Maps given SELMA data to given user object and saves it (to the DB).
+ *
+ * @param   user        $user User object - teacher or student (or user).
+ * @param   array       $selmadata Data received from SELMA.
+ * @return  user        $user User object.
+ */
+function enrol_selma_map_and_create_user(user $user, array $selmadata) {
+    // Check if user has capability to do so.
+    require_capability('moodle/user:create', context_system::instance());
+
+    // Get plugin configs.
+    $config = get_config('enrol_selma');
+
+    // Map & prep object.
+    $propertymapfactory = new property_map_factory();
+    $userpropertymap = $propertymapfactory->build_user_property_map($user, $config);
+    if (!$userpropertymap->is_valid()) {
+        throw new moodle_exception($userpropertymap->get_last_error());
     }
-    $selmalinkfield = $coursepropertymap->get_property($courselinkfield)->get_default_mapped_property_name();
-    if (!isset($selmadata[$selmalinkfield])) {
-        throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, $selmadata);
-    }
-    $record = $DB->get_record('course', [$courselinkfield => $selmadata[$selmalinkfield]], '*', MUST_EXIST);
-    $entityfactory = new entity_factory();
-    $course = $entityfactory->build_course_from_stdclass($record);
-    $coursepropertymap = $propertymapfactory->build_course_property_map($course, $config);
-    $coursepropertymap->write_data($selmadata);
-    $course->save();
-    return $course;
+    $userpropertymap->write_data($selmadata);
+
+    // Create user (in DB).
+    $user->save();
+
+    return $user;
 }
 
 /**

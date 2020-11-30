@@ -157,6 +157,17 @@ $functions = [
         'type'          => 'read',
         'ajax'          => false,
         'capabilities'  => ''
+    ],
+    'enrol_selma_create_teacher' => [
+        'classname'     => 'enrol_selma\local\external\create_teacher',
+        'methodname'    => 'create_teacher',
+        'description'   => new lang_string(
+            'create_teacher:description',
+            'enrol_selma'
+        ),
+        'type'          => 'write',
+        'ajax'          => false,
+        'capabilities'  => 'moodle/user:create'
     ]
 ];
 $services = [
@@ -175,7 +186,8 @@ $services = [
             'enrol_selma_add_user_to_intake',
             'enrol_selma_create_student',
             'enrol_selma_update_student',
-            'enrol_selma_get_student'
+            'enrol_selma_get_student',
+            'enrol_selma_create_teacher'
         ],
         'restrictedusers' => 0
     ]

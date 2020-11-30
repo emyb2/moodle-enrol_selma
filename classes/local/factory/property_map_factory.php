@@ -113,121 +113,56 @@ class property_map_factory {
         $propertymap = new property_map($user);
         $propertymap->set_config_name_grouping_prefix('upm_');
         $propertymap->add_mapped_property(
-            new mapped_property(
-                $user,
-                'firstname',
-                get_string('firstname'),
-                null,
-                'firstname',
-                true
-            )
+            new mapped_property($user, 'firstname', get_string('firstname'), null, 'firstname', true)
         );
         $propertymap->add_mapped_property(
-            new mapped_property(
-                $user,
-                'lastname',
-                get_string('lastname'),
-                null,
-                'lastname',
-                true
-            )
+            new mapped_property($user, 'lastname', get_string('lastname'), null, 'lastname', true)
         );
         $propertymap->add_mapped_property(
-            new mapped_property(
-                $user,
-                'email',
-                get_string('email'),
-                null,
-                'email',
-                true
-            )
+            new mapped_property($user, 'email', get_string('email'), null, 'email', true)
         );
         $propertymap->add_mapped_property(
-            new mapped_property(
-                $user,
-                'idnumber',
-                get_string('idnumber'),
-                null,
-                'studentid',
-                true
-            )
+            new mapped_property($user, 'idnumber', get_string('idnumber'), null, 'studentid', true)
         );
         $propertymap->add_mapped_property(
-            new mapped_property(
-                $user,
-                'institution',
-                get_string('institution'),
-                null,
-                null,
-                false
-            )
+            new mapped_property($user, 'institution', get_string('institution'))
         );
         $propertymap->add_mapped_property(
-            new mapped_property(
-                $user,
-                'department',
-                get_string('department'),
-                null,
-                null,
-                false
-            )
+            new mapped_property($user, 'department', get_string('department'))
         );
         $propertymap->add_mapped_property(
-            new mapped_property(
-                $user,
-                'phone1',
-                get_string('phone1'),
-                null,
-                null,
-                false
-            )
+            new mapped_property($user, 'phone1', get_string('phone1'))
         );
         $propertymap->add_mapped_property(
-            new mapped_property(
-                $user,
-                'phone2',
-                get_string('phone2'),
-                null,
-                null,
-                false
-            )
+            new mapped_property($user, 'phone2', get_string('phone2'))
         );
         $propertymap->add_mapped_property(
-            new mapped_property(
-                $user,
-                'middlename',
-                get_string('middlename'),
-                null,
-                null,
-                false
-            )
+            new mapped_property($user, 'middlename', get_string('middlename'))
         );
         $propertymap->add_mapped_property(
-            new mapped_property(
-                $user,
-                'alternatename',
-                get_string('alternatename'),
-                null,
-                null,
-                false
-            )
+            new mapped_property($user, 'alternatename', get_string('alternatename'))
         );
         foreach (profile_get_custom_fields() as $customfield) {
             $name = 'profile_field_' . $customfield->shortname;
+            $default = null;
+
+            // Handle default values (or anything) for expected custom profile fields.
+            if ($customfield->shortname === 'teacherid') {
+                $default = 'teacherid';
+
+                // If we're dealing with a teacher, a student ID should not be required.
+                $studentid = $propertymap->get_property('idnumber');
+                $studentid->set_required(false);
+            }
+
             $propertymap->add_mapped_property(
-                new mapped_property(
-                    $user,
-                    $name,
-                    $customfield->name,
-                    null,
-                    null,
-                    false
-                )
+                new mapped_property($user, $name, $customfield->name, null, $default)
             );
         }
         if (!is_null($config)) {
             $propertymap->set_mapped_properties_from_config($config);
         }
+
         return $propertymap;
     }
 }

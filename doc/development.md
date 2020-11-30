@@ -53,7 +53,7 @@ ___
 ## TravisCI
 ___
 ## GitLabCI
-GitLab is also used and makes testing the plugin locally easier.
+GitLabCI is also used and makes testing the plugin locally easier.
 
 #### QUICK SETUP:
 * Install Runner - [https://docs.gitlab.com/runner/install/](https://docs.gitlab.com/runner/install/)

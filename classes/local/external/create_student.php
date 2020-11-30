@@ -19,7 +19,6 @@ namespace enrol_selma\local\external;
 use context_system;
 use external_api;
 use external_function_parameters;
-use external_multiple_structure;
 use external_single_structure;
 use external_value;
 use external_warnings;
@@ -60,7 +59,7 @@ class create_student extends external_api {
         $warnings = [];
         $selmadata = $params['student'];
         try {
-            $user = enrol_selma_create_student_from_selma($selmadata, get_config('enrol_selma'));
+            $user = enrol_selma_create_student_from_selma($selmadata);
             if ($user->id >= 1) {
                 $status = 200;
                 $moodleuserid = $user->id;

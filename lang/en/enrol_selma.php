@@ -128,10 +128,10 @@ $string['userdefaultsheading::description'] = 'Default user preferences as set-u
                                                 You can find the \'User default preferences\' here:<br>
                                                 <a href="' . $CFG->wwwroot . '/admin/settings.php?section=userdefaultpreferences">User default preferences</a>';
 $string['profilemapheading'] = 'User profile field mapping';
-$string['profilemapheading::description'] = 'Below you can specify which SELMA user profile field is mapped to which Moodle profile field. Custom profile fields are also supported.';
+$string['profilemapheading::description'] = 'Below you can specify which Moodle user profile field (label) is populated with which SELMA user profile field (textbox). Custom profile fields are also supported and will appear here once created.<br>';
 $string['profilemap_duplicatewarning'] = '<span class="settingwarning">WARNING - Duplicates detected!</span>';
-$string['profilemap_duplicatewarning::description'] = '<span class="settingwarning">Duplicates values detected: {$a}</span><hr>';
-$string['profilemapduplicate'] = '<div class="alert alert-danger">Duplicate value!</div>';
+$string['profilemap_duplicatewarning::description'] = '<span class="settingwarning">Duplicate values detected: {$a}</span><hr>';
+$string['profilemapduplicate'] = '<div class="alert alert-danger">Duplicate value: "{$a}"!</div>';
 $string['profilemap_username'] = 'SELMA username';
 $string['profilemap_username::description'] = '<sup class="settingwarning">Enforced to preserve data integrity.</sup>';
 $string['profilemap_forename'] = 'SELMA forename';
@@ -143,7 +143,7 @@ $string['profilemap_email1::description'] = '<sup class="settingwarning">Enforce
 $string['profilemap_id'] = 'SELMA ID';
 $string['profilemap_id::description'] = '<sup class="settingwarning">Enforced to preserve data integrity.</sup>';
 $string['profilemap_mobilephone'] = 'SELMA mobilephone';
-$string['profilemap_mobilephone::description'] = 'Which Moodle field the SELMA mobilephone field can be mapped to.';
+$string['profilemap_mobilephone::description'] = 'Which SELMA field the Moodle mobilephone field should be populated with.';
 $string['profilemap_secondaryphone'] = 'SELMA secondaryphone';
 $string['profilemap_secondaryphone::description'] = 'Which Moodle field the SELMA secondaryphone field can be mapped to.';
 $string['profilemap_gender'] = 'SELMA gender';
@@ -260,12 +260,16 @@ $string['get_student_parameters'] = 'Expected parameters to retrieve a student\'
 $string['get_student_parameters::studentid'] = 'Student SELMA ID.';
 $string['get_student_parameters::email'] = 'Student SELMA email.';
 $string['get_student_returns'] = 'Returned values when calling this function.';
-$string['get_student_returns::id'] = 'Student\'s Moodle ID';
-$string['get_student_returns::firstname'] = 'Student\'s Moodle firstname';
-$string['get_student_returns::lastname'] = 'Student\'s Moodle lastname';
-$string['get_student_returns::email'] = 'Student\'s Moodle email address';
-$string['get_student_returns::idnumber'] = 'Student\'s SELMA ID';
-
+$string['get_student_returns::id'] = 'Student\'s Moodle ID.';
+$string['get_student_returns::firstname'] = 'Student\'s Moodle firstname.';
+$string['get_student_returns::lastname'] = 'Student\'s Moodle lastname.';
+$string['get_student_returns::email'] = 'Student\'s Moodle email address.';
+$string['get_student_returns::idnumber'] = 'Student\'s SELMA ID.';
+$string['create_teacher:description'] = '***WIP - Creates a teacher account from given information.***';
+$string['create_teacher_parameters'] = 'Expected parameters to create a teacher.';
+$string['create_teacher_parameters::teacherid'] = 'SELMA Teacher user ID.';
+$string['create_teacher_returns'] = 'Returned values when calling this function.';
+$string['create_teacher_returns::userid'] = 'Student\'s Moodle ID';
 
 // Web services warnings.
 $string['warning_code_notcapable'] = 'notcapable';
@@ -352,6 +356,9 @@ Please login {$a->site} and accept any privacy policies and reset password.
 // Exceptions.
 $string['exception_bepositive'] = "Parameters must be positive values";
 $string['exception_valuerequired'] = 'Value required for \'{$a}\'';
+$string['exception_fieldnotexist'] = 'Field \'{$a}\' does not exist.';
+$string['exception_existsalready'] = 'Found existing record(s) for: {$a}';
+
 
 // TODO Sort.
 $string['duplicateemailaddressesnotallowed'] = 'Duplicate email addresses not allowed by configuration';
