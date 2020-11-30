@@ -59,17 +59,6 @@ $functions = [
         'ajax'          => false,
         'capabilities'  => ''
     ],
-    'enrol_selma_create_users' => [
-        'classname'     => 'enrol_selma\local\external\create_users',
-        'methodname'    => 'create_users',
-        'description'   => new lang_string(
-            'create_users::description',
-            'enrol_selma'
-        ),
-        'type'          => 'write',
-        'ajax'          => false,
-        'capabilities'  => 'moodle/user:create'
-    ],
     'enrol_selma_create_intake' => [
         'classname'     => 'enrol_selma\local\external\create_intake',
         'methodname'    => 'create_intake',
@@ -167,7 +156,6 @@ $services = [
             'enrol_selma_create_course',
             'enrol_selma_get_gradebook_items',
             'enrol_selma_get_all_courses',
-            'enrol_selma_create_users',
             'enrol_selma_create_intake',
             'enrol_selma_get_intake',
             'enrol_selma_get_intake_courses',
