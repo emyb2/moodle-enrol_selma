@@ -1268,6 +1268,7 @@ function enrol_selma_get_student(int $studentid, string $email) {
 
     // If not found, try looking up by email.
     if ($student === false) {
+        // TODO - improve warning message - user not found by idnumber.
         $warnings[] = [
             'item' => get_string('pluginname', 'enrol_selma'),
             'itemid' => 1,
@@ -1276,11 +1277,11 @@ function enrol_selma_get_student(int $studentid, string $email) {
         ];
 
         if (!empty($email)) {
-            $student =
-                $DB->get_record('user', array('email' => $email), 'id, firstname, lastname, email, idnumber');
+            $student = $DB->get_record('user', array('email' => $email), 'id, firstname, lastname, email, idnumber');
 
             // Return 'not found' if email record could not be found.
             if ($student === false) {
+                // TODO - improve warning message - user not found by email.
                 $warnings[] = [
                     'item' => get_string('pluginname', 'enrol_selma'),
                     'itemid' => 1,
@@ -1302,7 +1303,7 @@ function enrol_selma_get_student(int $studentid, string $email) {
     }
 
     // Cast object to array.
-    $student = (array)$student;
+    $student = (array) $student;
 
     $dupeemails = get_config('core', 'allowaccountssameemail');
 
@@ -1321,4 +1322,130 @@ function enrol_selma_get_student(int $studentid, string $email) {
     }
 
     return $student;
+}
+
+/**
+ * Get a SELMA teacher's details (if any).
+ *
+ * @param   string                 $teacherid The SELMA teacher/tutor ID to retrieve details of.
+ * @param   string              $email The SELMA teacher/tutor email address to retrieve details of.
+ * @return  array               $teacher The teacher's details, or warning if none found.
+ * @throws  coding_exception
+ * @throws  dml_exception
+ */
+function enrol_selma_get_teacher(string $teacherid, string $email) {
+    global $DB;
+    $warnings = [];
+    $teacher = false;
+
+    // Lookup using SELMA teacher ID first.
+    if (isset($teacherid)) {
+        // Check if the 'teacherid' customfield exists.
+        $fieldid = enrol_selma_get_teacherid_field();
+
+        // Throw warning, if not, but we can still try and find by email if duplicates are not allowed.
+        if ($fieldid === false) {
+            // TODO - improve warning message - teacherid custom profile field not found.
+            $warnings[] = [
+                'item' => get_string('pluginname', 'enrol_selma'),
+                'itemid' => 1,
+                'warningcode' => get_string('warning_code_notfound', 'enrol_selma'),
+                'message' => get_string('warning_message_notfound', 'enrol_selma', $fieldid)
+            ];
+        } else {
+            // There should only be one user with that Teacher ID.
+            $select = sprintf("fieldid = :fieldid AND %s = :data", $DB->sql_compare_text('data'));
+
+            $idexists = $DB->get_record_select(
+                'user_info_data',
+                $select,
+                array('fieldid' => $fieldid, 'data' => $teacherid),
+                'userid'
+            );
+
+            // Now get the actual user record.
+            $teacher = $DB->get_record('user', array('id' => $idexists->userid), 'id, firstname, lastname, email, idnumber');
+        }
+    }
+
+    // If not found, try looking up by email.
+    if ($teacher === false) {
+        // TODO - improve warning message - user not found by id/teacherid.
+        $warnings[] = [
+            'item' => get_string('pluginname', 'enrol_selma'),
+            'itemid' => 1,
+            'warningcode' => get_string('warning_code_notfound', 'enrol_selma'),
+            'message' => get_string('warning_message_notfound', 'enrol_selma', $teacherid)
+        ];
+
+        if (!empty($email)) {
+            $teacher = $DB->get_record('user', array('email' => $email), 'id, firstname, lastname, email, idnumber');
+
+            // Return 'not found' if email record could not be found.
+            if ($teacher === false) {
+                // TODO - improve warning message - user not found by email.
+                $warnings[] = [
+                    'item' => get_string('pluginname', 'enrol_selma'),
+                    'itemid' => 1,
+                    'warningcode' => get_string('warning_code_notfound', 'enrol_selma'),
+                    'message' => get_string('warning_message_notfound', 'enrol_selma', $email)
+                ];
+
+                $teacher['warnings'] = $warnings;
+
+                // Return warning - and ONLY warning if both student ID & email lookup failed.
+                return $teacher;
+            }
+        }
+    }
+
+    // Handle the scenario when a user has no idnumber yet (it's an optional field in Moodle).
+    if (empty($teacher->idnumber)) {
+        unset($teacher->idnumber);
+    }
+
+    // TODO - return actual teacherid, not the sent one (or return nothing).
+    // Include teacherid in response.
+    $teacher->teacherid = $teacherid;
+
+    // Cast object to array.
+    $teacher = (array) $teacher;
+
+    $dupeemails = get_config('core', 'allowaccountssameemail');
+
+    // Warn if duplicate emails are allowed.
+    if ($dupeemails !== false && $dupeemails === '1') {
+        $warnings[] = [
+            'item' => get_string('pluginname', 'enrol_selma'),
+            'itemid' => 1,
+            'warningcode' => get_string('warning_code_duplicatesallowed', 'enrol_selma'),
+            'message' => get_string('warning_message_duplicatesallowed', 'enrol_selma')
+        ];
+    }
+
+    if (!empty($warnings)) {
+        $teacher['warnings'] = $warnings;
+    }
+
+    return $teacher;
+}
+
+/**
+ * Get the 'teacherid' custom profile field (if any).
+ *
+ * @return  int|bool            ID of field, or false if not found.
+ */
+function enrol_selma_get_teacherid_field() {
+    global $DB;
+
+    // We expect a custom textfield with the shortname 'teacherid'.
+    $fieldid = $DB->get_record('user_info_field', array('shortname' => 'teacherid', 'datatype' => 'text'), 'id');
+
+    // Return false if not found.
+    if ($fieldid === false) {
+        return $fieldid;
+    }
+
+    // Otherwise, send the DB id back.
+    return $fieldid->id;
 }
