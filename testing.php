@@ -40,6 +40,12 @@ require_once(dirname(__FILE__, 3) . '/group/lib.php');
 
 global $DB;
 
+$enrolled = enrol_selma_enrol_user(2, 10612954);
+
+var_dump($enrolled);
+die();
+
+
 $course = new course();
 $course->id = 41;
 $course->fullname = "TestingUpdate";
@@ -50,7 +56,6 @@ $course->customfield_test = 8;
 $course->save();
 
 var_dump($course);
-die();
 
 // Configs.
 var_dump(get_config('enrol_selma', 'faake'));

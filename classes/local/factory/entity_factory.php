@@ -19,8 +19,10 @@ namespace enrol_selma\local\factory;
 defined('MOODLE_INTERNAL') || die();
 
 use enrol_selma\local\course;
-use stdClass;
+use enrol_selma\local\student;
+use enrol_selma\local\teacher;
 use enrol_selma\local\user;
+use stdClass;
 
 /**
  * Factory to build user, course, and intake entities.
@@ -31,8 +33,38 @@ use enrol_selma\local\user;
  */
 class entity_factory {
 
-    public function build_user_from_stdclass(stdClass $record) : user {
-        $user = new user();
+    /**
+     * Builds a 'student' object based on a given (DB) record.
+     *
+     * @param   stdClass $record
+     * @return  student
+     */
+    public static function build_student_from_stdclass(stdClass $record) : student {
+        $student = new student();
+
+        return self::build_user_from_stdclass($record, $student);
+    }
+
+    /**
+     * Builds a 'teacher' object based on a given (DB) record.
+     *
+     * @param   stdClass $record
+     * @return  teacher
+     */
+    public static function build_teacher_from_stdclass(stdClass $record) : teacher {
+        $teacher = new teacher();
+
+        return self::build_user_from_stdclass($record, $teacher);
+    }
+
+    /**
+     * Builds a (enrol_selma) 'user' object based on a given (DB) record.
+     *
+     * @param   stdClass $record The (DB) record to load onto the object.
+     * @param   user     $user The type of user object - teacher or student (or user).
+     * @return  user
+     */
+    public static function build_user_from_stdclass(stdClass $record, user $user) : user {
         foreach (get_object_vars($record) as $propertyname => $value) {
             $user->{$propertyname} = $value;
         }

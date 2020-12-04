@@ -197,71 +197,82 @@ function enrol_selma_add_intake_to_course(int $intakeid, int $courseid) {
 /**
  * The function to add the specified user to an intake.
  *
- * @param   int     $selmauserid SELMA ID of user to add to intake.
- * @param   int     $intakeid SELMA intake ID the user should be added to.
+ * @param   int     $studentid SELMA ID of student to add to intake.
+ * @param   int     $intakeid  SELMA intake ID the user should be added to.
  * @return  array   Array of success status & bool if successful/not, message.
+ * @throws  coding_exception|dml_exception
  */
-function enrol_selma_add_user_to_intake(int $selmauserid, int $intakeid) {
+function enrol_selma_add_student_to_intake(int $studentid, int $intakeid) {
     global $DB;
 
-    // Set status to 'we don't know what went wrong'. We will set this to potential known causes further down.
-    $status = get_string('status_other', 'enrol_selma');
-    // Var 'added' of false means something didn't work. Changed if successfully added user to intake.
+    // Var 'added' of false means something didn't work. Changed further down if successfully added user to intake.
     $added = false;
-    // Use to give more detailed response message to user.
-    $message = get_string('status_other_message', 'enrol_selma');
-
-    // Prep data to go into DB.
-    // Check which Moodle field the SELMA ID is associated to.
-    $idmapping = enrol_selma_get_profile_mapping()['id'];
+    // Track any warning messages.
+    $warnings = [];
 
     // Get real Moodle user ID.
-    $muserid = $DB->get_record('user', array($idmapping => $selmauserid), 'id');
+    $muserid = $DB->get_record('user', array('idnumber' => $studentid), 'id, idnumber');
 
     // If user doesn't exist yet (or they have not been 'linked' to SELMA yet).
     if (!$muserid) {
-        // Set status to 'not found'.
-        $status = get_string('status_notfound', 'enrol_selma');
-        // Use to give more detailed response message to user.
-        $message = get_string('status_notfound_message', 'enrol_selma');
+        $warnings[] = [
+            'item' => get_string('pluginname', 'enrol_selma'),
+            'itemid' => 1,
+            'warningcode' => get_string('warning_code_notfound', 'enrol_selma'),
+            'message' => get_string('warning_message_notfound', 'enrol_selma', $studentid)
+        ];
 
         // Return 'not found' status.
-        return ['status' => $status, 'added' => $added, 'message' => $message];
+        return ['added' => $added, 'warnings' => $warnings];
     }
 
     // Check if they've already been linked?
     $linked = enrol_selma_user_is_in_intake($muserid->id, $intakeid);
 
-    // If user's been linked before.
+    // If user's been linked before. TODO - do we care/just do nothing then?
     if ($linked) {
-        // Set status to 'already reported'.
-        $status = get_string('status_nonew', 'enrol_selma');
-        // Set message to give more detailed response to user.
-        $message = get_string('status_nonew_message', 'enrol_selma');
+        $warnings[] = [
+            'item' => get_string('pluginname', 'enrol_selma'),
+            'itemid' => 1,
+            'warningcode' => get_string('warning_code_exists', 'enrol_selma'),
+            'message' => get_string('warning_message_exists', 'enrol_selma', $studentid)
+        ];
 
-        // Return 'already reported' status.
-        return ['status' => $status, 'added' => $added, 'message' => $message];
+        // Return 'already exists' status.
+        return ['added' => $added, 'warnings' => $warnings];
     }
-
-    // Construct enrol_selma user object to insert into DB.
-    $user = enrol_selma_user_from_id($muserid->id);
 
     // TODO - also eventually check if we need to enrol user into anything once we have all the necessary functions.
     // If added successfully, return success message.
-    if (enrol_selma_relate_user_to_intake($user->id, $intakeid)) {
-        // Set status to 'OK'.
-        $status = get_string('status_ok', 'enrol_selma');
+    if (enrol_selma_relate_user_to_intake($muserid->id, $intakeid)) {
         // User added to intake.
         $added = true;
-        // Use to give more detailed response message to user.
-        $message = get_string('status_ok_message', 'enrol_selma');
 
-        // Return 'success' status.
-        return ['status' => $status, 'added' => $added, 'message' => $message];
+        //// Return 'success' status.
+        //return ['added' => $added];
     }
 
+    $enrolled = false;
+    // If user has been added, we need to enrol them to the intake's associated course(s).
+    if ($added) {
+        $enrolled = enrol_selma_enrol_user($muserid->id, $intakeid);
+    }
+
+    if ($enrolled !== false) {
+
+        // TODO - Send back warnings from enrol attempt(s)?
+        return ['added' => $added, 'courses' => $enrolled];
+    }
+
+    $warnings[] = [
+        'item' => get_string('pluginname', 'enrol_selma'),
+        'itemid' => 1,
+        'warningcode' => get_string('warning_code_unknown', 'enrol_selma'),
+        'message' => get_string('warning_message_unknown', 'enrol_selma', $studentid)
+    ];
+
     // Returned details - failed (probably)...
-    return ['status' => $status, 'added' => $added, 'message' => $message];
+    return ['added' => $added, 'warnings' => $warnings];
 }
 
 /**
@@ -853,9 +864,10 @@ function enrol_selma_user_from_selma_data($selmauser) {
 /**
  * Creates record in DB of relationship between user & intake.
  *
- * @param   int     $userid User we're adding to an intake.
- * @param   int     $intakeid Intake ID user should be added to.
- * @return  bool    $inserted Bool indicating success/failure of inserting record to DB.
+ * @param   int         $userid User we're adding to an intake.
+ * @param   int         $intakeid Intake ID user should be added to.
+ * @return  bool        $inserted Bool indicating success/failure of inserting record to DB.
+ * @throws  dml_exception
  */
 function enrol_selma_relate_user_to_intake(int $userid, int $intakeid) {
     global $DB, $USER;
@@ -866,7 +878,7 @@ function enrol_selma_relate_user_to_intake(int $userid, int $intakeid) {
         return false;
     }
 
-    // Contruct data object for DB.
+    // Construct data object for DB.
     $data = new stdClass();
     $data->userid = $userid;
     $data->intakeid = $intakeid;
@@ -874,9 +886,7 @@ function enrol_selma_relate_user_to_intake(int $userid, int $intakeid) {
     $data->timecreated = time();
     $data->timemodified = time();
 
-    $inserted = $DB->insert_record('enrol_selma_user_intake', $data, false);
-
-    return $inserted;
+    return $DB->insert_record('enrol_selma_user_intake', $data, false);
 }
 
 /**
@@ -884,8 +894,9 @@ function enrol_selma_relate_user_to_intake(int $userid, int $intakeid) {
  *
  * @param   int     $id User's Moodle ID.
  * @return  array   $customfields Associative array with customfield's shortname as key and user's data as value.
+ * @throws  dml_exception
  */
-function enrol_selma_get_user_custom_field_data($id) {
+function enrol_selma_get_user_custom_field_data(int $id) {
     global $DB;
 
     // Keep track of given user's data.
@@ -981,12 +992,11 @@ function enrol_selma_update_course_from_selma(array $selmadata, stdClass $config
 /**
  * Create a Moodle user record based on SELMA student data.
  *
- * @param   array               $selmadata
- * @param   bool                $save
+ * @param   array       $selmadata
  * @return  user
- * @throws  coding_exception
  * @throws  dml_exception
  * @throws  moodle_exception
+ * @throws  required_capability_exception
  */
 function enrol_selma_create_student_from_selma(array $selmadata) {
     $student = new student();
@@ -997,13 +1007,13 @@ function enrol_selma_create_student_from_selma(array $selmadata) {
 /**
  * Update a Moodle user record based on SELMA student data.
  *
- * @param array $selmadata
- * @param stdClass $config
- * @param string $userlinkfield
- * @return user
- * @throws coding_exception
- * @throws dml_exception
- * @throws moodle_exception
+ * @param   array       $selmadata
+ * @param   stdClass    $config
+ * @param   string      $userlinkfield
+ * @return  user
+ * @throws  coding_exception
+ * @throws  dml_exception
+ * @throws  moodle_exception
  */
 function enrol_selma_update_student_from_selma(array $selmadata, stdClass $config, $userlinkfield = 'idnumber') {
     global $DB;
@@ -1022,8 +1032,7 @@ function enrol_selma_update_student_from_selma(array $selmadata, stdClass $confi
         throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'selmadata');
     }
     $record = $DB->get_record('user', [$userlinkfield => $selmadata[$selmalinkfield]], '*', MUST_EXIST);
-    $entityfactory = new entity_factory();
-    $user = $entityfactory->build_user_from_stdclass($record);
+    $user = entity_factory::build_student_from_stdclass($record);
     $userpropertymap = $propertymapfactory->build_user_property_map($user, $config);
     $userpropertymap->write_data($selmadata);
     $user->save();
@@ -1035,8 +1044,6 @@ function enrol_selma_update_student_from_selma(array $selmadata, stdClass $confi
  *
  * @param   array               $selmadata Data from SELMA - teacher user info.
  * @return  array               Created user ID and/or waarning(s).
- * @throws  coding_exception
- * @throws  dml_exception
  * @throws  moodle_exception
  */
 function enrol_selma_create_teacher_from_selma(array $selmadata) {
@@ -1064,6 +1071,9 @@ function enrol_selma_create_teacher_from_selma(array $selmadata) {
  * @param   user        $user User object - teacher or student (or user).
  * @param   array       $selmadata Data received from SELMA.
  * @return  user        $user User object.
+ * @throws  required_capability_exception
+ * @throws  dml_exception
+ * @throws  moodle_exception
  */
 function enrol_selma_map_and_create_user(user $user, array $selmadata) {
     // Check if user has capability to do so.
@@ -1321,4 +1331,64 @@ function enrol_selma_get_student(int $studentid, string $email) {
     }
 
     return $student;
+}
+
+/**
+ * Enrol a user into course associated to the given intake.
+ *
+ * @param   int     $userid Moodle user ID to be enrolled.
+ * @param   int     $intakeid ID of intake to inform course enrolments.
+ * @param   string  $role
+ * @return  mixed
+ * @throws  coding_exception
+ * @throws  dml_exception
+ */
+function enrol_selma_enrol_user(int $userid, int $intakeid, string $role = 'student') {
+    global $DB;
+
+    $enrolled = [];
+    $roleid = null;
+
+    // Get intake's courses & groups.
+    $coursesgroups = $DB->get_records('enrol_selma_course_intake', array('intakeid' => $intakeid), null, 'courseid, groupid');
+
+    // We only accept teacher/student as roles.
+    if ($role === 'student' || $role === 'teacher') {
+        // Get the role 'student' or 'teacher' maps to.
+        $roleid = get_config('enrol_selma', 'role_' . $role);
+    }
+
+
+    // Enrol the user into each course found.
+    foreach ($coursesgroups as $courseandgroup) {
+        // Get the selma enrolment method instance for the course.
+        $instance = $DB->get_record('enrol', array('courseid' => $courseandgroup->courseid, 'enrol' => 'selma'));
+        // Get the enrol plugin to use for user enrolment.
+        $enrolplugin = enrol_get_plugin('selma');
+
+        // Fall back to manual if not found.
+        if ($instance === false) {
+            $instance = $DB->get_record('enrol', array('courseid' => $courseandgroup->courseid, 'enrol' => 'manual'));
+            $enrolplugin = enrol_get_plugin('manual');
+        }
+
+        // This will enrol the user! Yay.
+        $enrolplugin->enrol_user($instance, $userid, $instance->roleid);
+
+        // Get user enrolment ID.
+        $ueid = $DB->get_record('user_enrolments', array('enrolid' => $instance->id, 'userid' => $userid), 'id');
+
+        // Put them in the appropriate group.
+        if (isset($courseandgroup->groupid) && !empty($courseandgroup->groupid)) {
+            $addedtogroup = groups_add_member($courseandgroup->groupid, $userid);
+        }
+
+        // Log enrolment.
+        $enrolled[] = [
+            'courseid' => $instance->courseid,
+            'userenrolid' => $ueid->id
+        ];
+    }
+
+    return $enrolled;
 }

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * SELMA plugin 'add_user_to_intake' external file.
+ * SELMA plugin 'add_student_to_intake' external file.
  *
  * @package    enrol_selma
  * @category   external
@@ -33,46 +33,49 @@ require_once(dirname(__FILE__, 4) . '/locallib.php');
 use context_system;
 use external_api;
 use external_function_parameters;
+use external_multiple_structure;
+use external_single_structure;
 use external_value;
+use external_warnings;
 
 /**
- * Class add_user_to_intake used to add a given user to a given intake.
+ * Class add_student_to_intake adds a given user to a given intake.
  *
  * @package     enrol_selma
  * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class add_user_to_intake extends external_api {
+class add_student_to_intake extends external_api {
     /**
      * Returns required parameters to add a user to an intake.
      *
      * @return external_function_parameters Description of parameters and expected type.
      */
-    public static function add_user_to_intake_parameters() {
+    public static function add_student_to_intake_parameters() {
         // A 'FUNCTIONNAME_parameters()' always return an 'external_function_parameters()'.
         // The 'external_function_parameters' constructor expects an array of 'external_description'.
         return new external_function_parameters(
             // An 'external_description' can be 'external_value', 'external_single_structure' or 'external_multiple' structure.
             [
-                'userid' => new external_value(PARAM_TEXT, get_string('add_user_to_intake_parameters::userid', 'enrol_selma')),
-                'intakeid' => new external_value(PARAM_TEXT, get_string('add_user_to_intake_parameters::intakeid', 'enrol_selma')),
+                'studentid' => new external_value(PARAM_TEXT, get_string('add_student_to_intake_parameters::studentid', 'enrol_selma')),
+                'intakeid' => new external_value(PARAM_TEXT, get_string('add_student_to_intake_parameters::intakeid', 'enrol_selma')),
             ],
-            get_string('add_user_to_intake_parameters', 'enrol_selma')
+            get_string('add_student_to_intake_parameters', 'enrol_selma')
         );
     }
 
     /**
      * The function itself - let's add the user to the intake.
      *
-     * @param   int     $userid SELMA ID of user to add to intake.
-     * @param   int     $intakeid SELMA intake ID the user should be added to.
+     * @param   int     $studentid SELMA ID of student to add to intake.
+     * @param   int     $intakeid SELMA intake ID the student should be added to.
      * @return  array   Array of success status & bool if successful/not, message.
      */
-    public static function add_user_to_intake(int $userid, int $intakeid) {
+    public static function add_student_to_intake(int $studentid, int $intakeid) {
         // Validate parameters.
-        $params = self::validate_parameters(self::add_user_to_intake_parameters(),
+        $params = self::validate_parameters(self::add_student_to_intake_parameters(),
             [
-                'userid' => $userid,
+                'studentid' => $studentid,
                 'intakeid' => $intakeid
             ]
         );
@@ -81,22 +84,32 @@ class add_user_to_intake extends external_api {
         self::validate_context(context_system::instance());
 
         // Returned details.
-        return enrol_selma_add_user_to_intake($params['userid'], $params['intakeid']);
+        return enrol_selma_add_student_to_intake($params['studentid'], $params['intakeid']);
     }
 
     /**
      * Returns description of method result value.
      *
-     * @return external_function_parameters Array of description of values returned by 'add_user_to_intake' function.
+     * @return external_single_structure Array of description of values returned by 'add_student_to_intake' function.
      */
-    public static function add_user_to_intake_returns() {
-        return new external_function_parameters(
+    public static function add_student_to_intake_returns() {
+        return new external_single_structure(
             [
-                'status' => new external_value(PARAM_TEXT, get_string('add_user_to_intake_returns::status', 'enrol_selma')),
-                'added' => new external_value(PARAM_BOOL, get_string('add_user_to_intake_returns::added', 'enrol_selma')),
-                'message' => new external_value(PARAM_TEXT, get_string('add_user_to_intake_returns::message', 'enrol_selma')),
+                'added' => new external_value(PARAM_BOOL, get_string('add_student_to_intake_returns::added', 'enrol_selma')),
+                'courses' => new external_multiple_structure(new external_single_structure(
+                    [
+                        'courseid' => new external_value(PARAM_INT,
+                            get_string('get_gradebook_items_returns::itemid', 'enrol_selma')),
+                        'userenrolid' => new external_value(PARAM_INT,
+                            get_string('get_gradebook_items_returns::itemname', 'enrol_selma')),
+                    ]
+                ), get_string('add_student_to_intake_returns::course', 'enrol_selma'), VALUE_OPTIONAL),
+                // TODO - Maybe we should be returning 'warning' values, instead of in the message.
+                // As per - https://docs.moodle.org/dev/Errors_handling_in_web_services#Warning_messages
+                // For example, refer to mod/assign/externallib.php:614.
+                'warnings' => new external_warnings()
             ],
-            get_string('add_user_to_intake_returns', 'enrol_selma')
+            get_string('add_student_to_intake_returns', 'enrol_selma')
         );
     }
 }

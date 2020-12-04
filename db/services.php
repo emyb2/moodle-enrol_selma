@@ -103,11 +103,11 @@ $functions = [
         'ajax'          => false,
         'capabilities'  => ''
     ],
-    'enrol_selma_add_user_to_intake' => [
-        'classname'     => 'enrol_selma\local\external\add_user_to_intake',
-        'methodname'    => 'add_user_to_intake',
+    'enrol_selma_add_student_to_intake' => [
+        'classname'     => 'enrol_selma\local\external\add_student_to_intake',
+        'methodname'    => 'add_student_to_intake',
         'description'   => new lang_string(
-            'add_user_to_intake::description',
+            'add_student_to_intake::description',
             'enrol_selma'
         ),
         'type'          => 'write',
@@ -171,7 +171,7 @@ $services = [
             'enrol_selma_get_intake',
             'enrol_selma_get_intake_courses',
             'enrol_selma_add_intake_to_course',
-            'enrol_selma_add_user_to_intake',
+            'enrol_selma_add_student_to_intake',
             'enrol_selma_create_student',
             'enrol_selma_update_student',
             'enrol_selma_get_student',
