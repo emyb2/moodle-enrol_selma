@@ -41,9 +41,11 @@ require_once(dirname(__FILE__, 3) . '/group/lib.php');
 /**
  * Function to add this intake to that course.
  *
- * @param   int     $intakeid ID of intake to add to course.
- * @param   int     $courseid ID of course the intake should be added to.
- * @return  array   Array of success status & bool of true if success, along with message.
+ * @param   int         $intakeid ID of intake to add to course.
+ * @param   int         $courseid ID of course the intake should be added to.
+ * @return  array       Array of success status & bool of true if success, along with message.
+ * @throws  coding_exception
+ * @throws  dml_exception|moodle_exception
  */
 function enrol_selma_add_intake_to_course(int $intakeid, int $courseid) {
     global $DB, $USER;
@@ -197,12 +199,12 @@ function enrol_selma_add_intake_to_course(int $intakeid, int $courseid) {
 /**
  * The function to add the specified user to an intake.
  *
- * @param   int     $studentid SELMA ID of student to add to intake.
+ * @param   string  $studentid SELMA ID of student to add to intake.
  * @param   int     $intakeid  SELMA intake ID the user should be added to.
  * @return  array   Array of success status & bool if successful/not, message.
  * @throws  coding_exception|dml_exception
  */
-function enrol_selma_add_student_to_intake(int $studentid, int $intakeid) {
+function enrol_selma_add_student_to_intake(string $studentid, int $intakeid) {
     global $DB;
 
     // Track any warning messages.
@@ -230,6 +232,37 @@ function enrol_selma_add_student_to_intake(int $studentid, int $intakeid) {
 /**
  * The function to add the specified user to an intake.
  *
+ * @param   string  $teacherid SELMA ID of teacher to add to intake.
+ * @param   int     $intakeid  SELMA intake ID the user should be added to.
+ * @return  array   Array of success status & bool if successful/not, message.
+ * @throws  coding_exception|dml_exception
+ */
+function enrol_selma_add_teacher_to_intake(string $teacherid, int $intakeid) {
+    // Track any warning messages.
+    $warnings = [];
+
+    // Get real Moodle user ID.
+    $muser = enrol_selma_get_teacher($teacherid);
+
+    // If user doesn't exist yet (or they have not been 'linked' to SELMA yet).
+    if (!$muser) {
+        $warnings[] = [
+            'item' => get_string('pluginname', 'enrol_selma'),
+            'itemid' => 1,
+            'warningcode' => get_string('warning_code_notfound', 'enrol_selma'),
+            'message' => get_string('warning_message_notfound', 'enrol_selma', $teacherid)
+        ];
+
+        // Return 'not found' status.
+        return ['added' => false, 'warnings' => $warnings];
+    }
+
+    return enrol_selma_add_user_to_intake($muser['id'], $intakeid, $teacherid, 'teacher');
+}
+
+/**
+ * The function to add the specified user to an intake.
+ *
  * @param   int         $muserid Moodle user ID - to add to intake.
  * @param   int         $intakeid SELMA intake ID the user should be added to.
  * @param   int         $selmaid SELMA user ID being added to intake.
@@ -238,15 +271,13 @@ function enrol_selma_add_student_to_intake(int $studentid, int $intakeid) {
  * @throws  coding_exception|dml_exception
  */
 function enrol_selma_add_user_to_intake(int $muserid, int $intakeid, int $selmaid, string $type = 'student') {
-    global $DB;
-
     // Var 'added' of false means something didn't work. Changed further down if successfully added user to intake.
     $added = false;
     // Track any warning messages.
     $warnings = [];
 
     // Check if they've already been linked?
-    $linked = enrol_selma_user_is_in_intake($muserid, $intakeid);
+    $linked = enrol_selma_user_is_in_intake($muserid, $intakeid, $type);
 
     // If user's been linked before. TODO - do we care/just do nothing then?
     if ($linked) {
@@ -263,7 +294,7 @@ function enrol_selma_add_user_to_intake(int $muserid, int $intakeid, int $selmai
 
     // TODO - also eventually check if we need to enrol user into anything once we have all the necessary functions.
     // If added successfully, return success message.
-    if (enrol_selma_relate_user_to_intake($muserid, $intakeid)) {
+    if (enrol_selma_relate_user_to_intake($muserid, $intakeid, $type)) {
         // User added to intake.
         $added = true;
 
@@ -274,7 +305,7 @@ function enrol_selma_add_user_to_intake(int $muserid, int $intakeid, int $selmai
     $enrolled = false;
     // If user has been added, we need to enrol them to the intake's associated course(s).
     if ($added) {
-        $enrolled = enrol_selma_enrol_user($muserid, $intakeid);
+        $enrolled = enrol_selma_enrol_user($muserid, $intakeid, $type);
     }
 
     if ($enrolled !== false) {
@@ -884,10 +915,11 @@ function enrol_selma_user_from_selma_data($selmauser) {
  *
  * @param   int         $userid User we're adding to an intake.
  * @param   int         $intakeid Intake ID user should be added to.
+ * @param   string      $type Type of user - student or teacher.
  * @return  bool        $inserted Bool indicating success/failure of inserting record to DB.
  * @throws  dml_exception
  */
-function enrol_selma_relate_user_to_intake(int $userid, int $intakeid) {
+function enrol_selma_relate_user_to_intake(int $userid, int $intakeid, string $type = 'student') {
     global $DB, $USER;
 
     // Todo - Should we be able to add users to an intake before the intake exists in Moodle (pre-create)?
@@ -904,7 +936,14 @@ function enrol_selma_relate_user_to_intake(int $userid, int $intakeid) {
     $data->timecreated = time();
     $data->timemodified = time();
 
-    return $DB->insert_record('enrol_selma_user_intake', $data, false);
+    // Add to student or teacher table.
+    $table = 'enrol_selma_student_intake';
+
+    if ($type === 'teacher') {
+        $table = 'enrol_selma_teacher_intake';
+    }
+
+    return $DB->insert_record($table, $data, false);
 }
 
 /**
@@ -935,16 +974,22 @@ function enrol_selma_get_user_custom_field_data(int $id) {
 /**
  * Checks if a user is associated to an intake.
  *
- * @param   int     $userid User we're check.
+ * @param   int     $userid   User we're checking.
  * @param   int     $intakeid Intake ID user should be checked against.
- * @return  bool    $inserted Bool indicating if user is in intake.
+ * @param   string  $type Type of user - student or teacher.
+ * @return  bool    Bool indicating if user is in intake.
+ * @throws  dml_exception
  */
-function enrol_selma_user_is_in_intake(int $userid, int $intakeid) {
+function enrol_selma_user_is_in_intake(int $userid, int $intakeid, string $type = 'student') {
     global $DB;
 
-    $exists = $DB->record_exists('enrol_selma_user_intake', array('userid' => $userid, 'intakeid' => $intakeid));
+    $table = 'enrol_selma_student_intake';
 
-    return $exists;
+    if ($type === 'teacher') {
+        $table = 'enrol_selma_teacher_intake';
+    }
+
+    return $DB->record_exists($table, array('userid' => $userid, 'intakeid' => $intakeid));
 }
 
 /**
@@ -1235,9 +1280,9 @@ function enrol_selma_get_intake_courses(int $intakeid) {
 /**
  * Retrieves gradebook items for a given course.
  *
- * @param int $courseid Course ID for which to retrieve gradebook items.
+ * @param   int     $courseid Course ID for which to retrieve gradebook items.
  * @return  array   $items The gradebook items found.
- * @throws dml_exception|coding_exception
+ * @throws  dml_exception|coding_exception
  */
 function enrol_selma_get_gradebook_items(int $courseid) {
     global $DB;
@@ -1361,7 +1406,7 @@ function enrol_selma_get_student(int $studentid, string $email) {
  * @throws  coding_exception
  * @throws  dml_exception
  */
-function enrol_selma_get_teacher(string $teacherid, string $email) {
+function enrol_selma_get_teacher(string $teacherid, string $email = '') {
     global $DB;
     $warnings = [];
     $teacher = false;
@@ -1483,12 +1528,12 @@ function enrol_selma_get_teacherid_field() {
  *
  * @param   int     $userid Moodle user ID to be enrolled.
  * @param   int     $intakeid ID of intake to inform course enrolments.
- * @param   string  $role
+ * @param   string  $type Role to assign to user.
  * @return  mixed
  * @throws  coding_exception
  * @throws  dml_exception
  */
-function enrol_selma_enrol_user(int $userid, int $intakeid, string $role = 'student') {
+function enrol_selma_enrol_user(int $userid, int $intakeid, string $type = 'student') {
     // TODO - Should this move to `enrol_user()` in lib.php?
     global $DB;
 
@@ -1499,9 +1544,9 @@ function enrol_selma_enrol_user(int $userid, int $intakeid, string $role = 'stud
     $coursesgroups = $DB->get_records('enrol_selma_course_intake', array('intakeid' => $intakeid), null, 'courseid, groupid');
 
     // We only accept teacher/student as roles.
-    if ($role === 'student' || $role === 'teacher') {
+    if ($type === 'student' || $type === 'teacher') {
         // Get the role 'student' or 'teacher' maps to.
-        $roleid = get_config('enrol_selma', $role . 'role');
+        $roleid = get_config('enrol_selma', $type . 'role');
     }
 
     // Enrol the user into each course found.
