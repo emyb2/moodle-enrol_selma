@@ -37,6 +37,25 @@ require_once(__DIR__ . '/vendor/autoload.php');
 class enrol_selma_plugin extends enrol_plugin {
 
     /**
+     * Enrol the user. This helps identify whether users were installed with the selma plugin (in the GUI, reports, etc).
+     *
+     * @param stdClass $instance
+     * @param int      $userid
+     * @param null     $roleid
+     * @param int      $timestart
+     * @param int      $timeend
+     * @param null     $status
+     * @param null     $recovergrades
+     * @throws coding_exception
+     */
+    public function enrol_user(stdClass $instance, $userid, $roleid = null, $timestart = 0, $timeend = 0, $status = null,
+        $recovergrades = null) {
+        // Just call the parent directly.
+        parent::enrol_user($instance, $userid, $roleid, $timestart, $timeend, $status,
+            $recovergrades);
+    }
+
+    /**
      * Does this plugin allow manual enrolments?
      *
      * All plugins allowing this must implement 'enrol/selma:enrol' capability.
@@ -105,7 +124,7 @@ class enrol_selma_plugin extends enrol_plugin {
      * @return  bool    Bool whether instance can be added.
      */
     public function can_add_instance($courseid) {
-        return false;
+        return true;
     }
 
     /**
