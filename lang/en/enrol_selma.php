@@ -277,6 +277,17 @@ $string['create_teacher_parameters'] = 'Expected parameters to create a teacher.
 $string['create_teacher_parameters::teacherid'] = 'SELMA Teacher user ID.';
 $string['create_teacher_returns'] = 'Returned values when calling this function.';
 $string['create_teacher_returns::userid'] = 'Student\'s Moodle ID';
+$string['get_teacher::description'] = '***WIP - Retrieves a given teacher\'s information.***';
+$string['get_teacher_parameters'] = 'Expected parameters to retrieve a teacher\'s details from Moodle (if any).';
+$string['get_teacher_parameters::teacherid'] = 'Teacher/Tutor SELMA ID.';
+$string['get_teacher_parameters::email'] = 'Teacher/Tutor SELMA email.';
+$string['get_teacher_returns'] = 'Returned values when calling this function.';
+$string['get_teacher_returns::id'] = 'Teacher\'s Moodle ID.';
+$string['get_teacher_returns::firstname'] = 'Teacher\'s Moodle firstname.';
+$string['get_teacher_returns::lastname'] = 'Teacher\'s Moodle lastname.';
+$string['get_teacher_returns::email'] = 'Teacher\'s Moodle email address.';
+$string['get_teacher_returns::idnumber'] = 'Teacher\'s SELMA student ID - if they are both a teacher & student.';
+$string['get_teacher_returns::teacherid'] = 'Teacher\'s SELMA ID.';
 
 // Web services warnings.
 $string['warning_code_notcapable'] = 'notcapable';
