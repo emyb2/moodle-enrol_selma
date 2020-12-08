@@ -99,11 +99,11 @@ class add_student_to_intake extends external_api {
                 'courses' => new external_multiple_structure(new external_single_structure(
                     [
                         'courseid' => new external_value(PARAM_INT,
-                            get_string('get_gradebook_items_returns::itemid', 'enrol_selma')),
+                            get_string('add_student_to_intake_returns::courseid', 'enrol_selma')),
                         'userenrolid' => new external_value(PARAM_INT,
-                            get_string('get_gradebook_items_returns::itemname', 'enrol_selma')),
+                            get_string('add_student_to_intake_returns::userenrolid', 'enrol_selma')),
                     ]
-                ), get_string('add_student_to_intake_returns::course', 'enrol_selma'), VALUE_OPTIONAL),
+                ), get_string('add_student_to_intake_returns::courses', 'enrol_selma'), VALUE_OPTIONAL),
                 // TODO - Maybe we should be returning 'warning' values, instead of in the message.
                 // As per - https://docs.moodle.org/dev/Errors_handling_in_web_services#Warning_messages
                 // For example, refer to mod/assign/externallib.php:614.

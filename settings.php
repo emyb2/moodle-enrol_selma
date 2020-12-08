@@ -259,6 +259,37 @@ if ($hassiteconfig) {
     );
     $coursesettings->add($setting);
 
+    // Role options.
+    $options = role_get_names(null, null, true);
+
+    // Default roles for student and teacher/tutor.
+    $setting = new admin_setting_heading(
+        "{$component}/rolemapping",
+        new lang_string('rolemappingheading', $component),
+        new lang_string('rolemappingheading::description', $component)
+    );
+    $coursesettings->add($setting);
+
+    // Role for students - "Student" by default.
+    $setting = new admin_setting_configselect(
+        "{$component}/studentrole",
+        new lang_string('studentrole', $component),
+        new lang_string('studentrole::description', $component),
+        5,
+        $options
+    );
+    $coursesettings->add($setting);
+
+    // Role for teachers - "Non-editing teacher" by default.
+    $setting = new admin_setting_configselect(
+        "{$component}/teacherrole",
+        new lang_string('teacherrole', $component),
+        new lang_string('teacherrole::description', $component),
+        4,
+        $options
+    );
+    $coursesettings->add($setting);
+
     $ADMIN->add(
         'enrolselmacategory',
         $coursesettings

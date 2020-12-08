@@ -205,16 +205,14 @@ function enrol_selma_add_intake_to_course(int $intakeid, int $courseid) {
 function enrol_selma_add_student_to_intake(int $studentid, int $intakeid) {
     global $DB;
 
-    // Var 'added' of false means something didn't work. Changed further down if successfully added user to intake.
-    $added = false;
     // Track any warning messages.
     $warnings = [];
 
     // Get real Moodle user ID.
-    $muserid = $DB->get_record('user', array('idnumber' => $studentid), 'id, idnumber');
+    $muser = $DB->get_record('user', array('idnumber' => $studentid), 'id');
 
     // If user doesn't exist yet (or they have not been 'linked' to SELMA yet).
-    if (!$muserid) {
+    if (!$muser) {
         $warnings[] = [
             'item' => get_string('pluginname', 'enrol_selma'),
             'itemid' => 1,
@@ -223,11 +221,32 @@ function enrol_selma_add_student_to_intake(int $studentid, int $intakeid) {
         ];
 
         // Return 'not found' status.
-        return ['added' => $added, 'warnings' => $warnings];
+        return ['added' => false, 'warnings' => $warnings];
     }
 
+    return enrol_selma_add_user_to_intake($muser->id, $intakeid, $studentid);
+}
+
+/**
+ * The function to add the specified user to an intake.
+ *
+ * @param   int         $muserid Moodle user ID - to add to intake.
+ * @param   int         $intakeid SELMA intake ID the user should be added to.
+ * @param   int         $selmaid SELMA user ID being added to intake.
+ * @param   string      $type Type of user - teacher or student.
+ * @return  array       Array of success status & bool if successful/not, message.
+ * @throws  coding_exception|dml_exception
+ */
+function enrol_selma_add_user_to_intake(int $muserid, int $intakeid, int $selmaid, string $type = 'student') {
+    global $DB;
+
+    // Var 'added' of false means something didn't work. Changed further down if successfully added user to intake.
+    $added = false;
+    // Track any warning messages.
+    $warnings = [];
+
     // Check if they've already been linked?
-    $linked = enrol_selma_user_is_in_intake($muserid->id, $intakeid);
+    $linked = enrol_selma_user_is_in_intake($muserid, $intakeid);
 
     // If user's been linked before. TODO - do we care/just do nothing then?
     if ($linked) {
@@ -235,7 +254,7 @@ function enrol_selma_add_student_to_intake(int $studentid, int $intakeid) {
             'item' => get_string('pluginname', 'enrol_selma'),
             'itemid' => 1,
             'warningcode' => get_string('warning_code_exists', 'enrol_selma'),
-            'message' => get_string('warning_message_exists', 'enrol_selma', $studentid)
+            'message' => get_string('warning_message_exists', 'enrol_selma', $selmaid)
         ];
 
         // Return 'already exists' status.
@@ -244,7 +263,7 @@ function enrol_selma_add_student_to_intake(int $studentid, int $intakeid) {
 
     // TODO - also eventually check if we need to enrol user into anything once we have all the necessary functions.
     // If added successfully, return success message.
-    if (enrol_selma_relate_user_to_intake($muserid->id, $intakeid)) {
+    if (enrol_selma_relate_user_to_intake($muserid, $intakeid)) {
         // User added to intake.
         $added = true;
 
@@ -255,11 +274,10 @@ function enrol_selma_add_student_to_intake(int $studentid, int $intakeid) {
     $enrolled = false;
     // If user has been added, we need to enrol them to the intake's associated course(s).
     if ($added) {
-        $enrolled = enrol_selma_enrol_user($muserid->id, $intakeid);
+        $enrolled = enrol_selma_enrol_user($muserid, $intakeid);
     }
 
     if ($enrolled !== false) {
-
         // TODO - Send back warnings from enrol attempt(s)?
         return ['added' => $added, 'courses' => $enrolled];
     }
@@ -268,7 +286,7 @@ function enrol_selma_add_student_to_intake(int $studentid, int $intakeid) {
         'item' => get_string('pluginname', 'enrol_selma'),
         'itemid' => 1,
         'warningcode' => get_string('warning_code_unknown', 'enrol_selma'),
-        'message' => get_string('warning_message_unknown', 'enrol_selma', $studentid)
+        'message' => get_string('warning_message_unknown', 'enrol_selma', $selmaid)
     ];
 
     // Returned details - failed (probably)...
@@ -1344,6 +1362,7 @@ function enrol_selma_get_student(int $studentid, string $email) {
  * @throws  dml_exception
  */
 function enrol_selma_enrol_user(int $userid, int $intakeid, string $role = 'student') {
+    // TODO - Should this move to `enrol_user()` in lib.php?
     global $DB;
 
     $enrolled = [];
@@ -1355,9 +1374,8 @@ function enrol_selma_enrol_user(int $userid, int $intakeid, string $role = 'stud
     // We only accept teacher/student as roles.
     if ($role === 'student' || $role === 'teacher') {
         // Get the role 'student' or 'teacher' maps to.
-        $roleid = get_config('enrol_selma', 'role_' . $role);
+        $roleid = get_config('enrol_selma', $role . 'role');
     }
-
 
     // Enrol the user into each course found.
     foreach ($coursesgroups as $courseandgroup) {
@@ -1373,7 +1391,7 @@ function enrol_selma_enrol_user(int $userid, int $intakeid, string $role = 'stud
         }
 
         // This will enrol the user! Yay.
-        $enrolplugin->enrol_user($instance, $userid, $instance->roleid);
+        $enrolplugin->enrol_user($instance, $userid, $roleid);
 
         // Get user enrolment ID.
         $ueid = $DB->get_record('user_enrolments', array('enrolid' => $instance->id, 'userid' => $userid), 'id');

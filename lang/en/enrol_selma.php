@@ -122,6 +122,12 @@ $string['selmacoursetags::description'] = 'Comma-separated text to include as ta
                                             Select placeholders are also available that will be dynamically replaced with real content.<br>
                                             <strong>e.g.</strong><br>
                                             "{{fullname}},{{shortname}},selma,course"<br>Converted to individual tags: "Course Name", "courseshortname", "selma" & "course"';
+$string['rolemappingheading'] = 'Role mapping';
+$string['rolemappingheading::description'] = 'Which Moodle role(s) users should be given when added as a student and/or teacher.';
+$string['studentrole'] = 'Student role';
+$string['studentrole::description'] = 'Students from SELMA will be given this role in a course.';
+$string['teacherrole'] = 'Teacher role';
+$string['teacherrole::description'] = 'Teachers from SELMA will be given this role in a course.';
 $string['usersettings'] = 'User settings';
 $string['userdefaultsheading'] = 'Default user preferences';
 $string['userdefaultsheading::description'] = 'Default user preferences as set-up in Moodle is used by this plugin when creating new users.<br><br>
@@ -253,6 +259,9 @@ $string['add_student_to_intake_parameters::userid'] = 'SELMA student ID.';
 $string['add_student_to_intake_parameters::intakeid'] = 'SELMA intake ID.';
 $string['add_student_to_intake_returns'] = 'The returned values after attempting to a student to an intake.';
 $string['add_student_to_intake_returns::added'] = 'Bool of whether the student could be added or not.';
+$string['add_student_to_intake_returns::courses'] = 'List of courses student was added to.';
+$string['add_student_to_intake_returns::courseid'] = 'Moodle course ID.';
+$string['add_student_to_intake_returns::userenrolid'] = 'User-enrolment ID - matches user to course in Moodle.';
 $string['get_student::description'] = '***WIP - Retrieves a given student\'s information.***';
 $string['get_student_parameters'] = 'Expected parameters to retrieve a student\'s details from Moodle (if any).';
 $string['get_student_parameters::studentid'] = 'Student SELMA ID.';
