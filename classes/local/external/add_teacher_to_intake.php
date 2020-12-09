@@ -105,7 +105,6 @@ class add_teacher_to_intake extends external_api {
     public static function add_teacher_to_intake_returns() {
         return new external_single_structure(
             [
-                'added' => new external_value(PARAM_BOOL, get_string('add_teacher_to_intake_returns::added', 'enrol_selma')),
                 'courses' => new external_multiple_structure(new external_single_structure(
                     [
                         'courseid' => new external_value(PARAM_INT,
