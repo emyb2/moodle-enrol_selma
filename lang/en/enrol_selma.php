@@ -79,7 +79,8 @@ $string['settingsheading'] = 'SELMA enrolment settings';
 $string['settingsheading::description'] = 'The SELMA->Moodle enrolment plugin *(MOOMA)* allows admins to manage user enrolments from SELMA SMS.
 Internally, the enrolment is done via the Manual enrolment plugin - which **must** to be enabled in the same course.';
 $string['unenrolaction'] = 'External unenrol action';
-$string['unenrolaction::description'] = 'Select action to carry out when Moodle receives \'unenrol\' request from SELMA. Please note: some user data purged from course during unenrolment.';
+$string['unenrolaction::description'] = 'What to do when Moodle receives \'unenrol\' request from SELMA.<br>
+                                        <strong>Please note:</strong> some user data purged from course during unenrolment.';
 $string['instancedefaults'] = 'Enrolment instance defaults';
 $string['instancedefaults::description'] = 'Default settings applied to a new SELMA enrolment instance in a course.';
 $string['defaultrole'] = 'Default role';
