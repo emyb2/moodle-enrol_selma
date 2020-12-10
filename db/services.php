@@ -158,6 +158,17 @@ $functions = [
         'ajax'          => false,
         'capabilities'  => ''
     ],
+    'enrol_selma_withdraw_student' => [
+        'classname'     => 'enrol_selma\local\external\withdraw_student',
+        'methodname'    => 'withdraw_student',
+        'description'   => new lang_string(
+            'withdraw_student::description',
+            'enrol_selma'
+        ),
+        'type'          => 'write',
+        'ajax'          => false,
+        'capabilities'  => ''
+    ],
     'enrol_selma_create_teacher' => [
         'classname'     => 'enrol_selma\local\external\create_teacher',
         'methodname'    => 'create_teacher',
@@ -198,6 +209,7 @@ $services = [
             'enrol_selma_create_student',
             'enrol_selma_update_student',
             'enrol_selma_get_student',
+            'enrol_selma_withdraw_student',
             'enrol_selma_create_teacher',
             'enrol_selma_get_teacher'
         ],
