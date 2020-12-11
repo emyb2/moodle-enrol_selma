@@ -1,0 +1,21 @@
+#page-enrol-selma-clarity {
+    #accordion {
+        > .card {
+
+            &:focus-within {
+                outline: solid 3px $accordion-card-outline;
+                outline-offset: -3px;
+
+                > .card-header {
+                    box-shadow: none;
+                }
+            }
+
+            table {
+                // Negate bootstrap styling.
+                margin: -1.25rem -1.25rem 1rem;
+                width: calc(100% + 2.5rem);
+            }
+        }
+    }
+}

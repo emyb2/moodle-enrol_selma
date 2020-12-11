@@ -27,3 +27,13 @@
 
 #page-admin-setting-usersettingsselma .form-item .alert {
   margin-bottom: 1.5em; }
+
+#page-enrol-selma-clarity #accordion > .card:focus-within {
+  outline: solid 3px #fff;
+  outline-offset: -3px; }
+  #page-enrol-selma-clarity #accordion > .card:focus-within > .card-header {
+    box-shadow: none; }
+
+#page-enrol-selma-clarity #accordion > .card table {
+  margin: -1.25rem -1.25rem 1rem;
+  width: calc(100% + 2.5rem); }
