@@ -1,4 +1,28 @@
 #page-enrol-selma-clarity {
+
+    /* Search feature. */
+    .usersearch {
+        width: 100%;
+        margin-bottom: 0.25rem;
+        display: inline-block;
+        opacity: 0;
+        animation: 200ms ease-in-out reveal forwards;
+    }
+
+    @keyframes reveal {
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .notresult {
+        display: none;
+    }
+
+
     #accordion {
         > .card {
 
@@ -15,6 +39,11 @@
                 // Negate bootstrap styling.
                 margin: -1.25rem -1.25rem 1rem;
                 width: calc(100% + 2.5rem);
+            }
+
+            .badge-pill {
+                border-radius: 10rem;
+                vertical-align: middle;
             }
         }
     }

@@ -64,6 +64,7 @@ $heading = get_string('clarity' . $scope, 'enrol_selma');
 $PAGE->set_title($heading);
 $PAGE->set_heading($heading);
 $PAGE->requires->jquery();
+$PAGE->requires->js_call_amd('enrol_selma/jssearch', 'init');
 
 // Breadcrumbs.
 $PAGE->navbar->add(get_string('enrol', 'enrol'));
@@ -86,6 +87,16 @@ if ($scope === 'overview') {
     // Get overview of intake.
     $intakes = $DB->get_records('enrol_selma_intake');
     if (!empty($intakes)) {
+        foreach ($intakes as $intake) {
+            $students = $DB->count_records('enrol_selma_student_intake', array('intakeid' => $intake->id));
+            $teachers = $DB->count_records('enrol_selma_teacher_intake', array('intakeid' => $intake->id));
+            $courses = $DB->count_records('enrol_selma_course_intake', array('intakeid' => $intake->id));
+
+            $intake->numstudents = $students;
+            $intake->numteachers = $teachers;
+            $intake->numcourses = $courses;
+        }
+
         $html = $renderer->overview($intakes);
     }
 } elseif ($scope === 'student') {

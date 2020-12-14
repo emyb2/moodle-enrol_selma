@@ -76,13 +76,19 @@ class enrol_selma_renderer extends plugin_renderer_base {
                             <div class="row">
                                 <a href="' .
                                         new moodle_url($PAGE->url, array('scope' => 'student', 'intake' => $intake->id)) .
-                                        '" class="btn btn-outline-primary col">' . get_string('claritystudent', 'enrol_selma') . '</a>
+                                        '" class="btn btn-outline-primary col">' . get_string('claritystudent', 'enrol_selma') .
+                                    ' <span class="badge badge-pill badge-primary">' . $intake->numstudents . '</span>' .
+                                '</a>
                                 <a href="' .
                                         new moodle_url($PAGE->url, array('scope' => 'teacher', 'intake' => $intake->id)) .
-                                        '" class="btn btn-outline-primary col">' . get_string('clarityteacher', 'enrol_selma') . '</a>
+                                        '" class="btn btn-outline-primary col">' . get_string('clarityteacher', 'enrol_selma') .
+                                    ' <span class="badge badge-pill badge-primary">' . $intake->numteachers . '</span>' .
+                                '</a>
                                 <a href="' .
                                         new moodle_url($PAGE->url, array('scope' => 'course', 'intake' => $intake->id)) .
-                                        '" class="btn btn-outline-primary col">' . get_string('claritycourse', 'enrol_selma') . '</a>
+                                        '" class="btn btn-outline-primary col">' . get_string('claritycourse', 'enrol_selma') .
+                                    ' <span class="badge badge-pill badge-primary">' . $intake->numcourses . '</span>' .
+                                '</a>
                             </div>
                         </div>
                     </div>

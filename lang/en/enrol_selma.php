@@ -34,6 +34,7 @@ $string['claritystudent'] = 'Students';
 $string['clarityteacher'] = 'Teachers';
 $string['claritycourse'] = 'Courses';
 $string['nothingtosee'] = 'Nothing to see here...';
+$string['placeholder'] = 'Type to search this page...';
 $string['applicationlog'] = 'Application log';
 $string['configuration'] = 'Configuration';
 $string['keep'] = 'Keep';
