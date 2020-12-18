@@ -27,3 +27,31 @@
 
 #page-admin-setting-usersettingsselma .form-item .alert {
   margin-bottom: 1.5em; }
+
+#page-enrol-selma-clarity {
+  /* Search feature. */ }
+  #page-enrol-selma-clarity .usersearch {
+    width: 100%;
+    margin-bottom: 0.25rem;
+    display: inline-block;
+    opacity: 0;
+    animation: 200ms ease-in-out reveal forwards; }
+
+@keyframes reveal {
+  0% {
+    opacity: 0; }
+  100% {
+    opacity: 1; } }
+  #page-enrol-selma-clarity .notresult {
+    display: none; }
+  #page-enrol-selma-clarity #accordion > .card:focus-within {
+    outline: solid 3px #fff;
+    outline-offset: -3px; }
+    #page-enrol-selma-clarity #accordion > .card:focus-within > .card-header {
+      box-shadow: none; }
+  #page-enrol-selma-clarity #accordion > .card table {
+    margin: -1.25rem -1.25rem 1rem;
+    width: calc(100% + 2.5rem); }
+  #page-enrol-selma-clarity #accordion > .card .badge-pill {
+    border-radius: 10rem;
+    vertical-align: middle; }
