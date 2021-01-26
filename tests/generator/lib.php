@@ -110,7 +110,7 @@ class enrol_selma_generator extends testing_module_generator {
             'complete' => [
                 'fullname' => 'Introduction to Team Leadership 3',
                 'shortname' => 'ITL3',
-                'idnumber' => 10479434
+                'idnumber' => 10479435
             ]
         ];
     }
