@@ -55,7 +55,6 @@ class add_intake_to_course_external_testcase extends externallib_advanced_testca
         // Run parent setup first, if any.
         parent::setUp();
 
-        // TODO - CREATE INTAKE?
         // Set up current user.
         $user = self::getDataGenerator()->create_user();
         $this->setUser($user);
@@ -72,7 +71,7 @@ class add_intake_to_course_external_testcase extends externallib_advanced_testca
         // Get test course data.
         $intakeobj = $this->plugingenerator->get_intake_data()[0];
 
-        $createparams['intake'] = [
+        $createparams = [
             'intakeid' => $intakeobj['id'],
             'programmeid' => $intakeobj['programmeid'],
             'intakecode' => $intakeobj['code'],
@@ -83,7 +82,6 @@ class add_intake_to_course_external_testcase extends externallib_advanced_testca
 
         // Create intake.
         $intake = create_intake::create_intake($createparams);
-
 
         // Create course to add intake to.
         $courserecord = $this->plugingenerator->get_selma_course_data()['valid'];
@@ -113,11 +111,6 @@ class add_intake_to_course_external_testcase extends externallib_advanced_testca
             'added' => $added,
             'message' => $message
         ];
-
-        var_dump($expectedvalue);
-        echo PHP_EOL;
-        echo PHP_EOL;
-        var_dump($returnedvalue);
 
         // Assert we got what we expected.
         $this->assertEquals($expectedvalue, $returnedvalue);

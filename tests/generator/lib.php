@@ -66,8 +66,8 @@ class enrol_selma_generator extends testing_module_generator {
                 'programmetitle' => 'Adult and Tertiary Teaching 4',
                 'code' => '2020-08-LW-ATT4-2018-1',
                 'name' => 'Wintec August 2020',
-                'startdate' => new DateTime('01-08-2020'),
-                'enddate' => new DateTime('31-07-2021'),
+                'startdate' => (new DateTime('01-08-2020'))->format('d-m-Y'),
+                'enddate' => (new DateTime('31-07-2021'))->format('d-m-Y'),
             ],
             [
                 'id' => 10612937,
