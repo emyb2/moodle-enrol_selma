@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Testing for the external (web-services) enrol_selma 'add_intake_to_course' class.
+ * Testing for the external (web-services) enrol_selma 'create_intake' class.
  *
  * @package     enrol_selma
  * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
@@ -35,13 +35,13 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->libdir . '/externallib.php');
 
 /**
- * Testing for the external enrol_selma 'add_intake_to_course' class.
+ * Testing for the external enrol_selma 'create_intake' class.
  *
  * @package     enrol_selma
  * @copyright   2020 LearningWorks <selma@learningworks.ac.nz>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class add_intake_to_course_external_testcase extends externallib_advanced_testcase {
+class create_intake_external_testcase extends externallib_advanced_testcase {
 
     /**
      * @var enrol_selma_generator $plugingenerator handle to plugin generator.
@@ -67,7 +67,7 @@ class add_intake_to_course_external_testcase extends externallib_advanced_testca
     /**
      * Tests if expected result is given when trying to add intake to course.
      */
-    public function test_add_intake_to_course() {
+    public function test_create_intake() {
         // Get test course data.
         $intakeobj = $this->plugingenerator->get_intake_data()[0];
 
@@ -81,34 +81,21 @@ class add_intake_to_course_external_testcase extends externallib_advanced_testca
         ];
 
         // Create intake.
-        $intake = create_intake::create_intake($createparams);
-
-        // Create course to add intake to.
-        $courserecord = $this->plugingenerator->get_selma_course_data()['valid'];
-        $course = $this->getDataGenerator()->create_course($courserecord);
-
-        // Params for 'add_intake_to_course';
-        $params = [
-            'intakeid' => $intake['intakeid'],
-            'courseid' => $course->id
-        ];
-
-        // Adding intake to course.
-        $result = add_intake_to_course::add_intake_to_course($params['intakeid'], $params['courseid']);
+        $result = create_intake::create_intake($createparams);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $returnedvalue = external_api::clean_returnvalue(add_intake_to_course::add_intake_to_course_returns(), $result);
+        $returnedvalue = external_api::clean_returnvalue(create_intake::create_intake_returns(), $result);
 
         // What we expect in the results.
         // Set status to 'OK'.
         $status = get_string('status_ok', 'enrol_selma');
         // Intake added bool status - we need it to be true.
-        $added = true;
+        $intakeid = $intakeobj['id'];
         // Give more detailed response message to user.
         $message = get_string('status_ok_message', 'enrol_selma');
 
         $expectedvalue = [
             'status' => $status,
-            'added' => $added,
+            'intakeid' => $intakeid,
             'message' => $message
         ];
 

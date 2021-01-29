@@ -109,7 +109,7 @@ class create_intake extends external_api {
             [
                 'status' => new external_value(PARAM_TEXT, get_string('create_intake_returns::status', 'enrol_selma')),
                 'intakeid' => new external_value(PARAM_INT, get_string('create_intake_returns::intakeid', 'enrol_selma')),
-                'message' => new external_value(PARAM_TEXT, get_string('create_intake_returns::message', 'enrol_selma')),
+                'message' => new external_value(PARAM_TEXT, get_string('create_intake_returns::message', 'enrol_selma'))
             ],
             get_string('create_intake_returns', 'enrol_selma')
         );
