@@ -116,6 +116,35 @@ class enrol_selma_generator extends testing_module_generator {
     }
 
     /**
+     * Prepared teacher data to test with.
+     *
+     * @return  array[] Array with most basic teacher/user data we need.
+     */
+    public function get_selma_teacher_data() : array {
+        return [
+            'valid' => [
+                'firstname' => 'Teacher',
+                'lastname' => 'User',
+                'email' => 'teacher@school.invalid',
+                'teacherid' => '12344321'
+            ],
+            'invalid' => [
+                'firstname' => 'Invalid Teacher',
+                'lastname' => 'User',
+                'email' => 34154576,
+                'teacherid' => '!@#$%^&*()'
+            ],
+            // Add all other fields too.
+            'complete' => [
+                'firstname' => 'Full Teacher',
+                'lastname' => 'User',
+                'email' => 'fullteacher@school.invalid',
+                'teacherid' => 12345678
+            ]
+        ];
+    }
+
+    /**
      * Prepared 'get_all_courses' webservice call data to help with testing.
      *
      * @return  array[] Array with most basic course data we need.
