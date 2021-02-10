@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Testing for the external (web-services) enrol_selma 'add_teacher_to_intake' class.
+ * Testing for the external (web-services) enrol_selma 'add_student_to_intake' class.
  *
  * @package     enrol_selma
  * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
@@ -25,9 +25,9 @@
 // For namespaces - look at https://docs.moodle.org/dev/Coding_style#Namespaces_within_.2A.2A.2Ftests_directories.
 
 use enrol_selma\local\intake;;
-use enrol_selma\local\external\add_teacher_to_intake;
+use enrol_selma\local\external\add_student_to_intake;
 use enrol_selma\local\external\create_intake;
-use enrol_selma\local\external\create_teacher;
+use enrol_selma\local\external\create_student;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,13 +36,13 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->libdir . '/externallib.php');
 
 /**
- * Testing for the external enrol_selma 'add_teacher_to_intake' class.
+ * Testing for the external enrol_selma 'add_student_to_intake' class.
  *
  * @package     enrol_selma
  * @copyright   2020 LearningWorks <selma@learningworks.ac.nz>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class add_teacher_to_intake_external_testcase extends externallib_advanced_testcase {
+class add_student_to_intake_external_testcase extends externallib_advanced_testcase {
 
     /**
      * @var enrol_selma_generator $plugingenerator handle to plugin generator.
@@ -66,9 +66,9 @@ class add_teacher_to_intake_external_testcase extends externallib_advanced_testc
     }
 
     /**
-     * Tests if expected result is returned when trying to add teacher to intake.
+     * Tests if expected result is returned when trying to add student to intake.
      */
-    public function test_add_teacher_to_intake() {
+    public function test_add_student_to_intake() {
         // Get valid test intake data.
         $intakeobj = $this->plugingenerator->get_intake_data()[0];
 
@@ -84,39 +84,27 @@ class add_teacher_to_intake_external_testcase extends externallib_advanced_testc
         // Create test intake.
         $intake = create_intake::create_intake($createparams);
 
-        // Set up custom profilefield needed for teacher user tracking.
-        $category = $this->plugingenerator->create_profile_field_category('other');
-        $this->plugingenerator->create_profile_field(
-            'text',
-            [
-                'categoryid' => $category->id,
-                'shortname' => 'teacherid',
-                'name' => 'Teacher ID',
-                'locked' => 1
-            ]
-        );
-
         // Set the required capabilities by the external function.
         $context = context_system::instance();
         $this->assignUserCapability('moodle/user:create', $context->id);
 
-        // Create teacher to add to intake.
-        $teacherrecord = $this->plugingenerator->get_selma_teacher_data()['valid'];
-        $teacher = create_teacher::create_teacher($teacherrecord);
+        // Create student to add to intake.
+        $studentrecord = $this->plugingenerator->get_selma_student_data()['valid'];
+        $student = create_student::create_student($studentrecord);
 
-        // Params for 'add_teacher_to_intake' - we need to pass SELMA teacherID.
+        // Params for 'add_student_to_intake' - we need to pass SELMA studentrID.
         $params = [
-            'teacherid' => $teacherrecord['teacherid'],
+            'studentid' => $studentrecord['studentid'],
             'intakeid' => $intake['intakeid']
         ];
 
-        // Adding teacher to intake.
-        $result = add_teacher_to_intake::add_teacher_to_intake($params['teacherid'], $params['intakeid']);
+        // Adding student to intake.
+        $result = add_student_to_intake::add_student_to_intake($params['studentid'], $params['intakeid']);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $returnedvalue = external_api::clean_returnvalue(add_teacher_to_intake::add_teacher_to_intake_returns(), $result);
+        $returnedvalue = external_api::clean_returnvalue(add_student_to_intake::add_student_to_intake_returns(), $result);
 
         // What we expect in the results.
-        // Teacher added bool status - we need it to be true.
+        // Student added bool status - we need it to be true.
         $added = true;
         $courses = [];
 
