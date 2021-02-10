@@ -137,7 +137,7 @@ class get_all_courses_external_testcase extends externallib_advanced_testcase {
         $nextpage = -1;
         $message = get_string('status_ok_message', 'enrol_selma');
 
-        // Returned details (expected.
+        // Returned details (expected).
         $expectedvalue = [
             'status' => $status,
             'courses' => $courses,
