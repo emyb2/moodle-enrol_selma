@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Testing for the external (web-services) enrol_selma 'create_intake' class.
+ * Testing for the external (web-services) enrol_selma 'create_teacher' class.
  *
  * @package     enrol_selma
  * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
@@ -24,8 +24,7 @@
 
 // For namespaces - look at https://docs.moodle.org/dev/Coding_style#Namespaces_within_.2A.2A.2Ftests_directories.
 
-use enrol_selma\local\intake;
-use enrol_selma\local\external\create_intake;
+use enrol_selma\local\external\create_teacher;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,13 +33,13 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->libdir . '/externallib.php');
 
 /**
- * Testing for the external enrol_selma 'create_intake' class.
+ * Testing for the external enrol_selma 'create_teacher' class.
  *
  * @package     enrol_selma
  * @copyright   2020 LearningWorks <selma@learningworks.ac.nz>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class create_intake_external_testcase extends externallib_advanced_testcase {
+class create_teacher_external_testcase extends externallib_advanced_testcase {
 
     /**
      * @var enrol_selma_generator $plugingenerator handle to plugin generator.
@@ -64,38 +63,39 @@ class create_intake_external_testcase extends externallib_advanced_testcase {
     }
 
     /**
-     * Tests if expected result is given when trying to create intake.
+     * Tests if expected result is given when trying to create a teacher/user.
      */
-    public function test_create_intake() {
-        // Get test course data.
-        $intakeobj = $this->plugingenerator->get_intake_data()[0];
+    public function test_create_teacher() {
+        global $DB;
 
-        $createparams = [
-            'intakeid' => $intakeobj['id'],
-            'programmeid' => $intakeobj['programmeid'],
-            'intakecode' => $intakeobj['code'],
-            'intakename' => $intakeobj['name'],
-            'intakestartdate' => $intakeobj['startdate'],
-            'intakeenddate' => $intakeobj['enddate']
-        ];
+        // Set up custom profilefield needed for teacher user tracking.
+        $category = $this->plugingenerator->create_profile_field_category('other');
+        $this->plugingenerator->create_profile_field(
+            'text',
+            [
+                'categoryid' => $category->id,
+                'shortname' => 'teacherid',
+                'name' => 'Teacher ID',
+                'locked' => 1
+            ]
+        );
 
-        // Create intake.
-        $result = create_intake::create_intake($createparams);
+        // Set the required capabilities by the external function.
+        $context = context_system::instance();
+        $this->assignUserCapability('moodle/user:create', $context->id);
+
+        // Create teacher.
+        $teacherrecord = $this->plugingenerator->get_selma_teacher_data()['valid'];
+        $result = create_teacher::create_teacher($teacherrecord);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $returnedvalue = external_api::clean_returnvalue(create_intake::create_intake_returns(), $result);
+        $returnedvalue = external_api::clean_returnvalue(create_teacher::create_teacher_returns(), $result);
 
         // What we expect in the results.
-        // Set status to 'OK'.
-        $status = get_string('status_ok', 'enrol_selma');
-        // Intake added bool status - we need it to be true.
-        $intakeid = $intakeobj['id'];
-        // Give more detailed response message to user.
-        $message = get_string('status_ok_message', 'enrol_selma');
+        // Set expected userid.
+        $newuser = $DB->get_record('user', array('email' => $teacherrecord['email']));
 
         $expectedvalue = [
-            'status' => $status,
-            'intakeid' => $intakeid,
-            'message' => $message
+            'userid' => $newuser->id,
         ];
 
         // Assert we got what we expected.
