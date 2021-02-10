@@ -99,13 +99,13 @@ class get_all_courses_external_testcase extends externallib_advanced_testcase {
     }
 
     /**
-     * Tests if exception is thrown when trying to get courses when none exist.
+     * Tests if exception is thrown when trying to get all courses.
      */
     public function test_get_all_courses() {
         // Get test course data.
         $params = $this->plugingenerator->get_selma_get_course_data()['valid'];
 
-        // Create to courses to check against.
+        // Create courses to check against.
         $course1record = $this->plugingenerator->get_selma_course_data()['valid'];
         $course1 = $this->getDataGenerator()->create_course($course1record);
 
