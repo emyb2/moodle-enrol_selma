@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Testing for the external (web-services) enrol_selma 'get_intake' class.
+ * Testing for the external (web-services) enrol_selma 'get_intake_courses' class.
  *
  * @package     enrol_selma
  * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
@@ -24,8 +24,10 @@
 
 // For namespaces - look at https://docs.moodle.org/dev/Coding_style#Namespaces_within_.2A.2A.2Ftests_directories.
 
+use enrol_selma\local\external\add_intake_to_course;
 use enrol_selma\local\external\create_intake;
 use enrol_selma\local\external\get_intake;
+use enrol_selma\local\external\get_intake_courses;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,13 +36,13 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->libdir . '/externallib.php');
 
 /**
- * Testing for the external enrol_selma 'get_intake' class.
+ * Testing for the external enrol_selma 'get_intake_courses' class.
  *
  * @package     enrol_selma
  * @copyright   2020 LearningWorks <selma@learningworks.ac.nz>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class get_intake_external_testcase extends externallib_advanced_testcase {
+class get_intake_courses_external_testcase extends externallib_advanced_testcase {
 
     /**
      * @var enrol_selma_generator $plugingenerator handle to plugin generator.
@@ -62,22 +64,22 @@ class get_intake_external_testcase extends externallib_advanced_testcase {
     }
 
     /**
-     * Tests if exception is thrown when trying to get intake - when none exist.
+     * Tests if exception is thrown when trying to get intake's courses - when none exist.
      */
-    public function test_no_intake_get_intake() {
+    public function test_no_ic_get_intake_courses() {
         // Get test intake data.
-        $params = $this->plugingenerator->get_intake_data()[0];
+        $intakerecord = $this->plugingenerator->get_intake_data()[0];
 
-        // Should get intake returned.
-        $result = get_intake::get_intake($params['id']);
+        // Should get a warning returned.
+        $result = get_intake_courses::get_intake_courses($intakerecord['id']);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $returnedvalue = external_api::clean_returnvalue(get_intake::get_intake_returns(), $result);
+        $returnedvalue = external_api::clean_returnvalue(get_intake_courses::get_intake_courses_returns(), $result);
 
         $warning[] = [
             'item' => get_string('pluginname', 'enrol_selma'),
             'itemid' => 1,
             'warningcode' => get_string('warning_code_notfound', 'enrol_selma'),
-            'message' => get_string('warning_message_notfound', 'enrol_selma', $params['id'])
+            'message' => get_string('warning_message_notfound', 'enrol_selma', $intakerecord['id'])
         ];
 
         $expectedvalue = [
@@ -89,43 +91,45 @@ class get_intake_external_testcase extends externallib_advanced_testcase {
     }
 
     /**
-     * Tests if exception is thrown when trying to get courses when none exist.
+     * Tests if any exceptions are thrown when trying to get intake's courses.
      */
-    public function test_get_intake() {
-        global $USER;
+    public function test_get_intake_courses() {
         // Get test intake data.
-        $params = $this->plugingenerator->get_intake_data()[0];
+        $intakerecord = $this->plugingenerator->get_intake_data()[0];
 
-        $createparams = [
-            'intakeid' => $params['id'],
-            'programmeid' => $params['programmeid'],
-            'intakecode' => $params['code'],
-            'intakename' => $params['name'],
-            'intakestartdate' => $params['startdate'],
-            'intakeenddate' => $params['enddate']
+        $createintake = [
+            'intakeid' => $intakerecord['id'],
+            'programmeid' => $intakerecord['programmeid'],
+            'intakecode' => $intakerecord['code'],
+            'intakename' => $intakerecord['name'],
+            'intakestartdate' => $intakerecord['startdate'],
+            'intakeenddate' => $intakerecord['enddate']
         ];
 
         // Create intake.
-        $intake = create_intake::create_intake($createparams);
+        $intake = create_intake::create_intake($createintake);
 
-        // Should get intake returned.
-        $result = get_intake::get_intake($params['id']);
+        // Create course to associate intake to.
+        $course1record = $this->plugingenerator->get_selma_course_data()['valid'];
+        $course1 = $this->getDataGenerator()->create_course($course1record);
+
+        // Create another course to associate intake to.
+        $course2record = $this->plugingenerator->get_selma_course_data()['complete'];
+        $course2 = $this->getDataGenerator()->create_course($course2record);
+
+        // Associate intake to courses.
+        $relate1 = add_intake_to_course::add_intake_to_course($intakerecord['id'], $course1->id);
+        $relate2 = add_intake_to_course::add_intake_to_course($intakerecord['id'], $course2->id);
+
+        // Should get intake's related courses returned.
+        $result = get_intake_courses::get_intake_courses($intakerecord['id']);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $returnedvalue = external_api::clean_returnvalue(get_intake::get_intake_returns(), $result);
+        $returnedvalue = external_api::clean_returnvalue(get_intake_courses::get_intake_courses_returns(), $result);
 
         // Returned details (expected).
         $expectedvalue = [
-            'id' => $params['id'],
-            'programmeid' => $params['programmeid'],
-            'code' => $params['code'],
-            'name' => $params['name'],
-            'startdate' => date_create_from_format('d-m-Y', $params['startdate'])->getTimestamp(),
-            'enddate' => date_create_from_format('d-m-Y', $params['enddate'])->getTimestamp(),
-            'usermodified' => (int) $USER->id
+            'courseids' => [(int) $course1->id, (int) $course2->id]
         ];
-
-        unset($returnedvalue['timecreated']);
-        unset($returnedvalue['timemodified']);
 
         // Assert we got what we expected.
         $this->assertEquals($expectedvalue, $returnedvalue);

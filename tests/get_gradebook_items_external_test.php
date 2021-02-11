@@ -91,7 +91,7 @@ class get_gradebook_items_external_testcase extends externallib_advanced_testcas
     }
 
     /**
-     * Tests if exception is thrown when trying to get gradebook items.
+     * Tests if any exceptions are thrown when trying to get gradebook items.
      */
     public function test_get_gradebook_items() {
         // Create course to have gradebook items to retrieve.
@@ -135,6 +135,7 @@ class get_gradebook_items_external_testcase extends externallib_advanced_testcas
         }
 
         // Assert we got what we expected.
+        $this->assertCount(2, $returnedvalue['items']);
         $this->assertEquals($expectedvalue, $returnedvalue);
     }
 }
