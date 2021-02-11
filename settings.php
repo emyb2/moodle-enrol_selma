@@ -61,6 +61,7 @@ if ($hassiteconfig) {
         ENROL_EXT_REMOVED_SUSPEND        => get_string('extremovedsuspend', 'enrol'),
         ENROL_EXT_REMOVED_SUSPENDNOROLES => get_string('extremovedsuspendnoroles', 'enrol'),
         ENROL_EXT_REMOVED_UNENROL        => get_string('extremovedunenrol', 'enrol'),
+        ENROL_EXT_REMOVED_KEEP           => get_string('extremovedkeep', 'enrol')
     );
 
     // What to do when 'unenrol user' event occurs.
@@ -68,7 +69,7 @@ if ($hassiteconfig) {
         "{$component}/unenrolaction",
         new lang_string('unenrolaction', $component),
         new lang_string('unenrolaction::description', $component),
-        ENROL_EXT_REMOVED_SUSPENDNOROLES,
+        ENROL_EXT_REMOVED_SUSPEND,
         $options
 
     );

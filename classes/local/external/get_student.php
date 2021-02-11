@@ -126,7 +126,7 @@ class get_student extends external_api {
                 // TODO - Maybe we should be returning 'warning' values, instead of in the message.
                 // As per - https://docs.moodle.org/dev/Errors_handling_in_web_services#Warning_messages
                 // For example, refer to mod/assign/externallib.php:614.
-                'warnings' => new external_warnings(),
+                'warnings' => new external_warnings()
             ],
             get_string('get_student_returns', 'enrol_selma')
         );

@@ -223,7 +223,7 @@ function enrol_selma_add_student_to_intake(string $studentid, int $intakeid) {
         ];
 
         // Return 'not found' status.
-        return ['added' => false, 'warnings' => $warnings];
+        return ['warnings' => $warnings];
     }
 
     return enrol_selma_add_user_to_intake($muser->id, $intakeid, $studentid);
@@ -254,7 +254,7 @@ function enrol_selma_add_teacher_to_intake(string $teacherid, int $intakeid) {
         ];
 
         // Return 'not found' status.
-        return ['added' => false, 'warnings' => $warnings];
+        return ['warnings' => $warnings];
     }
 
     return enrol_selma_add_user_to_intake($muser['id'], $intakeid, $teacherid, 'teacher');
@@ -289,7 +289,7 @@ function enrol_selma_add_user_to_intake(int $muserid, int $intakeid, int $selmai
         ];
 
         // Return 'already exists' status.
-        return ['added' => $added, 'warnings' => $warnings];
+        return ['warnings' => $warnings];
     }
 
     // TODO - also eventually check if we need to enrol user into anything once we have all the necessary functions.
@@ -297,9 +297,6 @@ function enrol_selma_add_user_to_intake(int $muserid, int $intakeid, int $selmai
     if (enrol_selma_relate_user_to_intake($muserid, $intakeid, $type)) {
         // User added to intake.
         $added = true;
-
-        //// Return 'success' status.
-        //return ['added' => $added];
     }
 
     $enrolled = false;
@@ -310,7 +307,7 @@ function enrol_selma_add_user_to_intake(int $muserid, int $intakeid, int $selmai
 
     if ($enrolled !== false) {
         // TODO - Send back warnings from enrol attempt(s)?
-        return ['added' => $added, 'courses' => $enrolled];
+        return ['courses' => $enrolled];
     }
 
     $warnings[] = [
@@ -321,7 +318,7 @@ function enrol_selma_add_user_to_intake(int $muserid, int $intakeid, int $selmai
     ];
 
     // Returned details - failed (probably)...
-    return ['added' => $added, 'warnings' => $warnings];
+    return ['warnings' => $warnings];
 }
 
 /**

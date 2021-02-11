@@ -40,6 +40,11 @@ require_once(dirname(__FILE__, 3) . '/group/lib.php');
 
 global $DB;
 
+(new enrol_selma_plugin)->unenrol_user_enrolment(28);
+echo 'DONE!';
+die();
+
+// Enrolling.
 $enrolled = enrol_selma_enrol_user(2, 10612954);
 
 var_dump($enrolled);

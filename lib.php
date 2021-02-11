@@ -169,4 +169,41 @@ class enrol_selma_plugin extends enrol_plugin {
     public function can_delete_instance($instance) {
         return false;
     }
+
+    /**
+     * Manages the unenrolment process for the plugin - keep, strip roles, suspend or unenrol.
+     *
+     * @param   int                 $ueid User-enrolment ID.
+     * @return  bool|Exception      Whether withdrawal was successful or not.
+     */
+    public function unenrol_user_enrolment(int $ueid) {
+        // TODO - Check if $ueid set.
+        global $DB;
+        // Deal with unenrolments.
+        switch ($this->get_config('unenrolaction')) {
+            case ENROL_EXT_REMOVED_SUSPEND:
+                $DB->set_field('user_enrolments', 'status', ENROL_USER_SUSPENDED, array('id' => $ueid));
+                return true;
+            case ENROL_EXT_REMOVED_SUSPENDNOROLES:
+                $DB->set_field('user_enrolments', 'status', ENROL_USER_SUSPENDED, array('id' => $ueid));
+                $ue = $DB->get_record('user_enrolments', array('id' => $ueid));
+                $enrol = $DB->get_record('enrol', array('id' => $ue->enrolid));
+                $context = context_course::instance($enrol->courseid);
+                role_unassign_all(array('contextid' => $context->id, 'userid' => $ue->userid, 'component' => 'enrol_selma',
+                    'itemid' => $ue->enrolid));
+                return true;
+            case ENROL_EXT_REMOVED_UNENROL:
+                $ue = $DB->get_record('user_enrolments', array('id' => $ueid));
+                if ($ue === false) {
+                    throw new moodle_exception('warning_message_notfound', 'enrol_selma', null, $ueid);
+                }
+                $instance = $DB->get_record('enrol', array('id' => $ue->enrolid));
+                parent::unenrol_user($instance, $ue->userid);
+                return true;
+            case ENROL_EXT_REMOVED_KEEP:
+                // Keep - only adding enrolments allowed.
+                return true;
+            }
+        return false;
+    }
 }
