@@ -1437,7 +1437,9 @@ function enrol_selma_get_teacher(string $teacherid, string $email = '') {
             );
 
             // Now get the actual user record.
-            $teacher = $DB->get_record('user', array('id' => $idexists->userid), 'id, firstname, lastname, email, idnumber');
+            if ($idexists !== false) {
+                $teacher = $DB->get_record('user', array('id' => $idexists->userid), 'id, firstname, lastname, email, idnumber');
+            }
         }
     }
 
@@ -1451,24 +1453,25 @@ function enrol_selma_get_teacher(string $teacherid, string $email = '') {
             'message' => get_string('warning_message_notfound', 'enrol_selma', $teacherid)
         ];
 
+        //Try finding by email
         if (!empty($email)) {
             $teacher = $DB->get_record('user', array('email' => $email), 'id, firstname, lastname, email, idnumber');
+        }
 
-            // Return 'not found' if email record could not be found.
-            if ($teacher === false) {
-                // TODO - improve warning message - user not found by email.
-                $warnings[] = [
-                    'item' => get_string('pluginname', 'enrol_selma'),
-                    'itemid' => 1,
-                    'warningcode' => get_string('warning_code_notfound', 'enrol_selma'),
-                    'message' => get_string('warning_message_notfound', 'enrol_selma', $email)
-                ];
+        // Return 'not found' if email record could not be found either.
+        if ($teacher === false) {
+            // TODO - improve warning message - user not found by email.
+            $warnings[] = [
+                'item' => get_string('pluginname', 'enrol_selma'),
+                'itemid' => 1,
+                'warningcode' => get_string('warning_code_notfound', 'enrol_selma'),
+                'message' => get_string('warning_message_notfound', 'enrol_selma', $email)
+            ];
 
-                $teacher['warnings'] = $warnings;
+            $teacher['warnings'] = $warnings;
 
-                // Return warning - and ONLY warning if both student ID & email lookup failed.
-                return $teacher;
-            }
+            // Return warning - and ONLY warning if both student ID & email lookup failed.
+            return $teacher;
         }
     }
 

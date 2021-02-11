@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Testing for the external (web-services) enrol_selma 'get_student' class.
+ * Testing for the external (web-services) enrol_selma 'get_teacher' class.
  *
  * @package     enrol_selma
  * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
@@ -24,8 +24,8 @@
 
 // For namespaces - look at https://docs.moodle.org/dev/Coding_style#Namespaces_within_.2A.2A.2Ftests_directories.
 
-use enrol_selma\local\external\create_student;
-use enrol_selma\local\external\get_student;
+use enrol_selma\local\external\create_teacher;
+use enrol_selma\local\external\get_teacher;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,13 +34,13 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->libdir . '/externallib.php');
 
 /**
- * Testing for the external enrol_selma 'get_student' class.
+ * Testing for the external enrol_selma 'get_teacher' class.
  *
  * @package     enrol_selma
  * @copyright   2020 LearningWorks <selma@learningworks.ac.nz>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class get_student_external_testcase extends externallib_advanced_testcase {
+class get_teacher_external_testcase extends externallib_advanced_testcase {
 
     /**
      * @var enrol_selma_generator $plugingenerator handle to plugin generator.
@@ -62,22 +62,41 @@ class get_student_external_testcase extends externallib_advanced_testcase {
     }
 
     /**
-     * Tests if exception is thrown when trying to get student - when none exist.
+     * Tests if exception is thrown when trying to get teacher - when none exist.
      */
-    public function test_no_student_get_student() {
-        // Get test student data.
-        $record = $this->plugingenerator->get_selma_student_data()['valid'];
+    public function test_no_teacher_get_teacher() {
+        // Set up custom profilefield needed for teacher user tracking.
+        $category = $this->plugingenerator->create_profile_field_category('other');
+        $this->plugingenerator->create_profile_field(
+            'text',
+            [
+                'categoryid' => $category->id,
+                'shortname' => 'teacherid',
+                'name' => 'Teacher ID',
+                'locked' => 1
+            ]
+        );
 
-        // Should get warning about missing student returned.
-        $result = get_student::get_student($record['studentid']);
+        // Get test teacher data.
+        $record = $this->plugingenerator->get_selma_teacher_data()['valid'];
+
+        // Should get warning about missing teacher returned.
+        $result = get_teacher::get_teacher($record['teacherid']);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $returnedvalue = external_api::clean_returnvalue(get_student::get_student_returns(), $result);
+        $returnedvalue = external_api::clean_returnvalue(get_teacher::get_teacher_returns(), $result);
 
         $warning[] = [
             'item' => get_string('pluginname', 'enrol_selma'),
             'itemid' => 1,
             'warningcode' => get_string('warning_code_notfound', 'enrol_selma'),
-            'message' => get_string('warning_message_notfound', 'enrol_selma', $record['studentid'])
+            'message' => get_string('warning_message_notfound', 'enrol_selma', $record['teacherid'])
+        ];
+
+        $warning[] = [
+            'item' => get_string('pluginname', 'enrol_selma'),
+            'itemid' => 1,
+            'warningcode' => get_string('warning_code_notfound', 'enrol_selma'),
+            'message' => get_string('warning_message_notfound', 'enrol_selma', '')
         ];
 
         $expectedvalue = [
@@ -89,29 +108,41 @@ class get_student_external_testcase extends externallib_advanced_testcase {
     }
 
     /**
-     * Tests if (SELMA) student can be retrieved.
+     * Tests if (SELMA) teacher can be retrieved.
      */
-    public function test_get_student() {
+    public function test_get_teacher() {
+        // Set up custom profilefield needed for teacher user tracking.
+        $category = $this->plugingenerator->create_profile_field_category('other');
+        $this->plugingenerator->create_profile_field(
+            'text',
+            [
+                'categoryid' => $category->id,
+                'shortname' => 'teacherid',
+                'name' => 'Teacher ID',
+                'locked' => 1
+            ]
+        );
+
         // Set the required capabilities by the external function.
         $context = context_system::instance();
         $this->assignUserCapability('moodle/user:create', $context->id);
 
-        // Create student.
-        $record = $this->plugingenerator->get_selma_student_data()['valid'];
-        $student = create_student::create_student($record);
+        // Create teacher.
+        $record = $this->plugingenerator->get_selma_teacher_data()['valid'];
+        $teacher = create_teacher::create_teacher($record);
 
-        // Should get student details returned.
-        $result = get_student::get_student($record['studentid']);
+        // Should get teacher details returned.
+        $result = get_teacher::get_teacher($record['teacherid']);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $returnedvalue = external_api::clean_returnvalue(get_student::get_student_returns(), $result);
+        $returnedvalue = external_api::clean_returnvalue(get_teacher::get_teacher_returns(), $result);
 
         // Returned details (expected).
         $expectedvalue = [
-            'id' => $student['moodleuserid'],
+            'id' => $teacher['userid'],
             'firstname' => $record['firstname'],
             'lastname' => $record['lastname'],
             'email' => $record['email'],
-            'idnumber' => (int) $record['studentid']
+            'teacherid' => (int) $record['teacherid']
         ];
 
         // Assert we got what we expected.

@@ -61,7 +61,7 @@ class get_teacher extends external_api {
                     get_string('get_teacher_parameters::teacherid', 'enrol_selma')
                 ),
                 'email' => new external_value(PARAM_TEXT,
-                    get_string('get_teacher_parameters::email', 'enrol_selma'), VALUE_OPTIONAL
+                    get_string('get_teacher_parameters::email', 'enrol_selma'), VALUE_DEFAULT, ''
                 )
             ],
             get_string('get_teacher_parameters', 'enrol_selma')
