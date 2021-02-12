@@ -115,13 +115,11 @@ class add_teacher_to_intake_external_testcase extends externallib_advanced_testc
         // We need to execute the return values cleaning process to simulate the web service server.
         $returnedvalue = external_api::clean_returnvalue(add_teacher_to_intake::add_teacher_to_intake_returns(), $result);
 
-        // What we expect in the results.
-        // Teacher added bool status - we need it to be true.
-        $added = true;
+        // What we expect in the results - user won't be added to course just yet.
         $courses = [];
+        // TODO - maybe test with DB call?
 
         $expectedvalue = [
-            'added' => $added,
             'courses' => $courses
         ];
 

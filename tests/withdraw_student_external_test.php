@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Testing for the external (web-services) enrol_selma 'add_student_to_intake' class.
+ * Testing for the external (web-services) enrol_selma 'withdraw_student' class.
  *
  * @package     enrol_selma
  * @copyright   2020 LearningWorks <selma@learningworks.co.nz>
@@ -24,10 +24,11 @@
 
 // For namespaces - look at https://docs.moodle.org/dev/Coding_style#Namespaces_within_.2A.2A.2Ftests_directories.
 
-use enrol_selma\local\intake;;
+use enrol_selma\local\external\add_intake_to_course;
 use enrol_selma\local\external\add_student_to_intake;
 use enrol_selma\local\external\create_intake;
 use enrol_selma\local\external\create_student;
+use enrol_selma\local\external\withdraw_student;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,13 +37,13 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->libdir . '/externallib.php');
 
 /**
- * Testing for the external enrol_selma 'add_student_to_intake' class.
+ * Testing for the external enrol_selma 'withdraw_student' class.
  *
  * @package     enrol_selma
  * @copyright   2020 LearningWorks <selma@learningworks.ac.nz>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class add_student_to_intake_external_testcase extends externallib_advanced_testcase {
+class withdraw_student_external_testcase extends externallib_advanced_testcase {
 
     /**
      * @var enrol_selma_generator $plugingenerator handle to plugin generator.
@@ -56,62 +57,92 @@ class add_student_to_intake_external_testcase extends externallib_advanced_testc
         // Run parent setup first, if any.
         parent::setUp();
 
-        // Set up current user.
         $user = self::getDataGenerator()->create_user();
         $this->setUser($user);
         $this->plugingenerator = $this->getDataGenerator()->get_plugin_generator('enrol_selma');
         $this->plugingenerator->enable_plugin();
-
         $this->resetAfterTest();
     }
 
     /**
-     * Tests if expected result is returned when trying to add student to intake.
+     * Tests if exception is thrown when trying to withdraw student with invalid ueid.
      */
-    public function test_add_student_to_intake() {
-        // Get valid test intake data.
-        $intakeobj = $this->plugingenerator->get_intake_data()[0];
+    public function test_invalid_withdraw_student() {
+        // Withdraw non-existent student/enrolment.
+        $result = withdraw_student::withdraw_student(1234);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $returnedvalue = external_api::clean_returnvalue(withdraw_student::withdraw_student_returns(), $result);
 
-        $createparams = [
-            'intakeid' => $intakeobj['id'],
-            'programmeid' => $intakeobj['programmeid'],
-            'intakecode' => $intakeobj['code'],
-            'intakename' => $intakeobj['name'],
-            'intakestartdate' => $intakeobj['startdate'],
-            'intakeenddate' => $intakeobj['enddate']
+        // Returned details (expected).
+        $expectedvalue = [
+            'withdrawn' => false
         ];
 
+        // Assert we got what we expected.
+        $this->assertFalse($returnedvalue['withdrawn']);
+        $this->assertEquals($expectedvalue, $returnedvalue);
+    }
+
+    /**
+     * Tests if (SELMA) student can be withdrawn from course.
+     */
+    public function test_withdraw_student() {
         // Create test intake.
+        $intakerecord = $this->plugingenerator->get_intake_data()[0];
+        $createparams = [
+            'intakeid' => $intakerecord['id'],
+            'programmeid' => $intakerecord['programmeid'],
+            'intakecode' => $intakerecord['code'],
+            'intakename' => $intakerecord['name'],
+            'intakestartdate' => $intakerecord['startdate'],
+            'intakeenddate' => $intakerecord['enddate']
+        ];
+
+        // Create intake.
         $intake = create_intake::create_intake($createparams);
 
+        // Create test course
+        // Create course to add intake to.
+        $courserecord = $this->plugingenerator->get_selma_course_data()['valid'];
+        $course = $this->getDataGenerator()->create_course($courserecord);
+
+        // Create test student.
         // Set the required capabilities by the external function.
         $context = context_system::instance();
         $this->assignUserCapability('moodle/user:create', $context->id);
-
-        // Create student to add to intake.
         $studentrecord = $this->plugingenerator->get_selma_student_data()['valid'];
-        $student = create_student::create_student($studentrecord);
+        create_student::create_student($studentrecord);
 
+        // Add intake to course.
+        // Params for 'add_intake_to_course';
+        $params = [
+            'intakeid' => $intake['intakeid'],
+            'courseid' => $course->id
+        ];
+        add_intake_to_course::add_intake_to_course($params['intakeid'], $params['courseid']);
+
+        // Add student to intake.
         // Params for 'add_student_to_intake' - we need to pass SELMA studentrID.
         $params = [
             'studentid' => $studentrecord['studentid'],
             'intakeid' => $intake['intakeid']
         ];
+        $enrolledcourses = add_student_to_intake::add_student_to_intake($params['studentid'], $params['intakeid']);
+        // Just get one course/user enrolment to withdraw the student from.
+        $ueid = $enrolledcourses['courses'][0]['userenrolid'];
 
-        // Adding student to intake.
-        $result = add_student_to_intake::add_student_to_intake($params['studentid'], $params['intakeid']);
+        // Withdraw student.
+        $result = withdraw_student::withdraw_student($ueid);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $returnedvalue = external_api::clean_returnvalue(add_student_to_intake::add_student_to_intake_returns(), $result);
+        $returnedvalue = external_api::clean_returnvalue(withdraw_student::withdraw_student_returns(), $result);
 
-        // What we expect in the results - user won't be added to course just yet.
-        $courses = [];
-        // TODO - maybe test with DB call?
-
+        // Returned details (expected).
         $expectedvalue = [
-            'courses' => $courses
+            'withdrawn' => true
         ];
 
         // Assert we got what we expected.
+        $this->assertTrue($returnedvalue['withdrawn']);
         $this->assertEquals($expectedvalue, $returnedvalue);
     }
 }
