@@ -177,8 +177,13 @@ class enrol_selma_plugin extends enrol_plugin {
      * @return  bool|Exception      Whether withdrawal was successful or not.
      */
     public function unenrol_user_enrolment(int $ueid) {
-        // TODO - Check if $ueid set.
         global $DB;
+        // Check if $ueid set/valid.
+        if ($DB->get_record('user_enrolments', array('id' => $ueid)) === false || !isset($ueid)) {
+            return false;
+        }
+
+        // TODO - how to make sure user isn't re-enrolled into course? They are still in the intake. A 'withdrawn' table?
         // Deal with unenrolments.
         switch ($this->get_config('unenrolaction')) {
             case ENROL_EXT_REMOVED_SUSPEND:

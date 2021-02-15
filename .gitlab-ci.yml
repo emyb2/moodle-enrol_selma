@@ -69,7 +69,7 @@ before_script:
 # Setup jobs as stages to run sequentially.
 stages:
 #  - job1
-  - job2
+#  - job2
 #  - job3
 #  - job4
 #  - job5
@@ -89,16 +89,16 @@ stages:
 #    DB: mariadb
 #    DBAPT: default-mysql-server
 #    DBSERVICE: mysql
-
-job2:
-  <<: *job_definition
-  stage: job2
-  image: moodlehq/moodle-php-apache:7.2
-  variables:
-    MOODLE_BRANCH: "MOODLE_35_STABLE"
-    DB: mariadb
-    DBAPT: mariadb-server
-    DBSERVICE: mysql
+#
+#job2:
+#  <<: *job_definition
+#  stage: job2
+#  image: moodlehq/moodle-php-apache:7.2
+#  variables:
+#    MOODLE_BRANCH: "MOODLE_35_STABLE"
+#    DB: mariadb
+#    DBAPT: mariadb-server
+#    DBSERVICE: mysql
 
 #job3:
 #  <<: *job_definition

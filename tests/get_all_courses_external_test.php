@@ -97,4 +97,55 @@ class get_all_courses_external_testcase extends externallib_advanced_testcase {
         // Assert we got what we expected.
         $this->assertEquals($expectedvalue, $returnedvalue);
     }
+
+    /**
+     * Tests if exception is thrown when trying to get all courses.
+     */
+    public function test_get_all_courses() {
+        // Get test course data.
+        $params = $this->plugingenerator->get_selma_get_course_data()['valid'];
+
+        // Create courses to check against.
+        $course1record = $this->plugingenerator->get_selma_course_data()['valid'];
+        $course1 = $this->getDataGenerator()->create_course($course1record);
+
+        $category = $this->getDataGenerator()->create_category();
+        $course2record = $this->plugingenerator->get_selma_course_data()['complete'];
+        $course2record['category'] = $category->id;
+        $course2 = $this->getDataGenerator()->create_course($course2record);
+
+        // User should get all course returned.
+        $result = get_all_courses::get_all_courses($params['amount'], $params['page']);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $returnedvalue = external_api::clean_returnvalue(get_all_courses::get_all_courses_returns(), $result);
+
+        // What we expect back.
+        $status = get_string('status_ok', 'enrol_selma');
+        $courses = [];
+        $courses[] = [
+            'id' => $course1->id,
+            'shortname' => $course1->shortname,
+            'fullname' => $course1->fullname,
+            'idnumber' => $course1->idnumber
+        ];
+        $courses[] = [
+            'id' => $course2->id,
+            'shortname' => $course2->shortname,
+            'fullname' => $course2->fullname,
+            'idnumber' => $course2->idnumber
+        ];
+        $nextpage = -1;
+        $message = get_string('status_ok_message', 'enrol_selma');
+
+        // Returned details (expected).
+        $expectedvalue = [
+            'status' => $status,
+            'courses' => $courses,
+            'nextpage' => $nextpage,
+            'message' => $message,
+        ];
+
+        // Assert we got what we expected.
+        $this->assertEquals($expectedvalue, $returnedvalue);
+    }
 }

@@ -66,8 +66,8 @@ class enrol_selma_generator extends testing_module_generator {
                 'programmetitle' => 'Adult and Tertiary Teaching 4',
                 'code' => '2020-08-LW-ATT4-2018-1',
                 'name' => 'Wintec August 2020',
-                'startdate' => new DateTime('01-08-2020'),
-                'enddate' => new DateTime('31-07-2021'),
+                'startdate' => (new DateTime('2020-08-01'))->format('Y-m-d'),
+                'enddate' => (new DateTime('2021-07-31'))->format('Y-m-d')
             ],
             [
                 'id' => 10612937,
@@ -75,8 +75,8 @@ class enrol_selma_generator extends testing_module_generator {
                 'programmetitle' => 'First Line Management 4',
                 'code' => '2020-08-LW-FLM4 v1-1',
                 'name' => 'Wintec August 2020',
-                'startdate' => new DateTime('01-08-2020'),
-                'enddate' => new DateTime('31-07-2021'),
+                'startdate' => new DateTime('2020-08-01'),
+                'enddate' => new DateTime('2021-07-31')
             ],
             [
                 'id' => 0,
@@ -84,8 +84,8 @@ class enrol_selma_generator extends testing_module_generator {
                 'programmetitle' => 'Introduction to Team Leadership 3',
                 'code' => '2020-08-LW-ITL3 v1-1',
                 'name' => 'Wintec August 2020',
-                'startdate' => new DateTime('01-08-2020'),
-                'enddate' => new DateTime('31-07-2021'),
+                'startdate' => new DateTime('2020-08-01'),
+                'enddate' => new DateTime('2021-07-31')
             ],
         ];
     }
@@ -110,7 +110,65 @@ class enrol_selma_generator extends testing_module_generator {
             'complete' => [
                 'fullname' => 'Introduction to Team Leadership 3',
                 'shortname' => 'ITL3',
-                'idnumber' => 10479434
+                'idnumber' => 10479435
+            ]
+        ];
+    }
+
+    /**
+     * Prepared student data to test with.
+     *
+     * @return  array[] Array with most basic student/user data we need.
+     */
+    public function get_selma_student_data() : array {
+        return [
+            'valid' => [
+                'firstname' => 'Student',
+                'lastname' => 'User',
+                'email' => 'student@school.invalid',
+                'studentid' => '43211234'
+            ],
+            'invalid' => [
+                'firstname' => 'Invalid Student',
+                'lastname' => 'User',
+                'email' => 53427896,
+                'studentid' => ')(*&^%$#@!'
+            ],
+            // Add all other fields too.
+            'complete' => [
+                'firstname' => 'Full Student',
+                'lastname' => 'User',
+                'email' => 'fullstudent@school.invalid',
+                'studentid' => 87654321
+            ]
+        ];
+    }
+
+    /**
+     * Prepared teacher data to test with.
+     *
+     * @return  array[] Array with most basic teacher/user data we need.
+     */
+    public function get_selma_teacher_data() : array {
+        return [
+            'valid' => [
+                'firstname' => 'Teacher',
+                'lastname' => 'User',
+                'email' => 'teacher@school.invalid',
+                'teacherid' => '12344321'
+            ],
+            'invalid' => [
+                'firstname' => 'Invalid Teacher',
+                'lastname' => 'User',
+                'email' => 34154576,
+                'teacherid' => '!@#$%^&*()'
+            ],
+            // Add all other fields too.
+            'complete' => [
+                'firstname' => 'Full Teacher',
+                'lastname' => 'User',
+                'email' => 'fullteacher@school.invalid',
+                'teacherid' => 12345678
             ]
         ];
     }

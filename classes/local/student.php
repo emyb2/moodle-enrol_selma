@@ -50,9 +50,9 @@ class student extends user {
     public function save() {
         global $CFG, $DB;
         // Check minimum required properties have a value.
-        if (trim($this->profile_field_teacherid) === '') {
-            throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'profile_field_teacherid');
-        }
+        //if (trim($this->profile_field_teacherid) === '') {
+        //    throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'profile_field_teacherid');
+        //}
 
         // If trying to create a user.
         if ($this->id <= 0) {

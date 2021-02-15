@@ -73,7 +73,7 @@ class external_structure {
                 get_string('email', 'enrol_selma')
             ),
             'studentid' => new external_value(
-                PARAM_ALPHANUMEXT,
+                PARAM_TEXT,
                 get_string('studentid', 'enrol_selma')
             ),
             'mobilephone' => new external_value(
@@ -130,14 +130,14 @@ class external_structure {
 
         // Set student ID to optional.
         $ts['studentid'] = new external_value(
-            PARAM_ALPHANUMEXT,
+            PARAM_TEXT,
             get_string('studentid', 'enrol_selma'),
             VALUE_OPTIONAL
         );
 
         // Add teacher ID requirement.
         $ts['teacherid'] = new external_value(
-            PARAM_ALPHANUMEXT,
+            PARAM_TEXT,
             get_string('create_teacher_parameters::teacherid', 'enrol_selma')
         );
 

@@ -61,7 +61,7 @@ class get_student extends external_api {
                     get_string('get_student_parameters::studentid', 'enrol_selma')
                 ),
                 'email' => new external_value(PARAM_TEXT,
-                    get_string('get_student_parameters::email', 'enrol_selma'), VALUE_OPTIONAL
+                    get_string('get_student_parameters::email', 'enrol_selma'), VALUE_DEFAULT, ''
                 )
             ],
             get_string('get_student_parameters', 'enrol_selma')

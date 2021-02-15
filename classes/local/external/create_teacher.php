@@ -91,7 +91,7 @@ class create_teacher extends external_api {
     public static function create_teacher_returns() {
         return new external_single_structure(
             [
-                'userid' => new external_value(PARAM_INT, get_string('create_teacher_returns::userid', 'enrol_selma')),
+                'userid' => new external_value(PARAM_TEXT, get_string('create_teacher_returns::userid', 'enrol_selma')),
                 'warnings' => new external_warnings()
             ], get_string('create_teacher_returns', 'enrol_selma')
         );
