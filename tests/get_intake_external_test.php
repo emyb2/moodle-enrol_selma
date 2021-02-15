@@ -119,8 +119,8 @@ class get_intake_external_testcase extends externallib_advanced_testcase {
             'programmeid' => $params['programmeid'],
             'code' => $params['code'],
             'name' => $params['name'],
-            'startdate' => date_create_from_format('d-m-Y', $params['startdate'])->getTimestamp(),
-            'enddate' => date_create_from_format('d-m-Y', $params['enddate'])->getTimestamp(),
+            'startdate' => date_create_from_format('Y-m-d', $params['startdate'])->getTimestamp(),
+            'enddate' => date_create_from_format('Y-m-d', $params['enddate'])->getTimestamp(),
             'usermodified' => (int) $USER->id
         ];
 

@@ -66,8 +66,8 @@ class enrol_selma_generator extends testing_module_generator {
                 'programmetitle' => 'Adult and Tertiary Teaching 4',
                 'code' => '2020-08-LW-ATT4-2018-1',
                 'name' => 'Wintec August 2020',
-                'startdate' => (new DateTime('01-08-2020'))->format('d-m-Y'),
-                'enddate' => (new DateTime('31-07-2021'))->format('d-m-Y'),
+                'startdate' => (new DateTime('2020-08-01'))->format('Y-m-d'),
+                'enddate' => (new DateTime('2021-07-31'))->format('Y-m-d')
             ],
             [
                 'id' => 10612937,
@@ -75,8 +75,8 @@ class enrol_selma_generator extends testing_module_generator {
                 'programmetitle' => 'First Line Management 4',
                 'code' => '2020-08-LW-FLM4 v1-1',
                 'name' => 'Wintec August 2020',
-                'startdate' => new DateTime('01-08-2020'),
-                'enddate' => new DateTime('31-07-2021'),
+                'startdate' => new DateTime('2020-08-01'),
+                'enddate' => new DateTime('2021-07-31')
             ],
             [
                 'id' => 0,
@@ -84,8 +84,8 @@ class enrol_selma_generator extends testing_module_generator {
                 'programmetitle' => 'Introduction to Team Leadership 3',
                 'code' => '2020-08-LW-ITL3 v1-1',
                 'name' => 'Wintec August 2020',
-                'startdate' => new DateTime('01-08-2020'),
-                'enddate' => new DateTime('31-07-2021'),
+                'startdate' => new DateTime('2020-08-01'),
+                'enddate' => new DateTime('2021-07-31')
             ],
         ];
     }

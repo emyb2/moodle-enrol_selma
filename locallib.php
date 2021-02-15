@@ -443,8 +443,8 @@ function enrol_selma_create_intake(array $intake) {
     // TODO - Any additional checks - as we're inserting to DB?
 
     // TODO - Handle date values, time seems to be set to current time.
-    $intake['intakestartdate'] = DateTime::createFromFormat('d-m-Y', $intake['intakestartdate']);
-    $intake['intakeenddate'] = DateTime::createFromFormat('d-m-Y', $intake['intakeenddate']);
+    $intake['intakestartdate'] = DateTime::createFromFormat('Y-m-d', $intake['intakestartdate']);
+    $intake['intakeenddate'] = DateTime::createFromFormat('Y-m-d', $intake['intakeenddate']);
 
     // Build record.
     $data = new stdClass();
