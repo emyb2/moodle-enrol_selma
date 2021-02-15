@@ -9,11 +9,14 @@ To function properly, the plugin requires the following:
 _____
 **The plugin support:**
 * User creation
-* Course creation
 * User enrolment
-* User grouping (in courses)
+* User groups (in courses)
 
 TODO Provide more detailed description here.
+
+### TODO
+* More tests - PHP Unit Tests
+* Improve logging
 
 #### License
 
