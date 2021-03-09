@@ -251,8 +251,16 @@ class selma_webservice {
         if (!$service) {
             throw new coding_exception("Service not found.");
         }
-        $capabilities = $webservicemanager->get_service_required_capabilities($service->id);
-        foreach (array_unique($capabilities) as $capability) {
+        $requiredcapabilities = [];
+        $functioncapabilities = $webservicemanager->get_service_required_capabilities($service->id);
+        foreach ($functioncapabilities as $function => $capabilities) {
+            if (is_array($capabilities)) {
+                foreach ($capabilities as $capability) {
+                    $requiredcapabilities[$capability] = $capability;
+                }
+            }
+        }
+        foreach ($requiredcapabilities as $capability) {
             assign_capability($capability, CAP_ALLOW, $role->id, $systemcontext->id, true);
             $trace->output("Allowing `{$capability}` for role `{$role->shortname}`");
         }
