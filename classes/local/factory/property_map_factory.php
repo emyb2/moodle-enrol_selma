@@ -148,7 +148,7 @@ class property_map_factory {
 
             // Handle default values (or anything) for expected custom profile fields.
             if ($customfield->shortname === 'teacherid') {
-                $default = 'teacherid';
+                $default = $name;
 
                 // If we're dealing with a teacher, a student ID should not be required.
                 $studentid = $propertymap->get_property('idnumber');

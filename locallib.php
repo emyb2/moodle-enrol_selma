@@ -1083,7 +1083,7 @@ function enrol_selma_update_student_from_selma(array $selmadata, stdClass $confi
     }
     $propertymapfactory = new enrol_selma\local\factory\property_map_factory();
     // Just want the map for now.
-    $userpropertymap = $propertymapfactory->build_user_property_map(new enrol_selma\local\user(), $config);
+    $userpropertymap = $propertymapfactory->build_user_property_map(new enrol_selma\local\student(), $config);
     if (!$userpropertymap->is_valid()) {
         throw new moodle_exception($userpropertymap->get_last_error());
     }
@@ -1091,7 +1091,12 @@ function enrol_selma_update_student_from_selma(array $selmadata, stdClass $confi
     if (!isset($selmadata[$selmalinkfield])) {
         throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'selmadata');
     }
-    $record = $DB->get_record('user', [$userlinkfield => $selmadata[$selmalinkfield]], '*', MUST_EXIST);
+    // Find by moodle user id first, if supplied, otherwise, try find by selmaid.
+    if (isset($selmadata['moodleuserid']) && !empty($selmadata['moodleuserid'])) {
+        $record = $DB->get_record('user', array('id' => $selmadata['moodleuserid']), '*', MUST_EXIST);
+    } else {
+        $record = $DB->get_record('user', [$userlinkfield => $selmadata[$selmalinkfield]], '*', MUST_EXIST);
+    }
     $user = entity_factory::build_student_from_stdclass($record);
     $userpropertymap = $propertymapfactory->build_user_property_map($user, $config);
     $userpropertymap->write_data($selmadata);
@@ -1123,6 +1128,48 @@ function enrol_selma_create_teacher_from_selma(array $selmadata) {
     return [
         'userid' => $moodleuserid
     ];
+}
+
+/**
+ * Update a Moodle user record based on SELMA teacher data.
+ *
+ * @param   array       $selmadata
+ * @param   stdClass    $config
+ * @param   string      $userlinkfield
+ * @return  user
+ * @throws  coding_exception
+ * @throws  dml_exception
+ * @throws  moodle_exception
+ */
+function enrol_selma_update_teacher_from_selma(array $selmadata, stdClass $config, $userlinkfield = 'teacherid') {
+    global $DB;
+    require_capability('moodle/user:update', context_system::instance());
+    if (trim($userlinkfield) === '') {
+        throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'userlinkfield');
+    }
+    $propertymapfactory = new enrol_selma\local\factory\property_map_factory();
+    // Just want the map for now.
+    $userpropertymap = $propertymapfactory->build_user_property_map(new enrol_selma\local\teacher(), $config);
+    if (!$userpropertymap->is_valid()) {
+        throw new moodle_exception($userpropertymap->get_last_error());
+    }
+    if (!isset($selmadata[$userlinkfield])) {
+        throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, 'selmadata');
+    }
+    // Find by moodle user id first, if supplied, otherwise, try find by selma tutorid.
+    if (isset($selmadata['moodleuserid']) && !empty($selmadata['moodleuserid'])) {
+        $record = $DB->get_record('user', array('id' => $selmadata['moodleuserid']), '*', MUST_EXIST);
+    } else {
+        // Needs fine-tuning if wanting to update by selmaID.
+        // $record = enrol_selma_get_teacher($selmadata[$userlinkfield], $selmadata['email']);
+        throw new moodle_exception('unexpectedvalue', 'enrol_selma', null, $userlinkfield);
+    }
+    $teacher = entity_factory::build_teacher_from_stdclass((object) $record);
+    $userpropertymap = $propertymapfactory->build_user_property_map($teacher, $config);
+    $userpropertymap->write_data($selmadata);
+
+    $teacher->save();
+    return $teacher;
 }
 
 /**
@@ -1450,7 +1497,7 @@ function enrol_selma_get_teacher(string $teacherid, string $email = '') {
             'message' => get_string('warning_message_notfound', 'enrol_selma', $teacherid)
         ];
 
-        //Try finding by email
+        // Try finding by email.
         if (!empty($email)) {
             $teacher = $DB->get_record('user', array('email' => $email), 'id, firstname, lastname, email, idnumber');
         }
@@ -1467,7 +1514,7 @@ function enrol_selma_get_teacher(string $teacherid, string $email = '') {
 
             $teacher['warnings'] = $warnings;
 
-            // Return warning - and ONLY warning if both student ID & email lookup failed.
+            // Return warning - and ONLY warning if both teacher ID & email lookup failed.
             return $teacher;
         }
     }

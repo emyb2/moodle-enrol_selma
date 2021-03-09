@@ -53,10 +53,10 @@ class user extends stdClass {
 
     public $mnethostid = 0;
 
-    /** @var string $username User username. */
 
     public $newpassword;
 
+    /** @var string $username User username. */
     public $username;
 
     /** @var string $firstname User first name. */
