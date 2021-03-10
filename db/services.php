@@ -180,6 +180,17 @@ $functions = [
         'ajax'          => false,
         'capabilities'  => 'moodle/user:create'
     ],
+    'enrol_selma_update_teacher' => [
+        'classname'     => 'enrol_selma\local\external\update_teacher',
+        'methodname'    => 'update_teacher',
+        'description'   => new lang_string(
+            'update_teacher::description',
+            'enrol_selma'
+        ),
+        'type'          => 'write',
+        'ajax'          => false,
+        'capabilities'  => 'moodle/user:update'
+    ],
     'enrol_selma_get_teacher' => [
         'classname'     => 'enrol_selma\local\external\get_teacher',
         'methodname'    => 'get_teacher',
@@ -211,6 +222,7 @@ $services = [
             'enrol_selma_get_student',
             'enrol_selma_withdraw_student',
             'enrol_selma_create_teacher',
+            'enrol_selma_update_teacher',
             'enrol_selma_get_teacher'
         ],
         'restrictedusers' => 0

@@ -307,6 +307,7 @@ $string['create_teacher_parameters'] = 'Expected parameters to create a teacher.
 $string['create_teacher_parameters::teacherid'] = 'SELMA Teacher user ID.';
 $string['create_teacher_returns'] = 'Returned values when calling this function.';
 $string['create_teacher_returns::userid'] = 'Student\'s Moodle ID';
+$string['update_teacher::description'] = 'Updates an existing teacher user account.';
 $string['get_teacher::description'] = '***WIP - Retrieves a given teacher\'s information.***';
 $string['get_teacher_parameters'] = 'Expected parameters to retrieve a teacher\'s details from Moodle (if any).';
 $string['get_teacher_parameters::teacherid'] = 'Teacher/Tutor SELMA ID.';

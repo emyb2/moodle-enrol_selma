@@ -86,7 +86,7 @@ class create_teacher extends external_api {
     /**
      * Returns description of method result value.
      *
-     * @return external_single_structure Array of expected course structure parameters and their description.
+     * @return external_single_structure Array of expected user structure parameters and their description.
      */
     public static function create_teacher_returns() {
         return new external_single_structure(
