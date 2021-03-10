@@ -411,6 +411,7 @@ $string['exception_bepositive'] = "Parameters must be positive values";
 $string['exception_valuerequired'] = 'Value required for \'{$a}\'';
 $string['exception_fieldnotexist'] = 'Field \'{$a}\' does not exist.';
 $string['exception_existsalready'] = 'Found existing record(s) for: {$a}';
+$string['exception_passgenfailed'] = 'Failed to to generate password for user: {$a}';
 
 
 // TODO Sort.

@@ -261,6 +261,14 @@ class user extends stdClass {
             $this->mnethostid = $CFG->mnet_localhost_id; // Always set to local for a new user.
             $this->id = user_create_user($this, false, true);
             set_user_preference('enrol_selma_new_student_create_password', 1, $this);
+
+            // Send credentials for new users, force password change.
+            if (setnew_password_and_mail($this, true)) {
+                unset_user_preference('enrol_selma_new_student_create_password', $this);
+                set_user_preference('auth_forcepasswordchange', 1, $this);
+            } else {
+                throw new moodle_exception('exception_passgenfailed', 'enrol_selma', null, $this->id);
+            }
         } else {
             user_update_user($this);
             if ($this->newpassword) {
