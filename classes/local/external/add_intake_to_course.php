@@ -33,6 +33,7 @@ use context_system;
 use external_api;
 use external_function_parameters;
 use external_value;
+use external_single_structure;
 
 /**
  * Class add_intake_to_course used to add SELMA intake to Moodle course.
@@ -52,6 +53,38 @@ class add_intake_to_course extends external_api {
             [
                 'intakeid' => new external_value(PARAM_INT, get_string('add_intake_to_course_parameters::intakeid', 'enrol_selma')),
                 'courseid' => new external_value(PARAM_INT, get_string('add_intake_to_course_parameters::courseid', 'enrol_selma')),
+                'customfields' => new external_single_structure([
+                    'customtext1' => new external_value(
+                        PARAM_TEXT, get_string('add_intake_to_course_parameters::customtext', 'enrol_selma'), VALUE_OPTIONAL
+                    ),
+                    'customtext2' => new external_value(
+                        PARAM_TEXT, get_string('add_intake_to_course_parameters::customtext', 'enrol_selma'), VALUE_OPTIONAL
+                    ),
+                    'customtext3' => new external_value(
+                        PARAM_TEXT, get_string('add_intake_to_course_parameters::customtext', 'enrol_selma'), VALUE_OPTIONAL
+                    ),
+                    'customtext4' => new external_value(
+                        PARAM_TEXT, get_string('add_intake_to_course_parameters::customtext', 'enrol_selma'), VALUE_OPTIONAL
+                    ),
+                    'customtext5' => new external_value(
+                        PARAM_TEXT, get_string('add_intake_to_course_parameters::customtext', 'enrol_selma'), VALUE_OPTIONAL
+                    ),
+                    'customtext6' => new external_value(
+                        PARAM_TEXT, get_string('add_intake_to_course_parameters::customtext', 'enrol_selma'), VALUE_OPTIONAL
+                    ),
+                    'customtext7' => new external_value(
+                        PARAM_TEXT, get_string('add_intake_to_course_parameters::customtext', 'enrol_selma'), VALUE_OPTIONAL
+                    ),
+                    'customtext8' => new external_value(
+                        PARAM_TEXT, get_string('add_intake_to_course_parameters::customtext', 'enrol_selma'), VALUE_OPTIONAL
+                    ),
+                    'customtext9' => new external_value(
+                        PARAM_TEXT, get_string('add_intake_to_course_parameters::customtext', 'enrol_selma'), VALUE_OPTIONAL
+                    ),
+                    'customtext10' => new external_value(
+                        PARAM_TEXT, get_string('add_intake_to_course_parameters::customtext', 'enrol_selma'), VALUE_OPTIONAL
+                    ),
+                ], get_string('add_intake_to_course_parameters::customfields', 'enrol_selma'), VALUE_OPTIONAL)
             ],
             get_string('add_intake_to_course_parameters', 'enrol_selma')
         );
@@ -62,14 +95,16 @@ class add_intake_to_course extends external_api {
      *
      * @param   int     $intakeid ID of intake to add to course.
      * @param   int     $courseid ID of course the intake should be added to.
+     * @param   array   $customfields Intake custom fields to add the the group customtext.
      * @return  array   Array of success status & bool of true if success, along with message.
      */
-    public static function add_intake_to_course(int $intakeid, int $courseid) {
+    public static function add_intake_to_course(int $intakeid, int $courseid, array $customfields = []) {
         // Validate parameters.
         $params = self::validate_parameters(self::add_intake_to_course_parameters(),
             [
                 'intakeid' => $intakeid,
-                'courseid' => $courseid
+                'courseid' => $courseid,
+                'customfields' => $customfields
             ]
         );
 
@@ -77,7 +112,7 @@ class add_intake_to_course extends external_api {
         self::validate_context(context_system::instance());
 
         // Returned details.
-        return enrol_selma_add_intake_to_course($params['intakeid'], $params['courseid']);
+        return enrol_selma_add_intake_to_course($params['intakeid'], $params['courseid'], $params['customfields']);
     }
 
     /**
