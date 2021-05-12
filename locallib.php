@@ -43,11 +43,12 @@ require_once(dirname(__FILE__, 3) . '/group/lib.php');
  *
  * @param   int         $intakeid ID of intake to add to course.
  * @param   int         $courseid ID of course the intake should be added to.
+ * @param   array       $customfields Intake custom fields to add the the group customtext.
  * @return  array       Array of success status & bool of true if success, along with message.
  * @throws  coding_exception
  * @throws  dml_exception|moodle_exception
  */
-function enrol_selma_add_intake_to_course(int $intakeid, int $courseid) {
+function enrol_selma_add_intake_to_course(int $intakeid, int $courseid, array $customfields) {
     global $DB, $USER;
 
     // Status tracker.
@@ -104,6 +105,11 @@ function enrol_selma_add_intake_to_course(int $intakeid, int $courseid) {
                 $group->name = $intake->name;
                 $group->courseid = $courseid;
                 $group->idnumber = $intakeid;
+
+                // Add the custom fields if they are present.
+                foreach ($customfields as $key => $value) {
+                    $group->{$key} = $value;
+                }
 
                 // Create group.
                 $newgroup = groups_create_group($group);

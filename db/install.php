@@ -29,6 +29,17 @@ defined('MOODLE_INTERNAL') || die();
  * Custom code to be run on installing the plugin.
  */
 function xmldb_enrol_selma_install() {
+    global $DB;
+    $dbmanager = $DB->get_manager();
 
+    // Add custom text fields to the group table.
+    $table = new xmldb_table('groups');
+
+    for ($i = 1; $i < 11; $i++) {
+        $field = new xmldb_field("customtext{$i}", XMLDB_TYPE_TEXT);
+        if (!$dbmanager->field_exists($table, $field)) {
+            $dbmanager->add_field($table, $field);
+        }
+    }
     return true;
 }

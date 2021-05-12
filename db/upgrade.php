@@ -33,11 +33,21 @@ defined('MOODLE_INTERNAL') || die();
  */
 function xmldb_enrol_selma_upgrade($oldversion) {
     global $DB;
+    $dbmanager = $DB->get_manager();
 
-    $dbman = $DB->get_manager();
+    if ($oldversion < 2021043000) {
+        // Add custom text fields to the group table.
+        $table = new xmldb_table('groups');
 
-    // For further information please read the Upgrade API documentation:
-    // https://docs.moodle.org/dev/Upgrade_API - useful post-launch of plugin.
+        for ($i = 1; $i < 11; $i++) {
+            $field = new xmldb_field("customtext{$i}", XMLDB_TYPE_TEXT);
+            if (!$dbmanager->field_exists($table, $field)) {
+                $dbmanager->add_field($table, $field);
+            }
+        }
+
+        upgrade_plugin_savepoint(true, 2021043000, 'enrol', 'selma');
+    }
 
     return true;
 }
