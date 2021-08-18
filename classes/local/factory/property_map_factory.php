@@ -146,6 +146,11 @@ class property_map_factory {
             $name = 'profile_field_' . $customfield->shortname;
             $default = null;
 
+            // Ignore file user profile fields.
+            if ($customfield->datatype === 'file') {
+                continue;
+            }
+
             // Handle default values (or anything) for expected custom profile fields.
             if ($customfield->shortname === 'teacherid') {
                 $default = $name;

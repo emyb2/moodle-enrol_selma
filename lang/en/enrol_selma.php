@@ -321,6 +321,12 @@ $string['get_teacher_returns::lastname'] = 'Teacher\'s Moodle lastname.';
 $string['get_teacher_returns::email'] = 'Teacher\'s Moodle email address.';
 $string['get_teacher_returns::idnumber'] = 'Teacher\'s SELMA student ID - if they are both a teacher & student.';
 $string['get_teacher_returns::teacherid'] = 'Teacher\'s SELMA ID.';
+$string['grade_student_course_returns::graded'] = 'If the student was graded or not.';
+$string['grade_student_course_returns::status'] = 'The HTTP status code of the request.';
+$string['grade_student_course_parameters::studentid'] = 'The id of the user in SELMA that maps to the idnumber of the user in the LMS.';
+$string['grade_student_course_parameters::courseid'] = 'The id of the course in the LMS.';
+$string['grade_student_course_parameters::grade'] = 'The grade value as an integer.';
+$string['gradetruncated'] = 'The grade {$a->grade} is more than the course grade max {$a->grademax}. The grade has been set to the course grademax value.';
 
 // Web services warnings.
 $string['warning_code_notcapable'] = 'notcapable';
@@ -336,6 +342,7 @@ $string['warning_code_duplicatesallowed'] = 'duplicatesallowed';
 $string['warning_message_duplicatesallowed'] = 'A setting (allowaccountssameemail) is enabled, allowing different users to use the same email address. Retrieving a student by email is therefore not reliable.';
 $string['warning_code_unknown'] = 'unknown';
 $string['warning_message_unknown'] = 'Something unexpected/unknown happened - manual inspection may be required.';
+$string['warning_message_gradebooknotconfigured'] = 'The grade book for course with id {$a->courseid} is not configured correctly. {$a->message}.';
 
 // Web services statuses.
 $string['status_ok'] = '200';

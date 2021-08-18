@@ -201,6 +201,14 @@ $functions = [
         'type'          => 'read',
         'ajax'          => false,
         'capabilities'  => ''
+    ],
+    'enrol_selma_grade_student_course' => [
+        'classname'     => 'enrol_selma\local\external\grade_student_course',
+        'methodname'    => 'grade_student_course',
+        'description'   => 'Set the final grade for a students course from SELMA',
+        'type'          => 'write',
+        'ajax'          => 'false',
+        'capabilities'  => ''
     ]
 ];
 $services = [
@@ -223,7 +231,8 @@ $services = [
             'enrol_selma_withdraw_student',
             'enrol_selma_create_teacher',
             'enrol_selma_update_teacher',
-            'enrol_selma_get_teacher'
+            'enrol_selma_get_teacher',
+            'enrol_selma_grade_student_course'
         ],
         'restrictedusers' => 0
     ]

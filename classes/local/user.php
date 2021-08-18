@@ -207,10 +207,13 @@ class user extends stdClass {
             $classname = 'profile_field_' . $field->datatype;
             /** @var profile_field_base $profilefield */
             $profilefield = new $classname($field->id, $this->id, $field);
-            if (method_exists($profilefield, 'edit_save_data_preprocess')) {
-                $this->{$profilefieldname} = $profilefield->edit_save_data_preprocess($value, null);
-            } else {
-                $this->{$profilefieldname} = $value;
+            if ($field->datatype !== 'file') {
+                // Only process non file user custom fields.
+                if (method_exists($profilefield, 'edit_save_data_preprocess')) {
+                    $this->{$profilefieldname} = $profilefield->edit_save_data_preprocess($value, null);
+                } else {
+                    $this->{$profilefieldname} = $value;
+                }
             }
         }
         return $this;
