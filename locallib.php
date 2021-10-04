@@ -134,7 +134,13 @@ function enrol_selma_add_intake_to_course(int $intakeid, int $courseid, array $c
                 $groupid = $groupfound->id;
 
                 foreach ($customfields as $key => $value) {
-                    $groupfound->{$key} = $value;
+                    if (empty($groupfound->{$key})) {
+                        // Not even set customfield to be set.
+                        $groupfound->{$key} = $value;
+                    } else if ($groupfound->{$key} !== $value) {
+                        // A changed custom field set.
+                        $groupfound->{$key} = $value;
+                    }
                 }
                 try {
                     groups_update_group($groupfound);
