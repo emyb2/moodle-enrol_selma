@@ -34,3 +34,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0).
 - Changed grade student function to accept a grade
 - Changed the language strings from completion to grade
 - This changelog
+
+## [Release 0.12.0]
+### Added
+- Update group custom field data when a group exists.
+
+### Changed
+- This changelog :joy: :man_facepalming:

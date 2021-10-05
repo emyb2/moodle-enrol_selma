@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component  = 'enrol_selma';        // Recommended since 2.0.2 (MDL-26035). Required since 3.0 (MDL-48494).
-$plugin->release    = '0.11.0 (MOOMA)';      // Human-readable release version.
-$plugin->version    = 2021043004;           // YYYYMMDDHH (year, month, day, 24-hr format hour).
+$plugin->release    = '0.12.0 (MOOMA)';      // Human-readable release version.
+$plugin->version    = 2021043005;           // YYYYMMDDHH (year, month, day, 24-hr format hour).
 $plugin->requires   = 2018051703;           // YYYYMMDDHH (Version number for Moodle 3.5.3).
 $plugin->maturity   = MATURITY_ALPHA;       // Code maturity/stability.
