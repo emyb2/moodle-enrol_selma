@@ -132,6 +132,22 @@ function enrol_selma_add_intake_to_course(int $intakeid, int $courseid, array $c
             } else {
                 // Else, group exists already.
                 $groupid = $groupfound->id;
+
+                foreach ($customfields as $key => $value) {
+                    if (empty($groupfound->{$key})) {
+                        // Not even set customfield to be set.
+                        $groupfound->{$key} = $value;
+                    } else if ($groupfound->{$key} !== $value) {
+                        // A changed custom field set.
+                        $groupfound->{$key} = $value;
+                    }
+                }
+                try {
+                    groups_update_group($groupfound);
+                } catch (\moodle_exception | \Exception $exception) {
+                    // Ignore these so that the sync can carry on.
+                    // Todo: these issues should be logged somewhere.
+                }
             }
 
             // Build relationship - group, course, enrol instance, intake.
