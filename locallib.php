@@ -298,22 +298,6 @@ function enrol_selma_add_user_to_intake(int $muserid, int $intakeid, int $selmai
     // Track any warning messages.
     $warnings = [];
 
-    // Check if they've already been linked?
-    $linked = enrol_selma_user_is_in_intake($muserid, $intakeid, $type);
-
-    // If user's been linked before. TODO - do we care/just do nothing then?
-    if ($linked) {
-        $warnings[] = [
-            'item' => get_string('pluginname', 'enrol_selma'),
-            'itemid' => 1,
-            'warningcode' => get_string('warning_code_exists', 'enrol_selma'),
-            'message' => get_string('warning_message_exists', 'enrol_selma', $selmaid)
-        ];
-
-        // Return 'already exists' status.
-        return ['warnings' => $warnings];
-    }
-
     // TODO - also eventually check if we need to enrol user into anything once we have all the necessary functions.
     // If added successfully, return success message.
     if (enrol_selma_relate_user_to_intake($muserid, $intakeid, $type)) {
@@ -962,7 +946,12 @@ function enrol_selma_relate_user_to_intake(int $userid, int $intakeid, string $t
         $table = 'enrol_selma_teacher_intake';
     }
 
-    return $DB->insert_record($table, $data, false);
+    // Prevent double up entries.
+    if ($DB->record_exists($table, ['userid' => $userid, 'intakeid' => $intakeid])) {
+        return true;
+    } else {
+        return $DB->insert_record($table, $data, false);
+    }
 }
 
 /**
@@ -1632,7 +1621,9 @@ function enrol_selma_enrol_user(int $userid, int $intakeid, string $type = 'stud
         }
 
         // This will enrol the user! Yay.
-        $enrolplugin->enrol_user($instance, $userid, $roleid);
+        if (!is_enrolled(\context_course::instance($courseandgroup->courseid), $userid)) {
+            $enrolplugin->enrol_user($instance, $userid, $roleid);
+        }
 
         // Get user enrolment ID.
         $ueid = $DB->get_record('user_enrolments', array('enrolid' => $instance->id, 'userid' => $userid), 'id');
