@@ -51,7 +51,7 @@ class add_intake_to_course_external_testcase extends externallib_advanced_testca
     /**
      * Prepares for the test.
      */
-    protected function setUp() {
+    protected function setUp() : void {
         // Run parent setup first, if any.
         parent::setUp();
 
