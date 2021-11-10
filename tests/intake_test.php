@@ -42,7 +42,7 @@ class intake_testcase extends advanced_testcase {
      */
     protected $plugingenerator;
 
-    public function setUp() {
+    public function setUp() : void {
         global $CFG;
         require_once($CFG->dirroot . '/enrol/selma/lib.php');
         require_once($CFG->dirroot . '/enrol/selma/locallib.php');

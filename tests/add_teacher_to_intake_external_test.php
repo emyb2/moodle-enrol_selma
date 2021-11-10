@@ -52,7 +52,7 @@ class add_teacher_to_intake_external_testcase extends externallib_advanced_testc
     /**
      * Prepares for the test.
      */
-    protected function setUp() {
+    protected function setUp() : void {
         // Run parent setup first, if any.
         parent::setUp();
 

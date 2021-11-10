@@ -49,7 +49,7 @@ class create_course_external_testcase extends externallib_advanced_testcase {
     /**
      * Prepares for the test.
      */
-    protected function setUp() {
+    protected function setUp() : void {
         // Run parent setup first, if any.
         parent::setUp();
 

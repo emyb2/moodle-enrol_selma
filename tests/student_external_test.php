@@ -39,7 +39,7 @@ class student_external_testcase extends externallib_advanced_testcase {
      */
     protected $plugingenerator;
 
-    protected function setUp() {
+    protected function setUp() : void {
         $user = self::getDataGenerator()->create_user();
         $this->setUser($user);
         $this->plugingenerator = $this->getDataGenerator()->get_plugin_generator('enrol_selma');
